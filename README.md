@@ -28,18 +28,19 @@ Once installed, update your Homebridge's `config.json`.
 ## Configuration
 
 As with other Homebridge plugins, you configure the Home Assistant plugin by
-adding it to your `config.json`.
+adding it to your `config.json`.  It is important to note that if you are connecting to a remote
+c-gate server, you will likely need to configure c-gate for remote connections.
 
 ```json
   "platforms": [
     {
       "platform": "homebridge-cbus",
       "name": "CBus",
-      "client_ip_address": '192.168.11.40',
+      "client_ip_address": "127.0.0.1",
       "client_controlport": 20023,
       "client_eventport": 20024,
       "client_statusport": 20025,
-      "client_cbusname": 'WEBB',
+      "client_cbusname": "HOME",
       "client_network": 254,
       "client_application": 56,
       "accessories": [ ... ]
@@ -49,20 +50,21 @@ adding it to your `config.json`.
 
 ### Configuration Platform fields:
 * `platform` and `name`: The platform name, you may leave these values.
-* `client_ip_address`: Your CBus local server IP address.
-* `client_controlport`: Your CBus control port number.
-* `client_eventport`: Your CBus event port number.
-* `client_statusport`: Your CBus status port number.
-* `client_cbusname`: The name of your CBus network.
-* `client_network`: The network address for your CBus network.
-* `client_application`: The application address for your CBus network.
-* `accessories`: List of accessories which you'd like to expose to the homebridge server.
+* `client_ip_address`: (required) Your CBus local server IP address.
+* `client_cbusname`: (required) The name of your CBus network.
+* `client_controlport`: (optional) Your CBus control port number.
+* `client_eventport`: (optional) Your CBus event port number.
+* `client_statusport`: (optional) Your CBus status port number.
+* `client_network`: (optional) The network address for your CBus network.
+* `client_application`: (optional) The application address for your CBus network.
+* `accessories`: (required) List of accessories which you'd like to expose to the homebridge server.
 
 #### Registering accessories
 Right now we are registering devices by hand.  In the future we may auto discover them. The platform definition in the `config.json` file contains an `accessories` array, which constitudes from objects with the following keys:
-* `type`: The type of the accessory. The valid values are "light" and "dimmer".
-* `name`: The name of the accessory (e.g. "Living room light", "Beedroom light", "Living Room curtain" etc.).
-* `id`: The module id of the accessory. Each accessory in CBus has one.
+* `type`: (required) The type of the accessory. The valid values are "light" and "dimmer".
+* `name`: (required) The name of the accessory (e.g. "Living room light", "Beedroom light", "Living Room curtain" etc.).
+* `id`: (required) The id of the device. Each accessory in CBus has one.
+* `location`: (optional) The device location.
 
 #### Fully functional example config.json:
 ````json
