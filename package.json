@@ -1,0 +1,33 @@
+{
+  "name": "homebridge-cbus",
+  "version": "0.0.1",
+  "description": "CBus Platform plugin for homebridge",
+  "license": "MIT",
+  "keywords": [
+    "homebridge-plugin",
+    "homebridge",
+    "plugin",
+    "cbus",
+    "cbus-smarthome",
+    "home",
+    "smarthome",
+    "homekit",
+    "siri",
+    "clipsal",
+    "cgate"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/anthonywebb/homebridge-cbus.git"
+  },
+  "bugs": {
+    "url": "http://github.com/anthonywebb/homebridge-cbus/issues"
+  },
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  },
+  "dependencies": {
+    "carrier": "^0.3.0"
+  }
+}
