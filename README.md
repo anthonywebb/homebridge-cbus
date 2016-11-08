@@ -35,7 +35,7 @@ c-gate server, you will likely need to configure c-gate for remote connections.
 ```json
   "platforms": [
     {
-      "platform": "homebridge-cbus",
+      "platform": "homebridge-cbus.CBus",
       "name": "CBus",
       "client_ip_address": "127.0.0.1",
       "client_controlport": 20023,
@@ -80,7 +80,7 @@ Right now we are registering devices by hand.  In the future we may auto discove
 
   "platforms": [
     {
-      "platform": "homebridge-cbus",
+      "platform": "homebridge-cbus.CBus",
       "name": "CBus",
       "client_ip_address": "127.0.0.1",
       "client_controlport": 20023,

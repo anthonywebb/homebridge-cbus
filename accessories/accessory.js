@@ -30,7 +30,7 @@ function CBusAccessory(platform, accessoryData)
         process.exit(0);
         
     } else if (!cbusUtils.verifyModuleId(accessoryData.id)) {
-        this.log.error("The specified module id (" + accessoryData.id + ") is invalid. ABORTING.");
+        this.log.error("The specified id (" + accessoryData.id + ") is invalid. ABORTING.");
         process.exit(0);
     }
 
@@ -44,8 +44,8 @@ function CBusAccessory(platform, accessoryData)
     this.log            =   platform.log;
 
     this.id             =   this.accessoryData.id;
+    this.uuid_base      =   this.accessoryData.uuid_base;
     this.name           =   this.accessoryData.name;
-    this.location       =   this.accessoryData.location;
     this.type           =   typeof(this.accessoryData.type) != "undefined" ? this.accessoryData.type : undefined;
 
     //--------------------------------------------------

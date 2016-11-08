@@ -141,6 +141,10 @@ CBusPlatform.prototype.accessories = function(callback) {
         this.foundAccessories = []; /* reset */
 
         for (var accessoryData of this.config.accessories) {
+
+            // make sure we use uuid_base so we dont see uuid collisions
+            accessoryData.uuid_base = accessoryData.id;
+
             var accessory = this.accessoryFactory(accessoryData);
             if (accessory) {
                 this.foundAccessories.push(accessory);
