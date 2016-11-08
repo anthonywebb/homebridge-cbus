@@ -7,6 +7,7 @@ var Service, Characteristic, Accessory, uuid;
 var CBusAccessory;
 var CBusLightAccessory;
 var CBusDimmerAccessory;
+var CBusMotionAccessory;
 
 //==========================================================================================
 //  Exports block
@@ -28,11 +29,13 @@ module.exports = function(homebridge) {
     CBusAccessory        = require('./accessories/accessory.js')(Service, Characteristic, Accessory, uuid);
     CBusLightAccessory   = require('./accessories/light-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
     CBusDimmerAccessory  = require('./accessories/dimmer-accessory.js')(Service, Characteristic, CBusLightAccessory, uuid);
+    CBusMotionAccessory   = require('./accessories/motion-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 
     /* Fix inheritance, since we've loaded our classes before the Accessory class has been loaded */
     cbusUtils.fixInheritance(CBusAccessory, Accessory);
     cbusUtils.fixInheritance(CBusLightAccessory, CBusAccessory);
     cbusUtils.fixInheritance(CBusDimmerAccessory, CBusLightAccessory);
+    cbusUtils.fixInheritance(CBusMotionAccessory, CBusAccessory);
 
     //--------------------------------------------------
     //  Register ourselfs with homebridge
@@ -109,6 +112,7 @@ CBusPlatform.prototype.accessories = function(callback) {
 
     this.client = new cbusClient(this.clientIpAddress, this.clientControlPort, this.clientEventPort, this.clientStatusPort, this.clientCbusName, this.clientNetwork, this.clientApplication);
 
+    // listen for data from the client and ensure that the homebridge UI is updated
     this.client.on('remoteData', function(data){
         var devs = this.foundAccessories;
         for (var i = 0; i < devs.length; i++) {
@@ -122,6 +126,8 @@ CBusPlatform.prototype.accessories = function(callback) {
                     }
                 } else if (dev.type == "dimmer"){
                     dev.lightService.getCharacteristic(Characteristic.Brightness).setValue(data.level, undefined, 'remoteData');
+                } else if (dev.type == "motion"){
+                    dev.motionService.getCharacteristic(Characteristic.MotionDetected).setValue(data.level > 0 ? true:false);
                 }
                 
             }
@@ -160,6 +166,8 @@ CBusPlatform.prototype.accessoryFactory = function(entry) {
             return new CBusLightAccessory(this, entry);
         case "dimmer":
             return new CBusDimmerAccessory(this, entry);
+        case "motion":
+            return new CBusMotionAccessory(this, entry);
         default:
             return undefined;
     }

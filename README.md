@@ -16,6 +16,7 @@ CBus already provides a fully supported home automation platform. Hence, this pr
 We are working on adding device types, but for now you'll only be able to control:
 * Lightblubs.
 * Dimmers.
+* Motion Sensors.
 
 ## Installation
 
@@ -61,7 +62,7 @@ c-gate server, you will likely need to configure c-gate for remote connections.
 
 #### Registering accessories
 Right now we are registering devices by hand.  In the future we may auto discover them. The platform definition in the `config.json` file contains an `accessories` array, which constitudes from objects with the following keys:
-* `type`: (required) The type of the accessory. The valid values are "light" and "dimmer".
+* `type`: (required) The type of the accessory. The valid values are "light", "motion", and "dimmer".
 * `name`: (required) The name of the accessory (e.g. "Living room light", "Beedroom light", "Living Room curtain" etc.).
 * `id`: (required) The id of the device. Each accessory in CBus has one.
 
@@ -93,8 +94,8 @@ Right now we are registering devices by hand.  In the future we may auto discove
         { "type": "light", "id": "0", "name": "Flood" },
         { "type": "light", "id": "1", "name": "Main Bay" },
         { "type": "light", "id": "2", "name": "3rd Bay" },
-        { "type": "light", "id": "3", "name": "Closet" },
-        { "type": "light", "id": "51", "name": "Main" }
+        { "type": "dimmer", "id": "3", "name": "Closet" },
+        { "type": "motion", "id": "51", "name": "Main" }
       ]
     }
   ],
