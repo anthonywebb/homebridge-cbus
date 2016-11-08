@@ -64,7 +64,6 @@ Right now we are registering devices by hand.  In the future we may auto discove
 * `type`: (required) The type of the accessory. The valid values are "light" and "dimmer".
 * `name`: (required) The name of the accessory (e.g. "Living room light", "Beedroom light", "Living Room curtain" etc.).
 * `id`: (required) The id of the device. Each accessory in CBus has one.
-* `location`: (optional) The device location.
 
 #### Fully functional example config.json:
 ````json
@@ -91,11 +90,11 @@ Right now we are registering devices by hand.  In the future we may auto discove
       "client_application": 56,
       "accessories":
       [
-        { "type": "light", "id": "0", "name": "Flood", "location": "Outdoor" },
-        { "type": "light", "id": "1", "name": "Main Bay", "location": "Garage" },
-        { "type": "light", "id": "2", "name": "3rd Bay", "location": "Garage" },
-        { "type": "light", "id": "3", "name": "Closet", "location": "Court" },
-        { "type": "light", "id": "51", "name": "Main", "location": "Master Bdrm" }
+        { "type": "light", "id": "0", "name": "Flood" },
+        { "type": "light", "id": "1", "name": "Main Bay" },
+        { "type": "light", "id": "2", "name": "3rd Bay" },
+        { "type": "light", "id": "3", "name": "Closet" },
+        { "type": "light", "id": "51", "name": "Main" }
       ]
     }
   ],

@@ -39,6 +39,8 @@ function CBusClient(clientIpAddress, clientControlPort, clientEventPort, clientS
     this.statuses           = undefined;
     this.pendingStatusQueue = [];
 
+    this.state = {};
+
     EventEmitter.call(this);
 }
 
@@ -132,14 +134,28 @@ CBusClient.prototype.disconnect = function()
 
 CBusClient.prototype.turnOnLight = function(id, callback)
 {
-    var cmd = this._buildCommandString(id,"on",100);
-    this._sendMessage(cmd, callback);
+    if(this.state[id] && !this.state[id].on){
+        var cmd = this._buildCommandString(id,"on",100);
+        this._sendMessage(cmd, callback);
+    } else {
+        //console.log("light is already on, no need to send the command again");
+        if (typeof(callback) != "undefined") {
+            callback();
+        } 
+    }
 };
 
 CBusClient.prototype.turnOffLight = function(id, callback)
 {
-    var cmd = this._buildCommandString(id,"off",0);
-    this._sendMessage(cmd, callback);
+    if(this.state[id] && this.state[id].on){
+        var cmd = this._buildCommandString(id,"off",0);
+        this._sendMessage(cmd, callback);
+    } else {
+        //console.log("light is already off, no need to send the command again");
+        if (typeof(callback) != "undefined") {
+            callback();
+        } 
+    }
 };
 
 CBusClient.prototype.receiveLightStatus = function(id, callback)
@@ -250,10 +266,14 @@ CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
         }
     }
 
+    // lets track some state for each device, this way we dont do things like turn on devices that are already on (when dimming)
+    if(responseObj.group != null && responseObj.level != null){
+        this.state[responseObj.group] = {on: responseObj.level > 0 ? true : false}; 
+    }
+
     if(responseObj.channel=='statusStream'){
         //this.platform.remoteLevelUpdate(this.platform.foundAccessories ,responseObj.group, responseObj.level);
         /* Iterate over the accesories and make sure the current state gets set */
-        
         this.emit('remoteData', responseObj);
     }
 };

@@ -18,10 +18,9 @@ function CBusDimmerAccessory(platform, accessoryData)
     CBusLightAccessory.call(this, platform, accessoryData);
 
     //--------------------------------------------------
-    //  Register the on-off service
+    //  Register the brightness service
     //--------------------------------------------------
-    
-    this.lightService.getCharacteristic(Characteristic.Brightness)
+    this.lightService.addCharacteristic(Characteristic.Brightness)
         .on('get', this.getBrightness.bind(this))
         .on('set', this.setBrightness.bind(this));
 };
@@ -38,7 +37,6 @@ CBusDimmerAccessory.prototype.getBrightness = function(callback, context) {
 CBusDimmerAccessory.prototype.setBrightness = function(level, callback, context) {
     // "context" is helping us avoid a never ending loop
     if(context != 'remoteData'){
-        level = cbusUtils.clamp(level, 0, 100);
         this._log("CBusDimmerAccessory", "setBrightness = " + level);
         this.client.setLightBrightness(this.id, level, function() {
             callback();
