@@ -101,6 +101,11 @@ function CBusPlatform(log, config) {
     if (typeof(config.client_application) != "undefined") {
       this.clientApplication = config.client_application;
     }
+
+    /* Client Debug */
+    if (typeof(config.client_debug) != "undefined") {
+      this.clientDebug = config.client_debug;
+    }
 };
 
 // Invokes callback(accessories[])
@@ -136,7 +141,7 @@ CBusPlatform.prototype.accessories = function(callback) {
     }.bind(this));
 
     this.client.connect(function() {
-        this.log.info('CBus Client is listening to CGate on ' + this.client.clientIpAddress +'...');
+        this.log.info('CBus Client is listening to CGate on ' + this.client.clientIpAddress +'... Debug: '+this.client.clientDebug);
 
         this.log.info("Registering the accessories list...");
         this.foundAccessories = []; /* reset */

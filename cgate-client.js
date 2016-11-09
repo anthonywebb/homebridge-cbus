@@ -34,7 +34,7 @@ function CBusClient(clientIpAddress, clientControlPort, clientEventPort, clientS
     this.clientStatusPort   = clientStatusPort || DEFAULT_CLIENT_STATUS_PORT;
     this.clientNetwork      = clientNetwork || DEFAULT_CLIENT_NETWORK;
     this.clientApplication  = clientApplication || DEFAULT_CLIENT_APPLICATION;
-    this.clientDebug  = clientDebug || DEFAULT_CLIENT_DEBUG;
+    this.clientDebug        = clientDebug || DEFAULT_CLIENT_DEBUG;
 
     this.control            = undefined;
     this.events             = undefined;
