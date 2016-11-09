@@ -53,12 +53,13 @@ function CBusPlatform(log, config) {
     //  vars definition
     //--------------------------------------------------
     this.clientIpAddress     = undefined;
-    this.clientControlPort    = undefined;
-    this.clientEventPort    = undefined;
+    this.clientControlPort   = undefined;
+    this.clientEventPort     = undefined;
     this.clientStatusPort    = undefined;
-    this.clientCbusName     = undefined;
-    this.clientNetwork     = undefined;
-    this.clientApplication    = undefined;
+    this.clientCbusName      = undefined;
+    this.clientNetwork       = undefined;
+    this.clientApplication   = undefined;
+    this.clientDebug         = undefined;
     this.config	             = config;
     this.log                 = log;
     this.foundAccessories    = [];
@@ -110,7 +111,7 @@ CBusPlatform.prototype.accessories = function(callback) {
 
     this.log.info("Connecting to the local CBus server...");
 
-    this.client = new cbusClient(this.clientIpAddress, this.clientControlPort, this.clientEventPort, this.clientStatusPort, this.clientCbusName, this.clientNetwork, this.clientApplication);
+    this.client = new cbusClient(this.clientIpAddress, this.clientControlPort, this.clientEventPort, this.clientStatusPort, this.clientCbusName, this.clientNetwork, this.clientApplication, this.clientDebug);
 
     // listen for data from the client and ensure that the homebridge UI is updated
     this.client.on('remoteData', function(data){

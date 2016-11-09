@@ -9,6 +9,7 @@ var DEFAULT_CLIENT_EVENT_PORT = 20024;
 var DEFAULT_CLIENT_STATUS_PORT = 20025;
 var DEFAULT_CLIENT_NETWORK = 254;
 var DEFAULT_CLIENT_APPLICATION= 56;
+var DEFAULT_CLIENT_DEBUG= false;
 
 var log     = require('util').log;
 var carrier = require('carrier');
@@ -21,7 +22,7 @@ var util = require('util');
 //  CBusClient initialization
 //==========================================================================================
 
-function CBusClient(clientIpAddress, clientControlPort, clientEventPort, clientStatusPort, clientCbusName, clientNetwork, clientApplication)
+function CBusClient(clientIpAddress, clientControlPort, clientEventPort, clientStatusPort, clientCbusName, clientNetwork, clientApplication, clientDebug)
 {
     //--------------------------------------------------
     //  vars setup
@@ -33,6 +34,7 @@ function CBusClient(clientIpAddress, clientControlPort, clientEventPort, clientS
     this.clientStatusPort   = clientStatusPort || DEFAULT_CLIENT_STATUS_PORT;
     this.clientNetwork      = clientNetwork || DEFAULT_CLIENT_NETWORK;
     this.clientApplication  = clientApplication || DEFAULT_CLIENT_APPLICATION;
+    this.clientDebug  = clientDebug || DEFAULT_CLIENT_DEBUG;
 
     this.control            = undefined;
     this.events             = undefined;
@@ -249,6 +251,10 @@ CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
     //--------------------------------------------------
 
     var responseObj = new CBusStatusPacket(buffer, type);
+
+    if(this.clientDebug){
+        console.log(responseObj);
+    }
 
     //--------------------------------------------------
     //  Prepare our match 'n' call callback

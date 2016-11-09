@@ -44,6 +44,7 @@ c-gate server, you will likely need to configure c-gate for remote connections.
       "client_cbusname": "HOME",
       "client_network": 254,
       "client_application": 56,
+      "client_debug": true,
       "accessories": [ ... ]
      }
 ]
@@ -58,6 +59,7 @@ c-gate server, you will likely need to configure c-gate for remote connections.
 * `client_statusport`: (optional) Your CBus status port number.
 * `client_network`: (optional) The network address for your CBus network.
 * `client_application`: (optional) The application address for your CBus network.
+* `client_debug`: (optional) Write CBus client debug logs to the console.
 * `accessories`: (required) List of accessories which you'd like to expose to the homebridge server.
 
 #### Registering accessories
@@ -89,6 +91,7 @@ Right now we are registering devices by hand.  In the future we may auto discove
       "client_cbusname": "WEBB",
       "client_network": 254,
       "client_application": 56,
+      "client_debug": true,
       "accessories":
       [
         { "type": "light", "id": "0", "name": "Flood" },
