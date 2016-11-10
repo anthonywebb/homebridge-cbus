@@ -119,11 +119,17 @@ CBusPlatform.prototype.accessories = function(callback) {
     this.client = new cbusClient(this.clientIpAddress, this.clientControlPort, this.clientEventPort, this.clientStatusPort, this.clientCbusName, this.clientNetwork, this.clientApplication, this.clientDebug);
 
     // listen for data from the client and ensure that the homebridge UI is updated
-    this.client.on('remoteData', function(data){
+    this.client.on("remoteData", function(data){
+        if(this.clientDebug){
+            this.log.info("[remoteData] id:"+data.group);
+        }
         var devs = this.foundAccessories;
         for (var i = 0; i < devs.length; i++) {
             var dev = devs[i];
             if(dev.id == data.group){
+                if(this.clientDebug){
+                    this.log.info("[remoteDataFound] id:"+data.group+" type:"+data.type+" level:"+data.level);
+                }
                 if(dev.type == "light"){
                     if(data.level > 0) {
                         dev.lightService.getCharacteristic(Characteristic.On).setValue(true, undefined, 'remoteData');
