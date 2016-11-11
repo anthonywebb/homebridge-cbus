@@ -128,7 +128,7 @@ CBusPlatform.prototype.accessories = function(callback) {
             var dev = devs[i];
             if(dev.id == data.group){
                 if(this.clientDebug){
-                    this.log.info("[remoteDataFound] id:"+data.group+" type:"+data.type+" level:"+data.level);
+                    this.log.info("[remoteDataFound] id:"+data.group+" type:"+dev.type+" level:"+data.level);
                 }
                 if(dev.type == "light"){
                     if(data.level > 0) {
@@ -137,7 +137,13 @@ CBusPlatform.prototype.accessories = function(callback) {
                         dev.lightService.getCharacteristic(Characteristic.On).setValue(false, undefined, 'remoteData');    
                     }
                 } else if (dev.type == "dimmer"){
+                    if (data.level == 0) {
+                        dev.lightService.getCharacteristic(Characteristic.On).setValue(false, undefined, 'remoteData');    
+                    } else if (data.level == 100) { 
+                        dev.lightService.getCharacteristic(Characteristic.On).setValue(true, undefined, 'remoteData');   
+                    } 
                     dev.lightService.getCharacteristic(Characteristic.Brightness).setValue(data.level, undefined, 'remoteData');
+                    
                 } else if (dev.type == "motion"){
                     dev.motionService.getCharacteristic(Characteristic.MotionDetected).setValue(data.level > 0 ? true:false);
                 }
