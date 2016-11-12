@@ -9,6 +9,11 @@ What does that means? You'll be able to:
 * Control your home using voice commands via Siri.
 * Use the built-in Home app (iOS 10+) to control your home.
 
+## In Action
+To see some action of homekit controlling a clipsal cbus system check out the following links
+https://www.youtube.com/watch?v=1_pzVlegnio
+https://www.youtube.com/watch?v=0NT9AGQd_FU
+
 ## Device Support
 
 CBus already provides a fully supported home automation platform. Hence, this project that provides a bridge which "expose' your devices in a way that you can control then using HomeKit.
