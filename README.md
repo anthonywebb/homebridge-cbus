@@ -11,8 +11,8 @@ What does that means? You'll be able to:
 
 ## In Action
 To see some action of homekit controlling a clipsal cbus system check out the following links
-https://www.youtube.com/watch?v=1_pzVlegnio
-https://www.youtube.com/watch?v=0NT9AGQd_FU
+* https://www.youtube.com/watch?v=1_pzVlegnio
+* https://www.youtube.com/watch?v=0NT9AGQd_FU
 
 ## Device Support
 
