@@ -27,7 +27,7 @@ function CBusLightAccessory(platform, accessoryData)
 
 CBusLightAccessory.prototype.getState = function(callback, context) {
     setTimeout(function() {
-        this.client.receiveLightStatus(this.id, function(result) {
+        this.client.receiveLightStatus(this.network, this.application, this.id, function(result) {
             this._log("CBusLightAccessory", "getState = " + result.level);
             callback(false, /*state: */ result.level ? 1 : 0);
         }.bind(this));
@@ -39,11 +39,11 @@ CBusLightAccessory.prototype.setState = function(value, callback, context) {
     if(context != 'remoteData'){
         this._log("CBusLightAccessory", "setState = " + value);
         if (value) {
-            this.client.turnOnLight(this.id, function() {
+            this.client.turnOnLight(this.network, this.application, this.id, function() {
                 callback();
             });
         } else {
-            this.client.turnOffLight(this.id, function() {
+            this.client.turnOffLight(this.network, this.application, this.id, function() {
                 callback();
             });
         }

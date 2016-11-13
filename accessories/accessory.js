@@ -24,6 +24,18 @@ function CBusAccessory(platform, accessoryData)
         process.exit(0);
     }
 
+    /* We got a network? */
+    if (typeof(accessoryData.network) != "string") {
+        this.log.error("One of your accessories is missing the \"name\" field, which is required. ABORTING.");
+        process.exit(0);
+    }
+		
+    /* We got a application? */
+    if (typeof(accessoryData.application) != "string") {
+        this.log.error("One of your accessories is missing the \"name\" field, which is required. ABORTING.");
+        process.exit(0);
+    }
+		
     /* We got an id? */
     if (typeof(accessoryData.id) != "string") {
         this.log.error("One of your accessories is missing the \"id\" field, which is required. ABORTING.");
@@ -42,7 +54,8 @@ function CBusAccessory(platform, accessoryData)
     this.client         =   this.platform.client;
     this.accessoryData  =   accessoryData;
     this.log            =   platform.log;
-
+    this.network        =   this.accessoryData.network;
+    this.application    =   this.accessoryData.application;
     this.id             =   this.accessoryData.id;
     this.uuid_base      =   this.accessoryData.uuid_base;
     this.name           =   this.accessoryData.name;
@@ -71,5 +84,9 @@ CBusAccessory.prototype.getServices = function() {
 };
 
 CBusAccessory.prototype._log = function(tag, message) {
-    this.log.info("[" + tag + "] [" + this.accessoryData.id + ", " + this.accessoryData.name + "]: " + message);
+    this.log.info("[" 
+								+ tag + "] [" + this.accessoryData.network + ", " 
+								+ this.accessoryData.application + ", " 
+								+ this.accessoryData.id + ", " 
+								+ this.accessoryData.name + "]: " + message);
 }

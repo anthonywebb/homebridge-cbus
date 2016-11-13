@@ -134,10 +134,10 @@ CBusClient.prototype.disconnect = function()
     this.statuses.close();
 };
 
-CBusClient.prototype.turnOnLight = function(id, callback)
+CBusClient.prototype.turnOnLight = function(network, application, id, callback)
 {
     if(this.state[id] && !this.state[id].on){
-        var cmd = this._buildCommandString(id,"on",100);
+        var cmd = this._buildCommandString(network, application, id,"on",100);
         this._sendMessage(cmd, callback);
     } else {
         //console.log("light is already on, no need to send the command again");
@@ -147,10 +147,10 @@ CBusClient.prototype.turnOnLight = function(id, callback)
     }
 };
 
-CBusClient.prototype.turnOffLight = function(id, callback)
+CBusClient.prototype.turnOffLight = function(network, application, id, callback)
 {
     if(this.state[id] && this.state[id].on){
-        var cmd = this._buildCommandString(id,"off",0);
+        var cmd = this._buildCommandString(network, application, id,"off",0);
         this._sendMessage(cmd, callback);
     } else {
         //console.log("light is already off, no need to send the command again");
@@ -160,9 +160,9 @@ CBusClient.prototype.turnOffLight = function(id, callback)
     }
 };
 
-CBusClient.prototype.receiveLightStatus = function(id, callback)
+CBusClient.prototype.receiveLightStatus = function(network, application, id, callback)
 {
-    var cmd = this._buildCommandString(id,"status",0);
+    var cmd = this._buildCommandString(network, application, id,"status",0);
 
     this.pendingStatusQueue.push({
        id: id, callback: callback
@@ -171,14 +171,14 @@ CBusClient.prototype.receiveLightStatus = function(id, callback)
     this._sendMessage(cmd);
 };
 
-CBusClient.prototype.setLightBrightness = function(id, value, callback)
+CBusClient.prototype.setLightBrightness = function(network, application, id, value, callback)
 {
-    var cmd = this._buildCommandString(id,"ramp",value);
+    var cmd = this._buildCommandString(network, application, id,"ramp",value);
     this._sendMessage(cmd, callback);
 };
 
-CBusClient.prototype.receiveLightBrightness = function(id, callback) {
-    var cmd = this._buildCommandString(id,"status",0);
+CBusClient.prototype.receiveLightBrightness = function(network, application, id, callback) {
+    var cmd = this._buildCommandString(network, application, id,"status",0);
 
     this.pendingStatusQueue.push({
        id: id, callback: callback
@@ -204,25 +204,25 @@ CBusClient.prototype._socketReceivedMessageEvent = function(message, type)
 //  Private API
 //==========================================================================================
 
-CBusClient.prototype._buildCommandString = function(device,command,level,delay) {
+CBusClient.prototype._buildCommandString = function(network, application, device,command,level,delay) {
     var message = '';
 
     if(command=='status') {
-        message = 'GET //'+this.clientCbusName+'/'+this.clientNetwork+'/'+this.clientApplication+'/'+device+' level\n';
+        message = 'GET //'+this.clientCbusName+'/'+network+'/'+application+'/'+device+' level\n';
     }
     else if(command=='on') {
-        message = 'ON //'+this.clientCbusName+'/'+this.clientNetwork+'/'+this.clientApplication+'/'+device+'\n';
+        message = 'ON //'+this.clientCbusName+'/'+network+'/'+application+'/'+device+'\n';
     }
     else if (command=='off') {
-        message = 'OFF //'+this.clientCbusName+'/'+this.clientNetwork+'/'+this.clientApplication+'/'+device+'\n';
+        message = 'OFF //'+this.clientCbusName+'/'+network+'/'+application+'/'+device+'\n';
     }
     else if (command=='ramp') {
 
         if (level <= 100) {
             if (delay) {
-            message = 'RAMP //'+this.clientCbusName+'/'+this.clientNetwork+'/'+this.clientApplication+'/'+device+' '+level+'% '+delay+'\n';
+            message = 'RAMP //'+this.clientCbusName+'/'+network+'/'+application+'/'+device+' '+level+'% '+delay+'\n';
             } else {
-            message = 'RAMP //'+this.clientCbusName+'/'+this.clientNetwork+'/'+this.clientApplication+'/'+device+' '+level+'%\n';
+            message = 'RAMP //'+this.clientCbusName+'/'+network+'/'+application+'/'+device+' '+level+'%\n';
             }
         }
     }
