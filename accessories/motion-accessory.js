@@ -26,7 +26,7 @@ function CBusMotionAccessory(platform, accessoryData)
 
 CBusMotionAccessory.prototype.getMotionState = function(callback, context) {
     setTimeout(function() {
-        this.client.receiveLightStatus(this.id, function(result) {
+        this.client.receiveLightStatus(this.network, this.application, this.id, function(result) {
             this._log("CBusMotionAccessory", "getState = " + result.level);
             callback(false, /*state: */ result.level ? 1 : 0);
         }.bind(this));
