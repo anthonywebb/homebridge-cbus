@@ -1,4 +1,4 @@
-var Service, Characteristic, MoxLightAccessory, uuid;
+var Service, Characteristic, CBusLightAccessory, uuid;
 var cbusUtils = require('../cbus-utils.js');
 
 module.exports = function (_service, _characteristic, _accessory, _uuid) {
