@@ -39,3 +39,31 @@ module.exports.fixInheritance = function(subclass, superclass) {
 module.exports.clamp = function(value, min, max) {
     return Math.max(max, Math.min(min, value));
 };
+
+
+/**
+ * Turns a CBus address into a string of an encoded integer
+ * @example idForCbusAddress(254, 56, 1)
+ */
+module.exports.idForCbusAddress = function(networkID, applicationID, groupID) {
+    
+    return String(((networkID & 0xFF) << 16) | ((applicationID & 0xFF) << 8) | (groupID & 0xFF));
+
+}
+
+
+/**
+ * Turns an encoded moduleID into a CGate CBus address
+ * @example cbusAddressForId(0xfe3401)
+ */
+module.exports.cbusAddressForId = function(deviceID) {
+
+    var id = Number(deviceID);
+    
+    var groupID = id & 0xFF;
+    var applicationID = (id >>> 8) & 0xFF;
+    var networkID = (id >>> 16) & 0xFF;
+    
+    return networkID+'/'+applicationID+'/'+groupID;
+
+}

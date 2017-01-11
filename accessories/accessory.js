@@ -33,6 +33,10 @@ function CBusAccessory(platform, accessoryData)
         this.log.error("The specified id (" + accessoryData.id + ") is invalid. ABORTING.");
         process.exit(0);
     }
+    
+    var networkID = accessoryData.network || platform.client.clientNetwork;
+    var applicationID = accessoryData.application || platform.client.clientApplication;
+    
 
     //--------------------------------------------------
     //  Define our iVars
@@ -43,8 +47,8 @@ function CBusAccessory(platform, accessoryData)
     this.accessoryData  =   accessoryData;
     this.log            =   platform.log;
 
-    this.id             =   this.accessoryData.id;
-    this.uuid_base      =   this.accessoryData.uuid_base;
+    this.id             =   cbusUtils.idForCbusAddress(networkID, applicationID, this.accessoryData.id);
+    this.uuid_base      =   this.id //NB ignore this.accessoryData.uuid_base as it is only based on group id
     this.name           =   this.accessoryData.name;
     this.type           =   typeof(this.accessoryData.type) != "undefined" ? this.accessoryData.type : undefined;
 
@@ -59,7 +63,7 @@ function CBusAccessory(platform, accessoryData)
     var s = this.getService(Service.AccessoryInformation);
     
     s.setCharacteristic(Characteristic.Manufacturer, "CBus")
-        .setCharacteristic(Characteristic.SerialNumber, String(this.id));
+        .setCharacteristic(Characteristic.SerialNumber, cbusUtils.cbusAddressForId(this.id));
     
     if (this.type) {
         s.setCharacteristic(Characteristic.Model, this.type);
@@ -71,5 +75,5 @@ CBusAccessory.prototype.getServices = function() {
 };
 
 CBusAccessory.prototype._log = function(tag, message) {
-    this.log.info("[" + tag + "] [" + this.accessoryData.id + ", " + this.accessoryData.name + "]: " + message);
+    this.log.info("[" + tag + "] [" + cbusUtils.cbusAddressForId(this.id) + ", " + this.name + "]: " + message);
 }

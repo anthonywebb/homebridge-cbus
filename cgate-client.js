@@ -18,6 +18,8 @@ var net     = require('net');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
+var cbusUtils    = require('./cbus-utils.js');
+
 //==========================================================================================
 //  CBusClient initialization
 //==========================================================================================
@@ -204,29 +206,35 @@ CBusClient.prototype._socketReceivedMessageEvent = function(message, type)
 //  Private API
 //==========================================================================================
 
-CBusClient.prototype._buildCommandString = function(device,command,level,delay) {
+CBusClient.prototype._buildCommandString = function(id,command,level,delay) {
     var message = '';
+    
+    var cbusAddress = cbusUtils.cbusAddressForId(id);
 
     if(command=='status') {
-        message = 'GET //'+this.clientCbusName+'/'+this.clientNetwork+'/'+this.clientApplication+'/'+device+' level\n';
+        message = 'GET //'+this.clientCbusName+'/'+cbusAddress+' level\n';
     }
     else if(command=='on') {
-        message = 'ON //'+this.clientCbusName+'/'+this.clientNetwork+'/'+this.clientApplication+'/'+device+'\n';
+        message = 'ON //'+this.clientCbusName+'/'+cbusAddress+'\n';
     }
     else if (command=='off') {
-        message = 'OFF //'+this.clientCbusName+'/'+this.clientNetwork+'/'+this.clientApplication+'/'+device+'\n';
+        message = 'OFF //'+this.clientCbusName+'/'+cbusAddress+'\n';
     }
     else if (command=='ramp') {
 
         if (level <= 100) {
             if (delay) {
-            message = 'RAMP //'+this.clientCbusName+'/'+this.clientNetwork+'/'+this.clientApplication+'/'+device+' '+level+'% '+delay+'\n';
+            message = 'RAMP //'+this.clientCbusName+'/'+cbusAddress+' '+level+'% '+delay+'\n';
             } else {
-            message = 'RAMP //'+this.clientCbusName+'/'+this.clientNetwork+'/'+this.clientApplication+'/'+device+' '+level+'%\n';
+            message = 'RAMP //'+this.clientCbusName+'/'+cbusAddress+' '+level+'%\n';
             }
         }
     }
-    //console.log(message);
+    
+    if(this.clientDebug){
+        console.log("Message:"+message);
+    }
+
     return message;
 }
 
@@ -262,7 +270,7 @@ CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
     /* Iterate over the pending items and clear them out */
     for (var i = 0; i < this.pendingStatusQueue.length; i++) {
         var item = this.pendingStatusQueue[i];
-        if (item.id == responseObj.group)
+        if (item.id == responseObj.moduleId)
         {
             /* Fire the callback */
             item.callback(responseObj);
@@ -273,12 +281,12 @@ CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
     }
 
     // lets track some state for each device, this way we dont do things like turn on devices that are already on (when dimming)
-    if(responseObj.group != null && responseObj.level != null){
-        this.state[responseObj.group] = {on: responseObj.level > 0 ? true : false}; 
+    if(responseObj.moduleId != null && responseObj.level != null){
+        this.state[responseObj.moduleId] = {on: responseObj.level > 0 ? true : false};
     }
 
     if(responseObj.channel=='statusStream'){
-        //this.platform.remoteLevelUpdate(this.platform.foundAccessories ,responseObj.group, responseObj.level);
+        //this.platform.remoteLevelUpdate(this.platform.foundAccessories ,responseObj.moduleId, responseObj.level);
         /* Iterate over the accesories and make sure the current state gets set */
         this.emit('remoteData', responseObj);
     }
@@ -308,10 +316,10 @@ function CBusStatusPacket(data, channel)
 
         this.action = array[1];
 
-        // last element of arr2 is the group
-        var temp = array[2].match(/\d+/g);
-        this.group = temp[2];
-
+        // the elements of arr2 are the project/network/application/group
+        var temp = array[2].split("/");
+        this.moduleId = cbusUtils.idForCbusAddress(temp[1], temp[2], temp[3]);
+        
         var parseunit = array[3];
         var parseoid = array[4];
 
@@ -341,8 +349,9 @@ function CBusStatusPacket(data, channel)
             this.type = 'info';
             this.level = this._humanLevelValue(temp[1]);
             var ind = (array.length == 3 ? 1 : 0);
-            var temp2 = array[ind].match(/\d+/g);
-            this.group = temp2[temp2.length-1];
+
+            var temp2 = array[ind].split("/");
+            this.moduleId = cbusUtils.idForCbusAddress(temp2[1], temp2[2], temp2[3]);;
         }
     }
 

@@ -121,14 +121,14 @@ CBusPlatform.prototype.accessories = function(callback) {
     // listen for data from the client and ensure that the homebridge UI is updated
     this.client.on("remoteData", function(data){
         if(this.clientDebug){
-            this.log.info("[remoteData] id:"+data.group);
+            this.log.info("[remoteData] id:"+data.moduleId);
         }
         var devs = this.foundAccessories;
         for (var i = 0; i < devs.length; i++) {
             var dev = devs[i];
-            if(dev.id == data.group){
+            if(dev.id == data.moduleId){
                 if(this.clientDebug){
-                    this.log.info("[remoteDataFound] id:"+data.group+" type:"+dev.type+" level:"+data.level);
+                    this.log.info("[remoteDataFound] id:"+data.moduleId+" type:"+dev.type+" level:"+data.level);
                 }
                 if(dev.type == "light"){
                     if(data.level > 0) {
