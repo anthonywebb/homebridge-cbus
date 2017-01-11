@@ -5,10 +5,8 @@ Make your home CBus accessories controllable using Apple's HomeKit with your [Ho
 This project provides a bridge between your CBus local server and HomeKit. Thus, once you setup your homebridge server, poof - all of your supported accessories will be instantly controllable via HomeKit.
 
 This is a fork of Anthony Webb's excellent [CBus plugin](https://github.com/gbrooker/homebridge-cbus) for homebridge to add:
-0.5.1:  adds optional "network" and "application" parameters per accessory, allowing multiple networks and device types
-        be monitored or controlled. 
-        NB if upgrading from an ealier version of homebridge-cbus, you may need to remove the files in 
-        your ~/.homebridge/persist/ directory before running for the first time due to new devide uuid's
+
+0.5.1:  adds optional "network" and "application" parameters per accessory, allowing multiple networks and device types be monitored or controlled. NB if upgrading from an ealier version of homebridge-cbus, you may need to remove the files in your ~/.homebridge/persist/ directory before running for the first time due to new devide uuid's
 
 What does that mean? You'll be able to:
 * Control your home using each app in the App Store which supports the HomeKit protocol.
@@ -114,7 +112,7 @@ Right now we are registering devices by hand.  In the future we may auto discove
         { "type": "light", "id": "2", "name": "3rd Bay" },
         { "type": "light", "network": "250", "id": "1", "name": "Outside light" },
         { "type": "light", "network": "250", "application": "203", "id": "3", "name": "Backdoor" },
-        { "type": "dimmer", "id": "3", "name": "Closet" }2
+        { "type": "dimmer", "id": "3", "name": "Closet" },
         { "type": "motion", "id": "51", "name": "Main" }
       ]
     }
