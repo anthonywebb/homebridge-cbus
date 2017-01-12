@@ -139,7 +139,7 @@ CBusClient.prototype.disconnect = function()
 CBusClient.prototype.turnOnLight = function(id, callback)
 {
     if(this.state[id] && !this.state[id].on){
-        var cmd = this._buildCommandString(id,"on",100);
+        var cmd = this._buildSetCommandString(id,"on",100);
         this._sendMessage(cmd, callback);
     } else {
         //console.log("light is already on, no need to send the command again");
@@ -152,7 +152,7 @@ CBusClient.prototype.turnOnLight = function(id, callback)
 CBusClient.prototype.turnOffLight = function(id, callback)
 {
     if(this.state[id] && this.state[id].on){
-        var cmd = this._buildCommandString(id,"off",0);
+        var cmd = this._buildSetCommandString(id,"off",0);
         this._sendMessage(cmd, callback);
     } else {
         //console.log("light is already off, no need to send the command again");
@@ -164,7 +164,7 @@ CBusClient.prototype.turnOffLight = function(id, callback)
 
 CBusClient.prototype.receiveLightStatus = function(id, callback)
 {
-    var cmd = this._buildCommandString(id,"status",0);
+    var cmd = this._buildGetCommandString(id,"level");
 
     this.pendingStatusQueue.push({
        id: id, callback: callback
@@ -175,19 +175,21 @@ CBusClient.prototype.receiveLightStatus = function(id, callback)
 
 CBusClient.prototype.setLightBrightness = function(id, value, callback)
 {
-    var cmd = this._buildCommandString(id,"ramp",value);
+    var cmd = this._buildSetCommandString(id,"ramp",value);
     this._sendMessage(cmd, callback);
 };
 
-CBusClient.prototype.receiveLightBrightness = function(id, callback) {
-    var cmd = this._buildCommandString(id,"status",0);
-
+CBusClient.prototype.receiveSecurityStatus = function(id, callback)
+{
+    var cmd = this._buildGetCommandString(id,"zonestate");
+    
     this.pendingStatusQueue.push({
-       id: id, callback: callback
-    });
-
+                                 id: id, callback: callback
+                                 });
+    
     this._sendMessage(cmd);
 };
+
 
 //==========================================================================================
 //  Events handling
@@ -206,15 +208,24 @@ CBusClient.prototype._socketReceivedMessageEvent = function(message, type)
 //  Private API
 //==========================================================================================
 
-CBusClient.prototype._buildCommandString = function(id,command,level,delay) {
+CBusClient.prototype._buildGetCommandString = function(id,command) {
+    
+    var cbusAddress = cbusUtils.cbusAddressForId(id);
+    
+    var message = 'GET //'+this.clientCbusName+'/'+cbusAddress+' '+command+'\n';
+    
+    if(this.clientDebug){
+        console.log("Message:"+message);
+    }
+    
+    return message;
+}
+CBusClient.prototype._buildSetCommandString = function(id,command,level,delay) {
     var message = '';
     
     var cbusAddress = cbusUtils.cbusAddressForId(id);
 
-    if(command=='status') {
-        message = 'GET //'+this.clientCbusName+'/'+cbusAddress+' level\n';
-    }
-    else if(command=='on') {
+    if(command=='on') {
         message = 'ON //'+this.clientCbusName+'/'+cbusAddress+'\n';
     }
     else if (command=='off') {
@@ -232,7 +243,7 @@ CBusClient.prototype._buildCommandString = function(id,command,level,delay) {
     }
     
     if(this.clientDebug){
-        console.log("Message:"+message);
+        console.log("Message:"+message+" (command:"+command+")");
     }
 
     return message;
@@ -339,7 +350,33 @@ function CBusStatusPacket(data, channel)
 
         temp = parseoid.split('=');
         this.oid = temp[1];
+        
+    } else if (array[0]=='security') {
+        
+        this.type = 'security';
+        
+        this.action = array[1];
+        
+        // the elements of arr2 are the project/network/application/group
+        var temp = array[2].split("/");
+        this.moduleId = cbusUtils.idForCbusAddress(temp[1], temp[2], temp[3]);
+
+        var parseunit = array[3];
+        var parseoid = array[4];
+
+        if (this.action == 'zone_unsealed' || this.action == 'zone_open' || this.action == 'zone_short') {
+            this.level = 100;
+        } else if (this.action == 'zone_sealed') {
+            this.level = 0;
+        }
+
+        temp = parseunit.split('=');
+        this.sourceunit = temp[1];
+
+        temp = parseoid.split('=');
+        this.oid = temp[1];
     }
+
 
     // are we getting group level report?
     if (array[0].substring(0, 3) == '300') {
@@ -352,7 +389,18 @@ function CBusStatusPacket(data, channel)
 
             var temp2 = array[ind].split("/");
             this.moduleId = cbusUtils.idForCbusAddress(temp2[1], temp2[2], temp2[3]);;
+        } else if(temp[0] == 'zonestate') {
+            //console.log('zonestate:'+temp[1]);
+            //console.log(array);
+            
+            this.type = 'info';
+            this.level = this._humanLevelValue(temp[1]);
+            var ind = (array.length == 3 ? 1 : 0);
+            
+            var temp2 = array[ind].split("/");
+            this.moduleId = cbusUtils.idForCbusAddress(temp2[1], temp2[2], temp2[3]);;
         }
+
     }
 
     //console.log(this);
