@@ -4,7 +4,9 @@ Make your home CBus accessories controllable using Apple's HomeKit with your [Ho
 
 This project provides a bridge between your CBus local server and HomeKit. Thus, once you setup your homebridge server, poof - all of your supported accessories will be instantly controllable via HomeKit.
 
-This is a fork of Anthony Webb's excellent [CBus plugin](https://github.com/gbrooker/homebridge-cbus) for homebridge to add:
+Changes since 0.5.0:
+
+0.5.2:  adds a "security" accessory, for a PIR presence detector, typically application 208
 
 0.5.1:  adds optional "network" and "application" parameters per accessory, allowing multiple networks and device types be monitored or controlled. NB if upgrading from an ealier version of homebridge-cbus, you may need to remove the files in your ~/.homebridge/persist/ directory before running for the first time due to new devide uuid's
 
@@ -25,7 +27,8 @@ CBus already provides a fully supported home automation platform. Hence, this pr
 We are working on adding device types, but for now you'll only be able to control:
 * Lightblubs.
 * Dimmers.
-* Motion Sensors.
+* Motion Sensors
+* Security Presence Detectors
 
 ## Installation
 
@@ -113,7 +116,8 @@ Right now we are registering devices by hand.  In the future we may auto discove
         { "type": "light", "network": "250", "id": "1", "name": "Outside light" },
         { "type": "light", "network": "250", "application": "203", "id": "3", "name": "Backdoor" },
         { "type": "dimmer", "id": "3", "name": "Closet" },
-        { "type": "motion", "id": "51", "name": "Main" }
+        { "type": "motion", "id": "51", "name": "Main" },
+        { "type": "security", "application": "208", "id": "1", "name": "Entry Zone" }
       ]
     }
   ],
