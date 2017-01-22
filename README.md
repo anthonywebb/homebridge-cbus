@@ -1,15 +1,15 @@
 # C-Bus for Homebridge
 
-Make your home C-Bus accessories controllable using Apple's HomeKit with your [Homebridge](https://github.com/nfarina/homebridge) server.
+HomeKit-enable your C-Bus installation with the `homebridge-cbus` plugin for the [Homebridge](https://github.com/nfarina/homebridge) server.
 
 This project provides a bridge between [Clipsal's C-Bus](http://www2.clipsal.com/cis/technical/product_groups/cbus) server [C-Gate](http://www2.clipsal.com/cis/technical/downloads/c-gate) server and Apple's [HomeKit](http://www.apple.com/au/ios/home/).
 
-Once setup, a Homebridge server with the `homebridge-cbus` plugin will allow you to instantly monitor and control all of your supported accessories.
+Once setup, a Homebridge server with the `homebridge-cbus` plugin will allow you to instantly monitor and control all of your supported C-Bus accessories.
 
-What does that mean? You'll be able to:
-* control your home using voice commands via Siri
-* use the built-in Home app (iOS 10+) to control your home
-* control your home using any app in the App Store that supports the HomeKit protocol.
+What does that mean? You'll be able to control your home with:
+* Siri voice commands
+* the built-in iOS 10+ Home app
+* iOS apps that support HomeKit.
 
 ## In Action
 To see some action of HomeKit controlling a Clipsal C-Bus system, check out the following videos:
@@ -39,7 +39,7 @@ N.B. you will need a C-Bus [C-Gate server](http://www2.clipsal.com/cis/technical
 
 ## Configuration
 
-As with other Homebridge plugins, you configure the homebridge-cbus plugin by
+As with other Homebridge plugins, you configure the `homebridge-cbus` plugin by
 adding it to your `config.json`.
 
 ```json
