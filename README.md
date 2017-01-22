@@ -24,12 +24,14 @@ To see some action of HomeKit controlling a clipsal cbus system check out the fo
 
 C-Bus already provides a fully supported home automation platform. Hence, this project provides a bridge which 'exposes' your devices in a way that you can control then using HomeKit.
 
-We are working on adding new device types. As of now, you'll be able to control:
+As of now, you'll be able to control:
 * Lightbulbs
 * Dimmers
 * Shutter Relays
 * Motion Sensors
 * Security Presence Detectors.
+
+If you need support for a new device types, feel free to open an issue, or have a go cutting code yourself.
 
 ## Installation
 
@@ -74,8 +76,8 @@ N.B. If you are connecting to a remote C-Gate server, you will likely need to co
 * `client_controlport`: (optional) port number of the C-Gate control port
 * `client_eventport`: (optional) port number of the C-Gate event port
 * `client_statusport`: (optional) port number of the C-Gate status port
-* `client_network`: (optional) network address of your C-Bus network (defaults to 254)
-* `client_application`: (optional) application address of your C-Bus network (defaults to 56)
+* `client_network`: (optional) network address of your C-Bus network — defaults to 254
+* `client_application`: (optional) application address of your C-Bus network — defaults to 56
 * `client_debug`: (optional) set to `true` to write C-Bus client debug logs to the console
 * `accessories`: (required) list of accessories to expose to the Homebridge server
 
@@ -85,8 +87,8 @@ Currently we are registering devices by hand. In the future we may auto-discover
 The platform definition in the `config.json` file contains an `accessories` array, which constitudes from objects with the following keys:
 * `type`: (required) type of the accessory. The valid values are "light", "dimmer", "shutter", "motion", and "security".
 * `name`: (required) name of the accessory (e.g. "Living Room Light", "Bedroom Light", "Living Room Curtain" etc.).
-* `network`: (optional) C-Bus network address of the device — defaults to client_network
-* `application`: (optional) The C-Bus Application address of the device — defaults to client_application
+* `network`: (optional) C-Bus network address of the device — defaults to `client_network`
+* `application`: (optional) The C-Bus Application address of the device — defaults to `client_application`
 * `id`: (required) C-Bus address of the device — every accessory in C-Bus has one
 
 #### Fully functional example `config.json`:
