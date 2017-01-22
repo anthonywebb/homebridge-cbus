@@ -8,8 +8,8 @@ var DEFAULT_CLIENT_CONTROL_PORT = 20023;
 var DEFAULT_CLIENT_EVENT_PORT = 20024;
 var DEFAULT_CLIENT_STATUS_PORT = 20025;
 var DEFAULT_CLIENT_NETWORK = 254;
-var DEFAULT_CLIENT_APPLICATION= 56;
-var DEFAULT_CLIENT_DEBUG= false;
+var DEFAULT_CLIENT_APPLICATION = 56;
+var DEFAULT_CLIENT_DEBUG = false;
 
 var log     = require('util').log;
 var carrier = require('carrier');
@@ -214,36 +214,37 @@ CBusClient.prototype._buildGetCommandString = function(id,command) {
     
     var message = 'GET //'+this.clientCbusName+'/'+cbusAddress+' '+command+'\n';
     
-    if(this.clientDebug){
+    if(this.clientDebug) {
         console.log("Message:"+message);
     }
     
     return message;
 }
+
 CBusClient.prototype._buildSetCommandString = function(id,command,level,delay) {
     var message = '';
     
     var cbusAddress = cbusUtils.cbusAddressForId(id);
 
     if(command=='on') {
-        message = 'ON //'+this.clientCbusName+'/'+cbusAddress+'\n';
+        message = 'ON //' + this.clientCbusName+'/'+cbusAddress+'\n';
     }
     else if (command=='off') {
-        message = 'OFF //'+this.clientCbusName+'/'+cbusAddress+'\n';
+        message = 'OFF //' + this.clientCbusName+'/'+cbusAddress+'\n';
     }
     else if (command=='ramp') {
 
         if (level <= 100) {
             if (delay) {
-            message = 'RAMP //'+this.clientCbusName+'/'+cbusAddress+' '+level+'% '+delay+'\n';
+            message = 'RAMP //' + this.clientCbusName+'/'+cbusAddress+' '+level+'% '+delay+'\n';
             } else {
-            message = 'RAMP //'+this.clientCbusName+'/'+cbusAddress+' '+level+'%\n';
+            message = 'RAMP //' + this.clientCbusName+'/'+cbusAddress+' '+level+'%\n';
             }
         }
     }
     
     if(this.clientDebug){
-        console.log("Message:"+message+" (command:"+command+")");
+        console.log("Message:" + message + " (command:" + command + ")");
     }
 
     return message;
@@ -253,10 +254,10 @@ CBusClient.prototype._sendMessage = function(command, callback) {
     //--------------------------------------------------
     //  Send
     //--------------------------------------------------
-    this.control.write(command, function(err){
+    this.control.write(command, function(err) {
         /* Fire the callback */
         if(err){
-            console.log("error sending: ",err)
+            console.log("error sending: ", err)
         }
         if (typeof(callback) != "undefined") {
             callback(command);
@@ -292,7 +293,7 @@ CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
     }
 
     // lets track some state for each device, this way we dont do things like turn on devices that are already on (when dimming)
-    if(responseObj.moduleId != null && responseObj.level != null){
+    if((responseObj.moduleId != null) && (responseObj.level != null)){
         this.state[responseObj.moduleId] = {on: responseObj.level > 0 ? true : false};
     }
 
@@ -307,8 +308,7 @@ CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
 //  CBusStatusPacket
 //==========================================================================================
 
-function CBusStatusPacket(data, channel)
-{
+function CBusStatusPacket(data, channel) {
 
     //--------------------------------------------------
     //  Setup our iVars
@@ -414,12 +414,11 @@ function CBusStatusPacket(data, channel)
 
 CBusStatusPacket.prototype._humanLevelValue = function humanLevelValue(level) {
     // convert levels from 0-255 to 0-100
-    var temp = Math.round((level/255)*100)
+    var temp = Math.round((level / 255) * 100)
 
-    if(temp > 100){
+    if (temp > 100){
         temp = 100;
-    }
-    else if(temp < 0){
+    } else if (temp < 0) {
         temp = 0;
     }
 

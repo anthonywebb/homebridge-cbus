@@ -1,6 +1,6 @@
 'use strict';
 
-var cbusUtils    = require('./cbus-utils.js');
+var cbusUtils = require('./cbus-utils.js');
 var cbusClient = require('./cgate-client.js');
 var Service, Characteristic, Accessory, uuid;
 
@@ -9,6 +9,7 @@ var CBusLightAccessory;
 var CBusDimmerAccessory;
 var CBusMotionAccessory;
 var CBusSecurityAccessory;
+var CBusShutterAccessory;
 
 //==========================================================================================
 //  Exports block
@@ -32,6 +33,7 @@ module.exports = function(homebridge) {
     CBusDimmerAccessory  = require('./accessories/dimmer-accessory.js')(Service, Characteristic, CBusLightAccessory, uuid);
     CBusMotionAccessory   = require('./accessories/motion-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
     CBusSecurityAccessory = require('./accessories/security-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
+    CBusShutterAccessory = require('./accessories/shutter-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 
     /* Fix inheritance, since we've loaded our classes before the Accessory class has been loaded */
     cbusUtils.fixInheritance(CBusAccessory, Accessory);
@@ -39,6 +41,7 @@ module.exports = function(homebridge) {
     cbusUtils.fixInheritance(CBusDimmerAccessory, CBusLightAccessory);
     cbusUtils.fixInheritance(CBusMotionAccessory, CBusAccessory);
     cbusUtils.fixInheritance(CBusSecurityAccessory, CBusAccessory);
+    cbusUtils.fixInheritance(CBusShutterAccessory, CBusAccessory);
 
     //--------------------------------------------------
     //  Register ourselfs with homebridge
@@ -122,10 +125,11 @@ CBusPlatform.prototype.accessories = function(callback) {
     this.client = new cbusClient(this.clientIpAddress, this.clientControlPort, this.clientEventPort, this.clientStatusPort, this.clientCbusName, this.clientNetwork, this.clientApplication, this.clientDebug);
 
     // listen for data from the client and ensure that the homebridge UI is updated
-    this.client.on("remoteData", function(data){
+    this.client.on("remoteData", function(data) {
         if(this.clientDebug){
-            this.log.info("[remoteData] id:"+data.moduleId);
+            this.log.info("[remoteData] id:" + data.moduleId);
         }
+        
         var devs = this.foundAccessories;
         for (var i = 0; i < devs.length; i++) {
             var dev = devs[i];
@@ -133,29 +137,27 @@ CBusPlatform.prototype.accessories = function(callback) {
                 if(this.clientDebug){
                     this.log.info("[remoteDataFound] id:"+data.moduleId+" type:"+dev.type+" level:"+data.level);
                 }
+                
                 if(dev.type == "light"){
                     if(data.level > 0) {
                         dev.lightService.getCharacteristic(Characteristic.On).setValue(true, undefined, 'remoteData');
                     } else if (data.level == 0) {
                         dev.lightService.getCharacteristic(Characteristic.On).setValue(false, undefined, 'remoteData');    
                     }
-                
-                } else if (dev.type == "dimmer"){
+                } else if (dev.type == "dimmer") {
                     if (data.level == 0) {
                         dev.lightService.getCharacteristic(Characteristic.On).setValue(false, undefined, 'remoteData');    
                     } else if (data.level == 100) { 
                         dev.lightService.getCharacteristic(Characteristic.On).setValue(true, undefined, 'remoteData');   
                     } 
                     dev.lightService.getCharacteristic(Characteristic.Brightness).setValue(data.level, undefined, 'remoteData');
-                    
-                } else if (dev.type == "motion"){
-                    dev.motionService.getCharacteristic(Characteristic.MotionDetected).setValue(data.level > 0 ? true:false);
-                
+                } else if (dev.type == "motion") {
+                    dev.motionService.getCharacteristic(Characteristic.MotionDetected).setValue(data.level > 0 ? true:false); 
                 } else if (dev.type == "security") {
                     dev.motionService.getCharacteristic(Characteristic.MotionDetected).setValue(data.level > 0 ? true:false);
+                } else if (dev.type == "shutter") {                	 
+                	 dev.processClientData(data.level);
                 }
-
-                
             }
         }
     }.bind(this));
@@ -167,7 +169,6 @@ CBusPlatform.prototype.accessories = function(callback) {
         this.foundAccessories = []; /* reset */
 
         for (var accessoryData of this.config.accessories) {
-
             // make sure we use uuid_base so we dont see uuid collisions
             accessoryData.uuid_base = accessoryData.id;
 
@@ -190,8 +191,7 @@ CBusPlatform.prototype.accessoryFactory = function(entry) {
         return undefined;
     }
 
-    switch (entry.type.toLowerCase())
-    {
+    switch (entry.type.toLowerCase()) {
         case "light":
             return new CBusLightAccessory(this, entry);
         case "dimmer":
@@ -200,6 +200,8 @@ CBusPlatform.prototype.accessoryFactory = function(entry) {
             return new CBusMotionAccessory(this, entry);
         case "security":
             return new CBusSecurityAccessory(this, entry);
+        case "shutter":
+            return new CBusShutterAccessory(this, entry);
         default:
             return undefined;
     }
