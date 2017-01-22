@@ -16,7 +16,7 @@ What does that mean? You'll be able to:
 * Use the built-in Home app (iOS 10+) to control your home.
 
 ## In Action
-To see some action of HomeKit controlling a clipsal cbus system check out the following links
+To see some action of HomeKit controlling a Clipsal C-Bus system, check out the following videos:
 * https://www.youtube.com/watch?v=1_pzVlegnio
 * https://www.youtube.com/watch?v=0NT9AGQd_FU
 
@@ -31,7 +31,7 @@ As of now, you'll be able to control:
 * Motion Sensors
 * Security Presence Detectors.
 
-If you need support for a new device types, feel free to open an issue, or have a go cutting code yourself.
+If you need support for a new device type, feel free to open an issue, or have a go cutting code yourself. If you have some familiarity with `Node.js` you'll find it pretty straightforward.
 
 ## Installation
 
