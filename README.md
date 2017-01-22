@@ -2,7 +2,7 @@
 
 Make your home C-Bus accessories controllable using Apple's HomeKit with your [Homebridge](https://github.com/nfarina/homebridge) server.
 
-This project provides a bridge between your local C-Bus C-Gate server and HomeKit. Thus, once you setup your Homebridge server, poof -- all of your supported accessories will be instantly controllable via HomeKit.
+This project provides a bridge between your local C-Bus C-Gate server and HomeKit. Thus, once you setup your Homebridge server, poof – all of your supported accessories will be instantly controllable via HomeKit.
 
 Changes since 0.5.0:
 
@@ -68,7 +68,7 @@ N.B. If you are connecting to a remote C-Gate server, you will likely need to co
 
 
 ### Configuration Platform fields:
-* `platform` and `name`: platform and name -- you may leave these values
+* `platform` and `name`: platform and name – you may leave these values
 * `client_ip_address`: (required) address of your C-Gate server
 * `client_cbusname`: (required) name of your C-Bus network
 * `client_controlport`: (optional) port number of the C-Gate control port
@@ -77,19 +77,19 @@ N.B. If you are connecting to a remote C-Gate server, you will likely need to co
 * `client_network`: (optional) network address of your C-Bus network (defaults to 254)
 * `client_application`: (optional) application address of your C-Bus network (defaults to 56)
 * `client_debug`: (optional) set to `true` to write C-Bus client debug logs to the console
-* `accessories`: (required) list of accessories to expose to the homebridge server
+* `accessories`: (required) list of accessories to expose to the Homebridge server
 
 #### Registering accessories
 Currently we are registering devices by hand. In the future we may auto-discover them.
 
 The platform definition in the `config.json` file contains an `accessories` array, which constitudes from objects with the following keys:
 * `type`: (required) type of the accessory. The valid values are "light", "dimmer", "shutter", "motion", and "security".
-* `name`: (required) name of the accessory (e.g. "Living Room Light", "Bedroom light", "Living Room Curtain" etc.).
-* `network`: (optional) C-Bus network address of the device -- defaults to client_network
-* `application`: (optional) The C-Bus Application address of the device -- efaults to client_application
-* `id`: (required) C-Bus address of the device -- every accessory in C-Bus has one
+* `name`: (required) name of the accessory (e.g. "Living Room Light", "Bedroom Light", "Living Room Curtain" etc.).
+* `network`: (optional) C-Bus network address of the device — defaults to client_network
+* `application`: (optional) The C-Bus Application address of the device — defaults to client_application
+* `id`: (required) C-Bus address of the device — every accessory in C-Bus has one
 
-#### Fully functional example config.json:
+#### Fully functional example `config.json`:
 ````json
 {
   "bridge": {
@@ -118,7 +118,7 @@ The platform definition in the `config.json` file contains an `accessories` arra
         { "type": "light", "id": "0", "name": "Flood" },
         { "type": "light", "id": "1", "name": "Main Bay" },
         { "type": "light", "id": "2", "name": "3rd Bay" },
-        { "type": "light", "network": "250", "id": "1", "name": "Outside light" },
+        { "type": "light", "network": "250", "id": "1", "name": "Outside Light" },
         { "type": "light", "network": "250", "application": "203", "id": "3", "name": "Backdoor" },
         
         { "type": "dimmer", "id": "3", "name": "Closet" },
