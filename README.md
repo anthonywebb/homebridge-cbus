@@ -2,7 +2,7 @@
 
 Make your home C-Bus accessories controllable using Apple's HomeKit with your [Homebridge](https://github.com/nfarina/homebridge) server.
 
-This project provides a bridge between [Clipsal's C-Bus](http://www2.clipsal.com/cis/technical/product_groups/cbus) server [C-Gate]((http://www2.clipsal.com/cis/technical/downloads/c-gate) server and Apple's [HomeKit](http://www.apple.com/au/ios/home/).
+This project provides a bridge between [Clipsal's C-Bus](http://www2.clipsal.com/cis/technical/product_groups/cbus) server [C-Gate](http://www2.clipsal.com/cis/technical/downloads/c-gate) server and Apple's [HomeKit](http://www.apple.com/au/ios/home/).
 
 Once setup, a Homebridge server with the `homebridge-cbus` plugin will allow you to instantly monitor and control all of your supported accessories.
 
@@ -18,9 +18,7 @@ To see some action of HomeKit controlling a Clipsal C-Bus system, check out the 
 
 ## Device Support
 
-C-Bus already provides a fully supported home automation platform. Hence, this project provides a bridge which 'exposes' your devices in a way that you can control then using HomeKit.
-
-`homebrige-cbus` is currently able to control and/or monitor:
+This project provides a bridge which 'exposes' your devices in a way that you can control then using HomeKit. `homebrige-cbus` is currently able to control and/or monitor:
 * lights
 * dimmers
 * shutter relays
@@ -31,7 +29,7 @@ If you need support for a new device type, feel free to open an issue, or have a
 
 ## Installation
 
-After installing and setting up [Homebridge](https://github.com/nfarina/homebridge), you can install the homebridge-cbus plugin with:
+After installing and setting up [Homebridge](https://github.com/nfarina/homebridge), you can install the `homebridge-cbus` plugin with:
 
     npm install -g homebridge-cbus
 
@@ -78,14 +76,15 @@ N.B. If you are connecting to a remote C-Gate server, you will likely need to co
 * `accessories`: (required) list of accessories to expose to the Homebridge server
 
 #### Registering accessories
-Currently we are registering devices by hand. In the future we may auto-discover them.
+Currently you must register devices by hand in a config file. In the future we may auto-discover them.
 
-The platform definition in the `config.json` file contains an `accessories` array, which constitudes from objects with the following keys:
+The platform definition in the `config.json` file contains an `accessories` array, which defines the available accessories using the following keys:
 * `type`: (required) type of the accessory. The valid values are "light", "dimmer", "shutter", "motion", and "security".
 * `name`: (required) name of the accessory (e.g. "Living Room Light", "Bedroom Light", "Living Room Curtain" etc.)
 * `network`: (optional, defaults to `client_network`) C-Bus network address of the device
 * `application`: (optional, defaults to `client_application`) The C-Bus Application address of the device
 * `id`: (required) C-Bus address of the device — every accessory in C-Bus has one
+* `invert`: (optional, defaults to false) only used by the shutter relay accessory and indicates that the shutter has been wired to open when commanded closed and vice versa
 
 #### Fully functional example `config.json`:
 ````json
