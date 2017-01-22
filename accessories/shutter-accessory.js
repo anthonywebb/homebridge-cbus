@@ -29,6 +29,10 @@ function CBusShutterAccessory(platform, accessoryData) {
     //  Initialize state variables
     //--------------------------------------------------
     
+    // handle inversion
+    this.invert = accessoryData.invert || "false";
+	this._log("CBusShutterAccessory", "invert = " + this.invert);     
+    
     // prime the last known position of the blinds
     // assume the blinds were closed, but immediately issue a receiveLightStatus to see 
     // if we can infer the position from the shutter state
@@ -81,6 +85,13 @@ CBusShutterAccessory.prototype.translateProportionalToShutter = function(level) 
 		return 0;
 	}
 	
+	// invert if required
+	if (this.invert == "true") {
+		var invertedLevel = 100 - level;
+		this._log("CBusShutterAccessory", level + " inverted to " + invertedLevel);
+		level = invertedLevel;
+	}
+
 	var translated;
 	
 	switch (level) {
@@ -134,6 +145,13 @@ CBusShutterAccessory.prototype.translateShutterToProportional = function(level) 
 		default:
 			translated = level;
 			break;
+	}
+	
+	// invert if required
+	if ((typeof translated != 'undefined') && (this.invert == "true")) {
+		var invertedLevel = 100 - level;
+		this._log("CBusShutterAccessory", level + " inverted to " + invertedLevel);
+		translated = invertedLevel;
 	}
 
 	// this._log("CBusShutterAccessory", "translated shutter level " + level + " to proportion " + translated);
