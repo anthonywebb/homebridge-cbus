@@ -2,20 +2,14 @@
 
 Make your home C-Bus accessories controllable using Apple's HomeKit with your [Homebridge](https://github.com/nfarina/homebridge) server.
 
-This project provides a bridge between your local C-Bus C-Gate server and HomeKit. Thus, once you setup your Homebridge server, poof – all of your supported accessories will be instantly controllable via HomeKit.
+This project provides a bridge between [Clipsal's C-Bus](http://www2.clipsal.com/cis/technical/product_groups/cbus) server [C-Gate]((http://www2.clipsal.com/cis/technical/downloads/c-gate) server and Apple's [HomeKit](http://www.apple.com/au/ios/home/).
 
-Changes since 0.5.0:
-
-0.5.2:  adds a "security" accessory, for a PIR presence detector, typically application 208
-
-0.5.1:  adds optional "network" and "application" parameters per accessory, allowing multiple networks and device types be monitored or controlled.
-
-N.B. If you are upgrading from an ealier version of `homebridge-cbus`, you may need to remove the files in your `~/.homebridge/persist/` directory before running for the first time due to new device UUIDs.
+Once setup, a Homebridge server with the `homebridge-cbus` plugin will allow you to instantly monitor and control all of your supported accessories.
 
 What does that mean? You'll be able to:
-* control your home using any app in the App Store that supports the HomeKit protocol
 * control your home using voice commands via Siri
-* use the built-in Home app (iOS 10+) to control your home.
+* use the built-in Home app (iOS 10+) to control your home
+* control your home using any app in the App Store that supports the HomeKit protocol.
 
 ## In Action
 To see some action of HomeKit controlling a Clipsal C-Bus system, check out the following videos:
@@ -26,12 +20,12 @@ To see some action of HomeKit controlling a Clipsal C-Bus system, check out the 
 
 C-Bus already provides a fully supported home automation platform. Hence, this project provides a bridge which 'exposes' your devices in a way that you can control then using HomeKit.
 
-As of now, you'll be able to control:
-* Lightbulbs
-* Dimmers
-* Shutter Relays
-* Motion Sensors
-* Security Presence Detectors.
+`homebrige-cbus` is currently able to control and/or monitor:
+* lights
+* dimmers
+* shutter relays
+* motion sensors
+* security presence detectors.
 
 If you need support for a new device type, feel free to open an issue, or have a go cutting code yourself. If you have some familiarity with [Node.js](https://nodejs.org/) you'll find it pretty straightforward.
 
@@ -139,6 +133,12 @@ The platform definition in the `config.json` file contains an `accessories` arra
   "accessories": [ ]
 }
 ````
+
+## Changes Since 0.5.0
+* 0.5.2:  adds a "security" accessory, for a PIR presence detector, typically application 208
+* 0.5.1:  adds optional "network" and "application" parameters per accessory, allowing multiple networks and device types be monitored or controlled.
+
+N.B. If you are upgrading from an ealier version of `homebridge-cbus`, you may need to remove the files in your `~/.homebridge/persist/` directory before running for the first time due to new device UUIDs.
 
 ## Contributions
 * fork
