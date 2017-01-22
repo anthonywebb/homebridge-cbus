@@ -8,12 +8,14 @@ Changes since 0.5.0:
 
 0.5.2:  adds a "security" accessory, for a PIR presence detector, typically application 208
 
-0.5.1:  adds optional "network" and "application" parameters per accessory, allowing multiple networks and device types be monitored or controlled. N.B. if upgrading from an ealier version of homebridge-cbus, you may need to remove the files in your ~/.homebridge/persist/ directory before running for the first time due to new device uuid's
+0.5.1:  adds optional "network" and "application" parameters per accessory, allowing multiple networks and device types be monitored or controlled.
+
+N.B. If you are upgrading from an ealier version of `homebridge-cbus`, you may need to remove the files in your `~/.homebridge/persist/` directory before running for the first time due to new device UUIDs.
 
 What does that mean? You'll be able to:
-* Control your home using any app in the App Store that supports the HomeKit protocol.
-* Control your home using voice commands via Siri.
-* Use the built-in Home app (iOS 10+) to control your home.
+* control your home using any app in the App Store that supports the HomeKit protocol
+* control your home using voice commands via Siri
+* use the built-in Home app (iOS 10+) to control your home.
 
 ## In Action
 To see some action of HomeKit controlling a Clipsal C-Bus system, check out the following videos:
@@ -31,7 +33,7 @@ As of now, you'll be able to control:
 * Motion Sensors
 * Security Presence Detectors.
 
-If you need support for a new device type, feel free to open an issue, or have a go cutting code yourself. If you have some familiarity with `Node.js` you'll find it pretty straightforward.
+If you need support for a new device type, feel free to open an issue, or have a go cutting code yourself. If you have some familiarity with [Node.js](https://nodejs.org/) you'll find it pretty straightforward.
 
 ## Installation
 
@@ -41,7 +43,7 @@ After installing and setting up [Homebridge](https://github.com/nfarina/homebrid
 
 Once installed, update your Homebridge's `config.json`.
 
-NOTE: you will need a C-Bus [C-Gate server](http://www2.clipsal.com/cis/technical/downloads/c-gate) on your network. This is a cross platform Java application which runs on most platforms. 
+N.B. you will need a C-Bus [C-Gate server](http://www2.clipsal.com/cis/technical/downloads/c-gate) on your network. This is a cross platform Java application which runs on most platforms. 
 
 ## Configuration
 
