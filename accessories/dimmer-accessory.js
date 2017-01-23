@@ -45,3 +45,18 @@ CBusDimmerAccessory.prototype.setBrightness = function(level, callback, context)
         callback();
     }
 };
+
+CBusDimmerAccessory.prototype.processClientData = function(level) {
+	// set the brightness characteristic
+	this.lightService.getCharacteristic(Characteristic.Brightness)
+		.setValue(level, undefined, 'remoteData');
+		
+	// pick up the special cases of 'on' and 'off'
+	if (level == 100) {
+		this.lightService.getCharacteristic(Characteristic.On)
+			.setValue(true, undefined, 'remoteData');    
+	} else if (level == 0) { 
+		this.lightService.getCharacteristic(Characteristic.On)
+			.setValue(false, undefined, 'remoteData');   
+	}
+};
