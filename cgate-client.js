@@ -20,12 +20,13 @@ var util = require('util');
 
 var cbusUtils    = require('./cbus-utils.js');
 
+
 //==========================================================================================
 //  CBusClient initialization
 //==========================================================================================
 
-function CBusClient(clientIpAddress, clientControlPort, clientEventPort, clientStatusPort, clientCbusName, clientNetwork, clientApplication, clientDebug)
-{
+function CBusClient(clientIpAddress, clientControlPort, clientEventPort, clientStatusPort, 
+	clientCbusName, clientNetwork, clientApplication, clientDebug) {
     //--------------------------------------------------
     //  vars setup
     //--------------------------------------------------
@@ -50,6 +51,7 @@ function CBusClient(clientIpAddress, clientControlPort, clientEventPort, clientS
 
 util.inherits(CBusClient, EventEmitter);
 
+
 //==========================================================================================
 //  Public API
 //==========================================================================================
@@ -57,59 +59,71 @@ util.inherits(CBusClient, EventEmitter);
 /**
  * Opens a connection with the CBus server by binding the client ip address and port.
  */
-CBusClient.prototype.connect = function(callback)
-{
+CBusClient.prototype.connect = function(callback) {
     var that = this;
-    this.control = net.createConnection(this.clientControlPort,this.clientIpAddress,function(){
+    this.control = net.createConnection(this.clientControlPort, this.clientIpAddress, function() {
         // if this connects we know we have good creds to the cgate
         callback();
     });
-    this.control.on('error', function(error){
+    
+    this.control.on('error', function(error) {
         log('cgate control socket error: ' + error);
     });
-    this.control.on('end', function(){
+    
+    this.control.on('end', function() {
         log('cgate control socket terminated');
     });
-    this.control.on('close', function(){
+    
+    this.control.on('close', function() {
         log('cgate control socket closed');
     });
-    this.control.on('timeout', function(){
+    
+    this.control.on('timeout', function() {
         log('cgate control socket timed out');
     });
+    
     carrier.carry(this.control, function(line) {
         that._socketReceivedMessageEvent(line, "controlStream");
     });
 
-    this.events = net.createConnection(this.clientEventPort,this.clientIpAddress);
-    this.events.on('error', function(error){
+    this.events = net.createConnection(this.clientEventPort, this.clientIpAddress);
+    this.events.on('error', function(error) {
         log('cgate events socket error: ' + error);
     });
-    this.events.on('end', function(){
+    
+    this.events.on('end', function() {
         log('cgate events socket terminated');
     });
-    this.events.on('close', function(){
+    
+    this.events.on('close', function() {
         log('cgate events socket closed');
     });
-    this.events.on('timeout', function(){
+    
+    this.events.on('timeout', function() {
         log('cgate events socket timed out');
     });
+    
     carrier.carry(this.events, function(line) {
         that._socketReceivedMessageEvent(line, "eventStream");
     });
 
-    this.statuses = net.createConnection(this.clientStatusPort,this.clientIpAddress);
-    this.statuses.on('error', function(error){
+    this.statuses = net.createConnection(this.clientStatusPort, this.clientIpAddress);
+    this.statuses.on('error', function(error) {
         log('cgate statuses socket error: ' + error);
     });
-    this.statuses.on('end', function(){
+    
+    this.statuses.on('end', function() {
         log('cgate statuses socket terminated');
     });
-    this.statuses.on('close', function(){
+    
+    this.statuses.on('close', function() {
         log('cgate statuses socket closed');
     });
-    this.statuses.on('timeout', function(){
+    
+    this.statuses.on('timeout', function() {
         log('cgate statuses socket timed out');
     });
+    
     carrier.carry(this.statuses, function(line) {
         that._socketReceivedMessageEvent(line, "statusStream");
     });
@@ -118,8 +132,7 @@ CBusClient.prototype.connect = function(callback)
 /**
  * Disconnects from the CBus server.
  */
-CBusClient.prototype.disconnect = function()
-{
+CBusClient.prototype.disconnect = function() {
     if (typeof(this.control) == "undefined") {
         throw new Error("The control socket has not been initialized yet.");
     }
@@ -136,10 +149,9 @@ CBusClient.prototype.disconnect = function()
     this.statuses.close();
 };
 
-CBusClient.prototype.turnOnLight = function(id, callback)
-{
-    if(this.state[id] && !this.state[id].on){
-        var cmd = this._buildSetCommandString(id,"on",100);
+CBusClient.prototype.turnOnLight = function(id, callback) {
+    if (this.state[id] && !this.state[id].on) {
+        var cmd = this._buildSetCommandString(id, "on", 100);
         this._sendMessage(cmd, callback);
     } else {
         //console.log("light is already on, no need to send the command again");
@@ -149,10 +161,9 @@ CBusClient.prototype.turnOnLight = function(id, callback)
     }
 };
 
-CBusClient.prototype.turnOffLight = function(id, callback)
-{
-    if(this.state[id] && this.state[id].on){
-        var cmd = this._buildSetCommandString(id,"off",0);
+CBusClient.prototype.turnOffLight = function(id, callback) {
+    if (this.state[id] && this.state[id].on) {
+        var cmd = this._buildSetCommandString(id, "off", 0);
         this._sendMessage(cmd, callback);
     } else {
         //console.log("light is already off, no need to send the command again");
@@ -162,9 +173,8 @@ CBusClient.prototype.turnOffLight = function(id, callback)
     }
 };
 
-CBusClient.prototype.receiveLightStatus = function(id, callback)
-{
-    var cmd = this._buildGetCommandString(id,"level");
+CBusClient.prototype.receiveLightStatus = function(id, callback) {
+    var cmd = this._buildGetCommandString(id, "level");
 
     this.pendingStatusQueue.push({
        id: id, callback: callback
@@ -173,19 +183,17 @@ CBusClient.prototype.receiveLightStatus = function(id, callback)
     this._sendMessage(cmd);
 };
 
-CBusClient.prototype.setLightBrightness = function(id, value, callback)
-{
-    var cmd = this._buildSetCommandString(id,"ramp",value);
+CBusClient.prototype.setLightBrightness = function(id, value, callback) {
+    var cmd = this._buildSetCommandString(id, "ramp", value);
     this._sendMessage(cmd, callback);
 };
 
-CBusClient.prototype.receiveSecurityStatus = function(id, callback)
-{
-    var cmd = this._buildGetCommandString(id,"zonestate");
+CBusClient.prototype.receiveSecurityStatus = function(id, callback) {
+    var cmd = this._buildGetCommandString(id, "zonestate");
     
     this.pendingStatusQueue.push({
-                                 id: id, callback: callback
-                                 });
+		id: id, callback: callback
+	});
     
     this._sendMessage(cmd);
 };
@@ -195,8 +203,7 @@ CBusClient.prototype.receiveSecurityStatus = function(id, callback)
 //  Events handling
 //==========================================================================================
 
-CBusClient.prototype._socketReceivedMessageEvent = function(message, type)
-{
+CBusClient.prototype._socketReceivedMessageEvent = function(message, type) {
     //--------------------------------------------------
     //  Attempt to resolve the income message
     //--------------------------------------------------
@@ -204,29 +211,29 @@ CBusClient.prototype._socketReceivedMessageEvent = function(message, type)
     this._resolveReceivedMessage(message, type);
 };
 
+
 //==========================================================================================
 //  Private API
 //==========================================================================================
 
-CBusClient.prototype._buildGetCommandString = function(id,command) {
-    
+CBusClient.prototype._buildGetCommandString = function(id, command) {
     var cbusAddress = cbusUtils.cbusAddressForId(id);
     
     var message = 'GET //'+this.clientCbusName+'/'+cbusAddress+' '+command+'\n';
     
-    if(this.clientDebug) {
+    if (this.clientDebug) {
         console.log("Message:"+message);
     }
     
     return message;
 }
 
-CBusClient.prototype._buildSetCommandString = function(id,command,level,delay) {
+CBusClient.prototype._buildSetCommandString = function(id, command, level, delay) {
     var message = '';
     
     var cbusAddress = cbusUtils.cbusAddressForId(id);
 
-    if(command=='on') {
+    if (command=='on') {
         message = 'ON //' + this.clientCbusName+'/'+cbusAddress+'\n';
     }
     else if (command=='off') {
@@ -243,7 +250,7 @@ CBusClient.prototype._buildSetCommandString = function(id,command,level,delay) {
         }
     }
     
-    if(this.clientDebug){
+    if (this.clientDebug) {
         console.log("Message:" + message + " (command:" + command + ")");
     }
 
@@ -256,9 +263,10 @@ CBusClient.prototype._sendMessage = function(command, callback) {
     //--------------------------------------------------
     this.control.write(command, function(err) {
         /* Fire the callback */
-        if(err){
+        if (err) {
             console.log("error sending: ", err)
         }
+        
         if (typeof(callback) != "undefined") {
             callback(command);
         }    
@@ -272,7 +280,7 @@ CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
 
     var responseObj = new CBusStatusPacket(buffer, type);
 
-    if(this.clientDebug){
+    if (this.clientDebug) {
         console.log(responseObj);
     }
 
@@ -282,8 +290,7 @@ CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
     /* Iterate over the pending items and clear them out */
     for (var i = 0; i < this.pendingStatusQueue.length; i++) {
         var item = this.pendingStatusQueue[i];
-        if (item.id == responseObj.moduleId)
-        {
+        if (item.id == responseObj.moduleId) {
             /* Fire the callback */
             item.callback(responseObj);
 
@@ -293,23 +300,23 @@ CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
     }
 
     // lets track some state for each device, this way we dont do things like turn on devices that are already on (when dimming)
-    if((responseObj.moduleId != null) && (responseObj.level != null)){
+    if ((responseObj.moduleId != null) && (responseObj.level != null)) {
         this.state[responseObj.moduleId] = {on: responseObj.level > 0 ? true : false};
     }
 
-    if(responseObj.channel=='statusStream'){
-        //this.platform.remoteLevelUpdate(this.platform.foundAccessories ,responseObj.moduleId, responseObj.level);
+    if (responseObj.channel=='statusStream') {
+        //this.platform.remoteLevelUpdate(this.platform.foundAccessories, responseObj.moduleId, responseObj.level);
         /* Iterate over the accesories and make sure the current state gets set */
         this.emit('remoteData', responseObj);
     }
 };
+
 
 //==========================================================================================
 //  CBusStatusPacket
 //==========================================================================================
 
 function CBusStatusPacket(data, channel) {
-
     //--------------------------------------------------
     //  Setup our iVars
     //--------------------------------------------------
@@ -377,19 +384,18 @@ function CBusStatusPacket(data, channel) {
         this.oid = temp[1];
     }
 
-
     // are we getting group level report?
     if (array[0].substring(0, 3) == '300') {
         var temp = array[array.length-1].split('=');
         
-        if(temp[0] == 'level') {
+        if (temp[0] == 'level') {
             this.type = 'info';
             this.level = this._humanLevelValue(temp[1]);
             var ind = (array.length == 3 ? 1 : 0);
 
             var temp2 = array[ind].split("/");
             this.moduleId = cbusUtils.idForCbusAddress(temp2[1], temp2[2], temp2[3]);;
-        } else if(temp[0] == 'zonestate') {
+        } else if (temp[0] == 'zonestate') {
             //console.log('zonestate:'+temp[1]);
             //console.log(array);
             
@@ -400,23 +406,21 @@ function CBusStatusPacket(data, channel) {
             var temp2 = array[ind].split("/");
             this.moduleId = cbusUtils.idForCbusAddress(temp2[1], temp2[2], temp2[3]);;
         }
-
     }
 
     //console.log(this);
 
     // are there custom things we want to do when this event occurs? ONLY do this for the status stream
-    if(channel=='statusStream' || this.type=='info'){
+    if (channel=='statusStream' || this.type=='info') {
         //COMMON.processMessage(packet);
     }
-
 };
 
 CBusStatusPacket.prototype._humanLevelValue = function humanLevelValue(level) {
     // convert levels from 0-255 to 0-100
     var temp = Math.round((level / 255) * 100)
 
-    if (temp > 100){
+    if (temp > 100) {
         temp = 100;
     } else if (temp < 0) {
         temp = 0;
@@ -424,6 +428,7 @@ CBusStatusPacket.prototype._humanLevelValue = function humanLevelValue(level) {
 
     return temp;
 }
+
 
 //==========================================================================================
 //  Exportation
