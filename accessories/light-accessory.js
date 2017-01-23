@@ -51,3 +51,9 @@ CBusLightAccessory.prototype.setState = function(value, callback, context) {
         callback();
     }
 };
+
+CBusLightAccessory.prototype.processClientData = function(level) {
+	this.lightService.getCharacteristic(Characteristic.On)
+		.setValue(level > 0 ? true : false, undefined, 'remoteData');
+};
+

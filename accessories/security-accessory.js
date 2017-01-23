@@ -9,8 +9,7 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
     return CBusSecurityAccessory;
 };
 
-function CBusSecurityAccessory(platform, accessoryData)
-{
+function CBusSecurityAccessory(platform, accessoryData) {
     //--------------------------------------------------
     //  Initialize the parent
     //--------------------------------------------------
@@ -26,9 +25,14 @@ function CBusSecurityAccessory(platform, accessoryData)
 
 CBusSecurityAccessory.prototype.getMotionState = function(callback, context) {
     setTimeout(function() {
-               this.client.receiveSecurityStatus(this.id, function(result) {
-                                              this._log("CBusSecurityAccessory", "getState = " + result.level);
-                                              callback(false, /*state: */ result.level ? 1 : 0);
-                                              }.bind(this));
-               }.bind(this), 50);
+	   this.client.receiveSecurityStatus(this.id, function(result) {
+		  this._log("CBusSecurityAccessory", "getState = " + result.level);
+		  callback(false, /*state: */ result.level ? 1 : 0);
+		  }.bind(this));
+	   }.bind(this), 50);
+};
+
+CBusSecurityAccessory.prototype.processClientData = function(level) {
+	this.motionService.getCharacteristic(Characteristic.MotionDetected)
+		.setValue(level > 0 ? true : false);
 };

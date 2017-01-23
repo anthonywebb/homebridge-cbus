@@ -9,8 +9,7 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
   return CBusMotionAccessory;
 };
 
-function CBusMotionAccessory(platform, accessoryData)
-{
+function CBusMotionAccessory(platform, accessoryData) {
     //--------------------------------------------------
     //  Initialize the parent
     //--------------------------------------------------
@@ -32,3 +31,9 @@ CBusMotionAccessory.prototype.getMotionState = function(callback, context) {
         }.bind(this));
     }.bind(this), 50);
 };
+
+CBusMotionAccessory.prototype.processClientData = function(level) {
+	this.motionService.getCharacteristic(Characteristic.MotionDetected)
+		.setValue(level > 0 ? true : false);
+};
+              
