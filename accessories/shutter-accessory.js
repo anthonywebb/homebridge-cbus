@@ -78,7 +78,6 @@ function CBusShutterAccessory(platform, accessoryData) {
         .on('get', this.getPositionState.bind(this));
 };
 
-
 CBusShutterAccessory.prototype.translateProportionalToShutter = function(level) {
 	if ((level > 100) || (level < 0)) {
 		this._log.error("CBusShutterAccessory", "illegal level: " + level);
@@ -91,9 +90,11 @@ CBusShutterAccessory.prototype.translateProportionalToShutter = function(level) 
 		this._log("CBusShutterAccessory", level + " inverted to " + invertedLevel);
 		level = invertedLevel;
 	}
-
-	var translated;
 	
+	// in level translation mode, the levels 1, 2, 98, 99 have special meanings and should
+	// therefore be mapped out to the vales for open (100%) and closed (0%)
+	var translated;
+
 	switch (level) {
 		case 0:
 		case 1:
@@ -157,34 +158,6 @@ CBusShutterAccessory.prototype.translateShutterToProportional = function(level) 
 	// this._log("CBusShutterAccessory", "translated shutter level " + level + " to proportion " + translated);
 	
 	return translated;
-};
-
-CBusShutterAccessory.prototype.processClientData = function(level) {
-	var translated = this.translateShutterToProportional(level);
-	
-	if (typeof translated != 'undefined') {
-		this._log("CBusShutterAccessory", "client: received " + translated);
-		
-		if (this.cachedTargetPosition != translated) {
-			this.shutterService.getCharacteristic(Characteristic.TargetPosition).setValue(translated, undefined, 'remoteData');
-
-			//  move over 2 seconds
-			setTimeout(function() {
-				this.cachedTargetPosition = translated;
-		
-				// in many cases the shutter will still be travelling for a while, but unless/until we
-				// simulate the shutter relay, we won't know when it has stopped. 
-				// so just assume it gets there immediately.		
-				this.shutterService.getCharacteristic(Characteristic.CurrentPosition).setValue(this.cachedTargetPosition, undefined, 'remoteData');
-				this.shutterService.getCharacteristic(Characteristic.PositionState).setValue(Characteristic.PositionState.STOPPED, undefined, 'remoteData');
-			}.bind(this), SPIN_TIME);
-		}
-	} else {
-		this._log("CBusShutterAccessory", "client: indeterminate");
-		
-		// could be a bit smarter here
-		this.cachedTargetPosition = 0;
-	}
 };
 
 CBusShutterAccessory.prototype.getCurrentPosition = function(callback, context) {
@@ -272,4 +245,34 @@ CBusShutterAccessory.prototype.setTargetPosition = function(newPosition, callbac
     	this._log("CBusShutterAccessory", "suppressing remote setTargetPosition");
         callback();
     }
+};
+
+CBusShutterAccessory.prototype.processClientData = function(level) {
+	var translated = this.translateShutterToProportional(level);
+	
+	if (typeof translated != 'undefined') {
+		this._log("CBusShutterAccessory", "client: received " + translated);
+		
+		if (this.cachedTargetPosition != translated) {
+			this.shutterService.getCharacteristic(Characteristic.TargetPosition).setValue(translated, undefined, 'remoteData');
+
+			//  move over 2 seconds
+			setTimeout(function() {
+				this.cachedTargetPosition = translated;
+		
+				// in many cases the shutter will still be travelling for a while, but unless/until we
+				// simulate the shutter relay, we won't know when it has stopped. 
+				// so just assume it gets there immediately.		
+				this.shutterService.getCharacteristic(Characteristic.CurrentPosition)
+					.setValue(this.cachedTargetPosition, undefined, 'remoteData');
+				this.shutterService.getCharacteristic(Characteristic.PositionState)
+					.setValue(Characteristic.PositionState.STOPPED, undefined, 'remoteData');
+			}.bind(this), SPIN_TIME);
+		}
+	} else {
+		this._log("CBusShutterAccessory", "client: indeterminate");
+		
+		// could be a bit smarter here
+		this.cachedTargetPosition = 0;
+	}
 };

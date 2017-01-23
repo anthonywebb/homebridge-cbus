@@ -10,6 +10,7 @@ var CBusDimmerAccessory;
 var CBusMotionAccessory;
 var CBusSecurityAccessory;
 var CBusShutterAccessory;
+               
 
 //==========================================================================================
 //  Exports block
@@ -133,37 +134,20 @@ CBusPlatform.prototype.accessories = function(callback) {
         var devs = this.foundAccessories;
         for (var i = 0; i < devs.length; i++) {
             var dev = devs[i];
-            if(dev.id == data.moduleId){
-                if(this.clientDebug){
-                    this.log.info("[remoteDataFound] id:"+data.moduleId+" type:"+dev.type+" level:"+data.level);
+            if(dev.id == data.moduleId) {
+                if(this.clientDebug) {
+                    this.log.info("[remoteDataFound] id:" + data.moduleId + " type:" + dev.type + " level:" + data.level);
                 }
                 
-                if(dev.type == "light"){
-                    if(data.level > 0) {
-                        dev.lightService.getCharacteristic(Characteristic.On).setValue(true, undefined, 'remoteData');
-                    } else if (data.level == 0) {
-                        dev.lightService.getCharacteristic(Characteristic.On).setValue(false, undefined, 'remoteData');    
-                    }
-                } else if (dev.type == "dimmer") {
-                    if (data.level == 0) {
-                        dev.lightService.getCharacteristic(Characteristic.On).setValue(false, undefined, 'remoteData');    
-                    } else if (data.level == 100) { 
-                        dev.lightService.getCharacteristic(Characteristic.On).setValue(true, undefined, 'remoteData');   
-                    } 
-                    dev.lightService.getCharacteristic(Characteristic.Brightness).setValue(data.level, undefined, 'remoteData');
-                } else if (dev.type == "motion") {
-                    dev.motionService.getCharacteristic(Characteristic.MotionDetected).setValue(data.level > 0 ? true:false); 
-                } else if (dev.type == "security") {
-                    dev.motionService.getCharacteristic(Characteristic.MotionDetected).setValue(data.level > 0 ? true:false);
-                } else if (dev.type == "shutter") {                	 
-                	 dev.processClientData(data.level);
-                }
+                // if we found a device, it must be supported
+                dev.processClientData(data.level);
             }
         }
     }.bind(this));
 
     this.client.connect(function() {
-        this.log.info('CBus Client is listening to CGate on ' + this.client.clientIpAddress +'... Debug: '+this.client.clientDebug);
+        this.log.info('CBus Client is listening to CGate on ' + this.client.clientIpAddress 
+        	+ '... Debug: ' + this.client.clientDebug);
 
         this.log.info("Registering the accessories list...");
         this.foundAccessories = []; /* reset */
