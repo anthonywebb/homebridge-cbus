@@ -49,7 +49,7 @@ CBusDimmerAccessory.prototype.setBrightness = function(level, callback, context)
 CBusDimmerAccessory.prototype.processClientData = function(level) {
 	// set the brightness characteristic
 	this.lightService.getCharacteristic(Characteristic.Brightness)
-		.setValue(data.level, undefined, 'remoteData');
+		.setValue(level, undefined, 'remoteData');
 		
 	// pick up the special cases of 'on' and 'off'
 	if (level == 100) {
