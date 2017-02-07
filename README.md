@@ -134,6 +134,7 @@ The platform definition in the `config.json` file contains an `accessories` arra
 ````
 
 ## Changes Since 0.5.0
+* 0.5.3:  adds a "shutter" accessory
 * 0.5.2:  adds a "security" accessory, for a PIR presence detector, typically application 208
 * 0.5.1:  adds optional "network" and "application" parameters per accessory, allowing multiple networks and device types be monitored or controlled.
 
