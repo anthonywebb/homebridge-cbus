@@ -3,6 +3,7 @@
   "version": "0.5.4",
   "description": "CBus Platform plugin for homebridge",
   "license": "MIT",
+  "homepage": "http://github.com/anthonywebb/homebridge-cbus/",
   "keywords": [
     "homebridge-plugin",
     "homebridge",
@@ -28,6 +29,17 @@
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
-    "carrier": "^0.3.0"
+    "carrier": "^0.3.0",
+    "colours": "^1.1.2"
+  },
+  "devDependencies": {
+    "tap": "10.0.2",
+    "tape": "^4.6.3",
+    "rewire": "^2.5.2"
+  },
+  "scripts": {
+    "test": "tape tests/*.js",
+    "test-coverage": "tap tests/*.js --cov --coverage-report=html",
+    "test-unit": "node $NODE_DEBUG_OPTION ./node_modules/tape/bin/tape tests/*.js"
   }
 }
