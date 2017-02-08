@@ -4,47 +4,87 @@
 //  Definitions
 //==========================================================================================
 
-var DEFAULT_CLIENT_CONTROL_PORT = 20023;
-var DEFAULT_CLIENT_EVENT_PORT = 20024;
-var DEFAULT_CLIENT_STATUS_PORT = 20025;
-var DEFAULT_CLIENT_NETWORK = 254;
-var DEFAULT_CLIENT_APPLICATION = 56;
-var DEFAULT_CLIENT_DEBUG = false;
+const DEFAULT_CLIENT_CONTROL_PORT = 20023;
 
-var log     = require('util').log;
-var carrier = require('carrier');
-var net     = require('net');
+const DEFAULT_CLIENT_NETWORK = 254;
+const DEFAULT_CLIENT_APPLICATION = 56;
 
-var EventEmitter = require('events').EventEmitter;
-var util = require('util');
+const DEFAULT_CLIENT_DEBUG = false;
 
-var cbusUtils    = require('./cbus-utils.js');
+let log = require('util').log;
+let carrier = require('carrier');
+let net = require('net');
+let util = require('util');
+let chalk = require('chalk'); // does not alter string prototype
+let EventEmitter = require('events').EventEmitter;
+
+const cbusUtils = require('./cbus-utils.js');
+const CBusNetId = require('./cbus-netid.js');
+
+const LINE_EVENT = `event`;
+const LINE_RESPONSE = `response`;
+const LINE_UNKNOWN = `unknown`;
+
+
+//==========================================================================================
+//  CBusClient Notes
+//==========================================================================================
+
+/*
+firstly, crank up the debug level of events so we receive fine-grained notifications.
+    events e7s0c0
+
+there are now only categories of messages to parse:
+
+1. response to a command
+    a. set command
+        TX: lighting on //SHAC/254/56/3
+        RX: 200 OK: //SHAC/254/56/3
+
+    b. get command
+        TX: get //SHAC/254/56/3 level
+        RX: 300 //SHAC/254/56/3: level=0
+
+2. an event
+    a. 702 application information event
+        // TODO quite possible that the response will have sessionId and commandId parameters
+        RX: #e# 20170204-130934.821 702 //SHAC/254/208 3dfc8d80-c4aa-1034-9fa5-fbb6c098d608 [security] system_arm 1 sourceUnit=213
+        RX: #e# {timestamp} 702 {netid} {objectId} [security] [verb] [optional parameter(s)] sourceUnit=213
+
+    b. 730 level advice
+        RX: #e# {timestamp} 730 //SHAC/254/56/3 3df86ed0-c4aa-1034-9e9e-fbb6c098d608 new level=255 sourceunit=12 ramptime=0 sessionId=cmd385 commandId=123
+        RX: #e# {timestamp} 730 {netid} {objectId} new {key=value}+
+
+    c. everything else (ignore for now)
+        RX: #e# {timestamp} 700 cgate - Heartbeat.
+ */
 
 
 //==========================================================================================
 //  CBusClient initialization
 //==========================================================================================
 
-function CBusClient(clientIpAddress, clientControlPort, clientEventPort, clientStatusPort, 
-	clientCbusName, clientNetwork, clientApplication, clientDebug) {
+function CBusClient(cgateIpAddress, cgateControlPort,
+                    project, network, application,
+                    log, clientDebug) {
     //--------------------------------------------------
     //  vars setup
     //--------------------------------------------------
-    this.clientIpAddress    = clientIpAddress;
-    this.clientCbusName     = clientCbusName;
-    this.clientControlPort  = clientControlPort || DEFAULT_CLIENT_CONTROL_PORT;
-    this.clientEventPort    = clientEventPort || DEFAULT_CLIENT_EVENT_PORT;
-    this.clientStatusPort   = clientStatusPort || DEFAULT_CLIENT_STATUS_PORT;
-    this.clientNetwork      = clientNetwork || DEFAULT_CLIENT_NETWORK;
-    this.clientApplication  = clientApplication || DEFAULT_CLIENT_APPLICATION;
+    this.cgateIpAddress    = cgateIpAddress;
+    this.cgateControlPort  = cgateControlPort || DEFAULT_CLIENT_CONTROL_PORT;
+
+    this.project            = project;
+    this.network            = network || DEFAULT_CLIENT_NETWORK;
+    this.application        = application || DEFAULT_CLIENT_APPLICATION;
+
+    this.log                = log;
     this.clientDebug        = clientDebug || DEFAULT_CLIENT_DEBUG;
 
-    this.control            = undefined;
-    this.events             = undefined;
-    this.statuses           = undefined;
-    this.pendingStatusQueue = [];
+    this.socket             = undefined;
+    this.connectionReady    = false;
 
-    this.state = {};
+    this.commandId = 100;
+    this.pendingCommands = new Map();
 
     EventEmitter.call(this);
 }
@@ -61,71 +101,52 @@ util.inherits(CBusClient, EventEmitter);
  */
 CBusClient.prototype.connect = function(callback) {
     var that = this;
-    this.control = net.createConnection(this.clientControlPort, this.clientIpAddress, function() {
-        // if this connects we know we have good creds to the cgate
-        callback();
-    });
-    
-    this.control.on('error', function(error) {
-        log('cgate control socket error: ' + error);
-    });
-    
-    this.control.on('end', function() {
-        log('cgate control socket terminated');
-    });
-    
-    this.control.on('close', function() {
-        log('cgate control socket closed');
-    });
-    
-    this.control.on('timeout', function() {
-        log('cgate control socket timed out');
-    });
-    
-    carrier.carry(this.control, function(line) {
-        that._socketReceivedMessageEvent(line, "controlStream");
+
+    this.socket = net.createConnection(this.cgateControlPort, this.cgateIpAddress);
+
+    this.socket.on('error', function(error) {
+        that.log('C-Gate socket error: ' + error);
+        // this is where we need to re-open
     });
 
-    this.events = net.createConnection(this.clientEventPort, this.clientIpAddress);
-    this.events.on('error', function(error) {
-        log('cgate events socket error: ' + error);
-    });
-    
-    this.events.on('end', function() {
-        log('cgate events socket terminated');
-    });
-    
-    this.events.on('close', function() {
-        log('cgate events socket closed');
-    });
-    
-    this.events.on('timeout', function() {
-        log('cgate events socket timed out');
-    });
-    
-    carrier.carry(this.events, function(line) {
-        that._socketReceivedMessageEvent(line, "eventStream");
+    this.socket.on('end', function() {
+        that.log('C-Gate socket terminated');
     });
 
-    this.statuses = net.createConnection(this.clientStatusPort, this.clientIpAddress);
-    this.statuses.on('error', function(error) {
-        log('cgate statuses socket error: ' + error);
+    this.socket.on('close', function() {
+        that.log('C-Gate socket closed');
     });
-    
-    this.statuses.on('end', function() {
-        log('cgate statuses socket terminated');
+
+    this.socket.on('timeout', function() {
+        that.log('C-Gate socket timed out');
     });
-    
-    this.statuses.on('close', function() {
-        log('cgate statuses socket closed');
-    });
-    
-    this.statuses.on('timeout', function() {
-        log('cgate statuses socket timed out');
-    });
-    
-    carrier.carry(this.statuses, function(line) {
-        that._socketReceivedMessageEvent(line, "statusStream");
+
+    carrier.carry(this.socket, function(line) {
+        if (!that.connectionReady) {
+            // TODO we should timeout if we haven't received a response to the 'events' command within a certain period
+            const SERVICE_READY_REGEX = /201 Service ready: Clipsal C-Gate Version: (v\d+\.\d+\.\d+ \(build \d+\)) #cmd-syntax=(\d+\.\d+)/;
+            const EVENTS_REQUEST = '[99] events e7s0c0\r\n';
+            const EVENTS_RESPONSE_REGEX = /\[99\] 200 OK\./;
+
+            // on startup, we need to configure the events port to send us messages from every channel
+            let parts;
+
+            if (parts = line.match(SERVICE_READY_REGEX)) {
+                that.log.info('C-Gate server responded ' + parts[1] + ", syntax " + parts[2]);
+                that.log.info('Configuring C-Gate session ...');
+                that.socket.write(EVENTS_REQUEST);
+            } else if (parts = line.match(EVENTS_RESPONSE_REGEX)) {
+                // we've connected to cgate and received a response to our command to
+                // set the event level as we want it.
+                that.log(`C-Gate session configured and ready at ${that.cgateControlPort}:${that.cgateIpAddress}`);
+                that.connectionReady = true;
+                callback();
+            } else {
+                that.log(`C-Gate session not ready -- unexpected message: ${line}`);
+            }
+        } else {
+            that._socketReceivedLine(line);
+        }
     });
 };
 
@@ -133,82 +154,38 @@ CBusClient.prototype.connect = function(callback) {
  * Disconnects from the CBus server.
  */
 CBusClient.prototype.disconnect = function() {
-    if (typeof(this.control) == "undefined") {
-        throw new Error("The control socket has not been initialized yet.");
+    if (typeof(this.socket) == 'undefined') {
+        throw new Error('CGate socket has not been initialized yet.');
     }
-    this.control.close();
-
-    if (typeof(this.events) == "undefined") {
-        throw new Error("The event socket has not been initialized yet.");
-    }
-    this.events.close();
-
-    if (typeof(this.statuses) == "undefined") {
-        throw new Error("The status socket has not been initialized yet.");
-    }
-    this.statuses.close();
+    this.socket.close();
 };
 
-CBusClient.prototype.turnOnLight = function(id, callback) {
-    if (this.state[id] && !this.state[id].on) {
-        var cmd = this._buildSetCommandString(id, "on", 100);
-        this._sendMessage(cmd, callback);
-    } else {
-        //console.log("light is already on, no need to send the command again");
-        if (typeof(callback) != "undefined") {
-            callback();
-        } 
-    }
+/**
+ * CGate level change commands
+ */
+CBusClient.prototype.turnOnLight = function(netId, callback) {
+	const cmd = this._buildSetCommandString(netId, 'on', 100);
+	this._sendMessage(cmd, callback);
 };
 
-CBusClient.prototype.turnOffLight = function(id, callback) {
-    if (this.state[id] && this.state[id].on) {
-        var cmd = this._buildSetCommandString(id, "off", 0);
-        this._sendMessage(cmd, callback);
-    } else {
-        //console.log("light is already off, no need to send the command again");
-        if (typeof(callback) != "undefined") {
-            callback();
-        } 
-    }
+CBusClient.prototype.turnOffLight = function(netId, callback) {
+	const cmd = this._buildSetCommandString(netId, 'off', 0);
+	this._sendMessage(cmd, callback);
 };
 
-CBusClient.prototype.receiveLightStatus = function(id, callback) {
-    var cmd = this._buildGetCommandString(id, "level");
-
-    this.pendingStatusQueue.push({
-       id: id, callback: callback
-    });
-
-    this._sendMessage(cmd);
-};
-
-CBusClient.prototype.setLightBrightness = function(id, value, callback) {
-    var cmd = this._buildSetCommandString(id, "ramp", value);
+CBusClient.prototype.receiveLightStatus = function(netId, callback) {
+	const cmd = this._buildGetCommandString(netId, 'level');
     this._sendMessage(cmd, callback);
 };
 
-CBusClient.prototype.receiveSecurityStatus = function(id, callback) {
-    var cmd = this._buildGetCommandString(id, "zonestate");
-    
-    this.pendingStatusQueue.push({
-		id: id, callback: callback
-	});
-    
-    this._sendMessage(cmd);
+CBusClient.prototype.setLightBrightness = function(netId, value, callback) {
+	const cmd = this._buildSetCommandString(netId, 'ramp', value);
+    this._sendMessage(cmd, callback);
 };
 
-
-//==========================================================================================
-//  Events handling
-//==========================================================================================
-
-CBusClient.prototype._socketReceivedMessageEvent = function(message, type) {
-    //--------------------------------------------------
-    //  Attempt to resolve the income message
-    //--------------------------------------------------
-
-    this._resolveReceivedMessage(message, type);
+CBusClient.prototype.receiveSecurityStatus = function(netId, callback) {
+	const cmd = this._buildGetCommandString(netId, 'zonestate');
+    this._sendMessage(cmd, callback);
 };
 
 
@@ -216,222 +193,376 @@ CBusClient.prototype._socketReceivedMessageEvent = function(message, type) {
 //  Private API
 //==========================================================================================
 
-CBusClient.prototype._buildGetCommandString = function(id, command) {
-    var cbusAddress = cbusUtils.cbusAddressForId(id);
-    
-    var message = 'GET //'+this.clientCbusName+'/'+cbusAddress+' '+command+'\n';
-    
-    if (this.clientDebug) {
-        console.log("Message:"+message);
-    }
-    
-    return message;
+// TODO fix! legacy code -- very broken at the moment
+/*
+function _toPrettyString(parsed) {
+	let output;
+	
+	if (this.type == 'lighting') {
+		output = `unit ${this.sourceUnit} just set ${this.netId} to ${this.level}% over ${this.duration}s`;
+	} else if (this.type == 'info') {
+		output = `${this.netId} group ${this.netId.group} advised current level of ${this.level}%`;
+	} else if (this.type == 'event') {
+		output = `received event status ${this.statusCode} with message: '${this.eventMessage}'`;
+		if (typeof this.timestamp != 'undefined') {
+			output = `at ${this.timestamp} ${output}`;
+		}
+		if (typeof this.commandId != 'undefined') {
+			output = `${output} [commandId: ${this.commandId}]`;
+		}
+	}
+	
+	let result;
+	if (typeof output != 'undefined') {
+		result = output;
+	} else {
+		let flat = JSON.stringify(this);
+		result = `untranslated: ${flat}`;
+	}
+	
+	return result;
 }
+*/
 
-CBusClient.prototype._buildSetCommandString = function(id, command, level, delay) {
-    var message = '';
-    
-    var cbusAddress = cbusUtils.cbusAddressForId(id);
-
-    if (command=='on') {
-        message = 'ON //' + this.clientCbusName+'/'+cbusAddress+'\n';
-    }
-    else if (command=='off') {
-        message = 'OFF //' + this.clientCbusName+'/'+cbusAddress+'\n';
-    }
-    else if (command=='ramp') {
-
-        if (level <= 100) {
-            if (delay) {
-            message = 'RAMP //' + this.clientCbusName+'/'+cbusAddress+' '+level+'% '+delay+'\n';
-            } else {
-            message = 'RAMP //' + this.clientCbusName+'/'+cbusAddress+' '+level+'%\n';
-            }
-        }
-    }
-    
-    if (this.clientDebug) {
-        console.log("Message:" + message + " (command:" + command + ")");
-    }
-
-    return message;
-}
-
-CBusClient.prototype._sendMessage = function(command, callback) {
-    //--------------------------------------------------
-    //  Send
-    //--------------------------------------------------
-    this.control.write(command, function(err) {
-        /* Fire the callback */
-        if (err) {
-            console.log("error sending: ", err)
-        }
-        
-        if (typeof(callback) != "undefined") {
-            callback(command);
-        }    
-    });
+CBusClient.prototype._buildGetCommandString = function(netId, command) {
+    return `get ${netId} ${command}`;
 };
 
-CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
-    //--------------------------------------------------
-    //  Create a new response object
-    //--------------------------------------------------
+CBusClient.prototype._buildSetCommandString = function(netId, command, level, delay) {
+    var message;
 
-    var responseObj = new CBusStatusPacket(buffer, type);
-
-    if (this.clientDebug) {
-        console.log(responseObj);
-    }
-
-    //--------------------------------------------------
-    //  Prepare our match 'n' call callback
-    //--------------------------------------------------
-    /* Iterate over the pending items and clear them out */
-    for (var i = 0; i < this.pendingStatusQueue.length; i++) {
-        var item = this.pendingStatusQueue[i];
-        if (item.id == responseObj.moduleId) {
-            /* Fire the callback */
-            item.callback(responseObj);
-
-            /* Remove it from the queue */
-            this.pendingStatusQueue.splice(i, 1);
+    if (command == 'on') {
+        message = `on ${netId}`;
+    } else if (command == 'off') {
+        message = `off ${netId}`;
+    } else if (command == 'ramp') {
+        console.assert(level <= 100);
+        message = `ramp ${netId} ${level}%`;
+        if (delay) {
+            message += ` ${delay}`;
         }
+    } else {
+        console.assert(false);
     }
 
-    // lets track some state for each device, this way we dont do things like turn on devices that are already on (when dimming)
-    if ((responseObj.moduleId != null) && (responseObj.level != null)) {
-        this.state[responseObj.moduleId] = {on: responseObj.level > 0 ? true : false};
+    return message;
+};
+
+CBusClient.prototype._sendMessage = function (message, inCallback) {
+    let nextCommandId = this.commandId++;
+
+    const request = {
+        message: message,
+        callback: inCallback,
+        raw: `[${nextCommandId}] ${message}`
+    };
+
+    // add to pending command map
+    this.pendingCommands.set(nextCommandId, request);
+
+    this.socket.write(request.raw + `\n`, function(err) {
+        if (err) {
+            this._log(`error '${err} when sending '${chalk.green(request.raw)}'`);
+        } else {
+            this._log(`sent command '${chalk.green(request.raw)}'`);
+        }
+
+        // fire the callback
+        if (typeof(callback) != "undefined") {
+            callback(message);
+        }
+    }.bind(this));
+};
+
+/*
+CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
+	
+    // TODO we used to keep state of each device, but i found it wasn't really doing much, if anything
+    // let's track some state for each device, this way we dont do things like turn on devices that are already on (when dimming)
+    if ((responseObj.netId != null) && (responseObj.level != null)) {
+        this.state[responseObj.netId.moduleId] = {
+            on: (responseObj.level > 0)
+        };
     }
 
-    if (responseObj.channel=='statusStream') {
-        //this.platform.remoteLevelUpdate(this.platform.foundAccessories, responseObj.moduleId, responseObj.level);
-        /* Iterate over the accesories and make sure the current state gets set */
+    // TODO this is important and needs to be reimplemented
+    // broadcast receipt of parsable status updates relating to accessories
+    if ((responseObj.channel == LINE_STATUS)
+        && (typeof responseObj != 'undefined')
+        && (typeof responseObj.netId != 'undefined')) {
         this.emit('remoteData', responseObj);
     }
 };
+*/
 
+function _parseResponse(line) {
+    //  RX: [123] 200 OK: //SHAC/254/56/3
+    //  RX: [456] 300 //SHAC/254/56/145: level=255
+    //  parse into { commandId, resultCode, remainder } then process
+    const RESPONSE_REGEX = /^\[(\S+)\] (\d{3}) (.*)/;
 
-//==========================================================================================
-//  CBusStatusPacket
-//==========================================================================================
+    let parts = line.match(RESPONSE_REGEX);
+	console.assert(parts);	// impossible to not have parts
 
-function CBusStatusPacket(data, channel) {
-    //--------------------------------------------------
-    //  Setup our iVars
-    //--------------------------------------------------
+    let response = {
+        commandId: parseInt(parts[1]),     // it appears that the Map object thinks that "200" != 200
+        code: parseInt(parts[2]),
+        matched: false,
+        processed: false
+    };
 
-    this.raw          = data;
-    this.channel      = channel;
-    this.type         = "unknown";
-    this.source       = "cbus";
+    const message = parts[3];
+	
+	// if we requested the level, we'll get back a 300
+	switch (response.code) {
+		case 300:
+			// TX: get //SHAC/254/56/3 level
+			// RX: 300 //SHAC/254/56/3: level=0
+			// parse '//SHAC/254/56/3: level=0' into netId, level
+			const OBJ_INFO_REGEX = /^(.*): level=(\d{0,3})$/;
+			let parsed = message.match(OBJ_INFO_REGEX);
+			if (!parsed) {
+				throw `not in 'level=xxx' format`;
+			}
 
-    var array = data.match(/\b[\S]+\b/g);
+			response.netId = CBusNetId.parseNetId(parsed[1]);
+			response.level = _rawToPercent(parseInt(parsed[2]));
+			response.processed = true;
+			break;
 
-    // is this a lighting packet?
-    if (array[0]=='lighting') {
-        this.type = 'lighting';
+		case 200:
+			// result from setting a level
+			response.processed = true;
+			break;
 
-        this.action = array[1];
+		default:
+			// TODO probably should do something special if we get an unexpected result code
+			// console.log(chalk.red(`unexpected reponse code ${responseCode} in line '${response.raw}'`));
+			break;
+	}
 
-        // the elements of arr2 are the project/network/application/group
-        var temp = array[2].split("/");
-        this.moduleId = cbusUtils.idForCbusAddress(temp[1], temp[2], temp[3]);
-        
-        var parseunit = array[3];
-        var parseoid = array[4];
-
-        if (this.action == 'ramp') {
-            this.level = this._humanLevelValue(array[3]);
-            this.time = array[4];
-            parseunit = array[5];
-            parseoid = array[6];
-        } else if (this.action == 'on') {
-            this.level = 100;
-        } else if (this.action == 'off') {
-            this.level = 0;
-        }
-
-        temp = parseunit.split('=');
-        this.sourceunit = temp[1];
-
-        temp = parseoid.split('=');
-        this.oid = temp[1];
-        
-    } else if (array[0]=='security') {
-        
-        this.type = 'security';
-        
-        this.action = array[1];
-        
-        // the elements of arr2 are the project/network/application/group
-        var temp = array[2].split("/");
-        this.moduleId = cbusUtils.idForCbusAddress(temp[1], temp[2], temp[3]);
-
-        var parseunit = array[3];
-        var parseoid = array[4];
-
-        if (this.action == 'zone_unsealed' || this.action == 'zone_open' || this.action == 'zone_short') {
-            this.level = 100;
-        } else if (this.action == 'zone_sealed') {
-            this.level = 0;
-        }
-
-        temp = parseunit.split('=');
-        this.sourceunit = temp[1];
-
-        temp = parseoid.split('=');
-        this.oid = temp[1];
-    }
-
-    // are we getting group level report?
-    if (array[0].substring(0, 3) == '300') {
-        var temp = array[array.length-1].split('=');
-        
-        if (temp[0] == 'level') {
-            this.type = 'info';
-            this.level = this._humanLevelValue(temp[1]);
-            var ind = (array.length == 3 ? 1 : 0);
-
-            var temp2 = array[ind].split("/");
-            this.moduleId = cbusUtils.idForCbusAddress(temp2[1], temp2[2], temp2[3]);;
-        } else if (temp[0] == 'zonestate') {
-            //console.log('zonestate:'+temp[1]);
-            //console.log(array);
-            
-            this.type = 'info';
-            this.level = this._humanLevelValue(temp[1]);
-            var ind = (array.length == 3 ? 1 : 0);
-            
-            var temp2 = array[ind].split("/");
-            this.moduleId = cbusUtils.idForCbusAddress(temp2[1], temp2[2], temp2[3]);;
-        }
-    }
-
-    //console.log(this);
-
-    // are there custom things we want to do when this event occurs? ONLY do this for the status stream
-    if (channel=='statusStream' || this.type=='info') {
-        //COMMON.processMessage(packet);
-    }
-};
-
-CBusStatusPacket.prototype._humanLevelValue = function humanLevelValue(level) {
-    // convert levels from 0-255 to 0-100
-    var temp = Math.round((level / 255) * 100)
-
-    if (temp > 100) {
-        temp = 100;
-    } else if (temp < 0) {
-        temp = 0;
-    }
-
-    return temp;
+    return response;
 }
 
+function _rawToPercent(raw) {
+	if (typeof raw !== `number`) {
+		throw `illegal raw type: ${typeof raw}`;
+	}
+	
+	if ((raw < 0) || (raw > 255)) {
+		throw `illegal raw level: ${raw}`;
+	}
+	
+	// convert levels from 0-255 to 0-100 to agree with the table in
+	// the help document 'C-Bus to percent level lookup table'
+	// return Math.floor(((raw + 2) / 255) * 100);
+	return Math.floor(((raw + 2) / 255) * 100);
+}
 
-//==========================================================================================
-//  Exportation
-//==========================================================================================
+// extracts key=value pairs and adds to target
+// any left over words are added as as remainder property
+function _parseProperties(message, target) {
+    // pull out key=value pairs
+    const words = message.split(' ');
+    let remainder = [];
+
+    for (let word of words) {
+        let keyValue = word.split('=');
+        if (keyValue.length == 2) {
+        	const key = keyValue[0];
+			let value = keyValue[1];
+            
+            if ((key.length == 0) || (value.length == 0)) {
+            	throw `bad key=value: '${keyValue}'`;
+			}
+			
+            // parse it if it's a number
+            if (!isNaN(value)) {
+				value = parseFloat(value);
+            }
+
+            target[key] = value;
+        } else {
+            remainder.push(word);
+        }
+    }
+
+    if (remainder.length > 0) {
+        //  something like 'system_arm 1' or 'exit_delay_started'
+        target.remainder = remainder;
+    }
+}
+
+function _parseEvent(line) {
+    // RX: 20170204-130934.821 702 //SHAC/254/208 3dfc8d80-c4aa-1034-9fa5-fbb6c098d608 [security] system_arm 1 sourceUnit=213
+    // RX: 20170204-203326.551 730 //SHAC/254/56/3 3df86ed0-c4aa-1034-9e9e-fbb6c098d608 new level=255 sourceunit=12 ramptime=0 sessionId=cmd385 commandId=123
+    // RX: 20170204-203326 700 cgate - Heartbeat.
+
+    // parse into time, code, message
+    const EVENT_REGEX = /^(\d{8}-\d{6}(?:\.\d{3})?) (\d{3}) (.*)/;
+
+    const parts = line.match(EVENT_REGEX);
+    if (!parts) {
+        throw `not in 'timestamp code message' format`;
+    }
+
+    let event = {
+        time: parts[1],     // it appears that the Map object thinks that "200" != 200
+        code: parseInt(parts[2]),
+        processed: false
+    };
+
+    const message = parts[3];
+
+    switch (event.code) {
+        case 702:
+            // application information event
+            // RX: //SHAC/254/208 3dfc8d80-c4aa-1034-9fa5-fbb6c098d608 [security] exit_delay_started sourceUnit=213
+            // RX: //SHAC/254/208/24 - [security] arm_not_ready sourceUnit=213
+            // RX: //SHAC/254/208 3dfc8d80-c4aa-1034-9fa5-fbb6c098d608 [security] system_arm 1 sourceUnit=213
+            // RX: //SHAC/254/208/13 - [security] zone_sealed sourceUnit=213
+
+            // eg: event.message = '[security] system_arm 1 sourceUnit=213'
+            const APP_INFO_REGEX = /^(\S+) (\S+) \[(.*)\] (.+)/;
+
+            const infoParts = message.match(APP_INFO_REGEX);
+            if (!infoParts) {
+                throw `not in 'netid objectId [applicationName] remainder' format`;
+            }
+
+            event.netId = CBusNetId.parseNetId(infoParts[1]);
+            // event.objectId = infoParts[2];
+            event.application = infoParts[3];
+            event.processed = true;
+
+            // pull our parameters
+			_parseProperties(infoParts[4], event);
+	
+			// convert application events to levels
+			// TODO this probably belongs in the security accessory
+			if (event.application == `security`) {
+				const subType = event.remainder[0];
+				switch (subType) {
+					case `zone_unsealed`:
+					case `zone_open`:
+					case `zone_short`:
+						event.level = 100;
+						break;
+						
+					case `zone_sealed`:
+						event.level = 0;
+						break;
+				}
+			}
+			break;
+
+        case 730:
+            // level advice
+            // RX: //SHAC/254/56/3 3df86ed0-c4aa-1034-9e9e-fbb6c098d608 new level=255 sourceunit=12 ramptime=0 sessionId=cmd385 commandId=123
+
+            // eg: event.message = 'new key=value key=value key=value'
+            // pull out parameters
+            const NEW_LEVEL_REGEX = /^(\S+) (\S+) new (.*)/;
+
+            const attributes = message.match(NEW_LEVEL_REGEX);
+            if (!attributes) {
+                throw `not in 'new remainder' format`;
+            }
+
+            event.netId = CBusNetId.parseNetId(attributes[1]);
+            // event.objectId = attributes[2];
+            event.processed = true;
+	
+			_parseProperties(attributes[3], event);
+
+            // convert level (if any) to percentage
+            if (typeof event.level != 'undefined') {
+                event.level = _rawToPercent(event.level);
+            }
+            break;
+
+        default:
+            // not of current interest
+			event.message = message;
+            break;
+    }
+
+    return event;
+}
+
+function _parseLine(line) {
+	// parse the incoming line to an entity
+	// line is either:
+	// 1. response to a command
+	// 2. an event
+	
+	const CHANNEL_REGEX = /^#e# (.*)/;
+	const RESPONSE_REGEX = /^(\[(\d+)\])\s(\d{3}) (.*)/;
+	
+	let parts, parsedLine;
+	if (parts = line.match(RESPONSE_REGEX)) {
+		// event response without a prefix 'e', so it's a *r*esponse to one of _our_ commands
+		parsedLine = _parseResponse(line);
+		parsedLine.type = LINE_RESPONSE;
+	} else if (parts = line.match(CHANNEL_REGEX)) {
+		parsedLine = _parseEvent(parts[1]);
+		parsedLine.type = LINE_EVENT;
+	} else {
+		throw `unrecognised structure'`;
+	}
+	parsedLine.raw = line;
+	
+	return parsedLine;
+}
+
+CBusClient.prototype._resolveResponse = function(response) {
+	response.matched = this.pendingCommands.has(response.commandId);
+	
+	if (response.matched) {
+		// found a corresponding request in the pending command cache
+		const request = this.pendingCommands.get(response.commandId);
+		this.pendingCommands.delete(response.commandId);
+			
+		response.request = request;
+		this._log(`matched request '${chalk.green(request.raw)}' with '${chalk.green(request.raw)}' ` + chalk.dim(`(${this.pendingCommands.size} pending requests)`));
+		
+		if (typeof request.callback != 'undefined') {
+			request.callback(response);
+		}
+	} else {
+		// couldn't find a corresponding request in the pending command cache
+		// should be exceedingly rare
+		// TODO log as unexpected behaviour
+		this._log(chalk.red(`unmatched response '${response.raw}'`));
+	}
+};
+
+CBusClient.prototype._socketReceivedLine = function(line) {
+	try {
+		const parsedLine = _parseLine(line);
+		
+		switch (parsedLine.type) {
+			case LINE_RESPONSE:
+				this._resolveResponse(parsedLine);
+				this._log(chalk.blue(`response ${util.inspect(parsedLine, { breakLength: Infinity })}`));
+				break;
+			
+			case LINE_EVENT:
+				this._log(chalk.blue(`event ${util.inspect(parsedLine, { breakLength: Infinity })}`));
+				// TODO resolve the response
+				break;
+				
+			default:
+				console.assert(false, `illegal parsedLine type ${parsedLine.type}`);
+		}
+	} catch (ex) {
+		this._log(chalk.red(`received unparsable line: '${line}', exception: ${ex}`));
+	}
+};
+
+CBusClient.prototype._log = function (message) {
+	const fileName = `[` + __filename.slice(__dirname.length + 1, -3) + `]`;
+	this.log.info(`${chalk.green.bold(fileName)} ${message}`);
+};
 
 module.exports = CBusClient;

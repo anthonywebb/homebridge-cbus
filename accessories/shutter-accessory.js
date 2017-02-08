@@ -1,9 +1,11 @@
+'use strict';
+
 var Service, Characteristic, CBusAccessory, uuid;
 var cbusUtils = require('../cbus-utils.js');
 
 const SHUTTER_OPEN = 100;
 const SHUTTER_TOGGLE = 98;
-const SHUTTER_OPENT_TOGGLE = 99;
+const SHUTTER_OPEN_TOGGLE = 99;
 const SHUTTER_DOWN = 0;
 const SHUTTER_CLOSE_TOGGLE = 1;
 const SHUTTER_STOP = 2;
@@ -30,8 +32,8 @@ function CBusShutterAccessory(platform, accessoryData) {
     //--------------------------------------------------
     
     // handle inversion
-    this.invert = accessoryData.invert || "false";
-	this._log("CBusShutterAccessory", "invert = " + this.invert);     
+    this.invert = accessoryData.invert || 'false';
+	// this._log("CBusShutterAccessory", "invert = " + this.invert);     
     
     // prime the last known position of the blinds
     // assume the blinds were closed, but immediately issue a receiveLightStatus to see 
@@ -39,16 +41,16 @@ function CBusShutterAccessory(platform, accessoryData) {
     this.cachedTargetPosition = 0;
     
     setTimeout(function() {
-		this._log("CBusShutterAccessory", "prime shutter level");     
-		this.client.receiveLightStatus(this.id, function(result) {
-			var translated = this.translateShutterToProportional(result.level);
+		this._log('CBusShutterAccessory', 'prime shutter level');
+		this.client.receiveLightStatus(this.netId, function(result) {
+			let translated = this.translateShutterToProportional(result.level);
 	
 			if (typeof translated != 'undefined') {
-				this._log("CBusShutterAccessory", "prime cachedTargetPosition = " + translated);
+				this._log("CBusShutterAccessory", `prime cachedTargetPosition = ${translated}%`);
 				this.cachedTargetPosition = translated;
 			} else {
 				// TODO be smarter here
-				this._log("CBusShutterAccessory", "prime cachedTargetPosition = indeterminate; defaulting to 0");			
+				this._log("CBusShutterAccessory", `prime position indeterminate (${result.level}%); defaulting to 0%`);
 				this.cachedTargetPosition = 0;
 			}
 		}.bind(this));
@@ -76,24 +78,24 @@ function CBusShutterAccessory(platform, accessoryData) {
     // https://github.com/KhaosT/HAP-NodeJS/blob/master/lib/gen/HomeKitTypes.js#L3213
     this.shutterService.getCharacteristic(Characteristic.PositionState)
         .on('get', this.getPositionState.bind(this));
-};
+}
 
 CBusShutterAccessory.prototype.translateProportionalToShutter = function(level) {
 	if ((level > 100) || (level < 0)) {
-		this._log.error("CBusShutterAccessory", "illegal level: " + level);
+		this._log("CBusShutterAccessory", `illegal level: ${level}`);
 		return 0;
 	}
 	
 	// invert if required
-	if (this.invert == "true") {
+	if (this.invert == 'true') {
 		var invertedLevel = 100 - level;
-		this._log("CBusShutterAccessory", level + " inverted to " + invertedLevel);
+		this._log("CBusShutterAccessory", `${level} inverted to ${invertedLevel}%`);
 		level = invertedLevel;
 	}
 	
 	// in level translation mode, the levels 1, 2, 98, 99 have special meanings and should
 	// therefore be mapped out to the vales for open (100%) and closed (0%)
-	var translated;
+	let translated;
 
 	switch (level) {
 		case 0:
@@ -120,11 +122,11 @@ CBusShutterAccessory.prototype.translateProportionalToShutter = function(level) 
 
 CBusShutterAccessory.prototype.translateShutterToProportional = function(level) {
 	if ((level > 100) || (level < 0)) {
-		this._log.error("CBusShutterAccessory", "illegal network level = " + level);
+		this._log("CBusShutterAccessory", "illegal network level = " + level);
 		return;
 	}
 
-	var translated;
+	let translated;
 	
 	switch (level) {
 		case SHUTTER_OPEN:
@@ -136,7 +138,7 @@ CBusShutterAccessory.prototype.translateShutterToProportional = function(level) 
 			break;
 			
 		case SHUTTER_TOGGLE:
-		case SHUTTER_OPENT_TOGGLE:
+		case SHUTTER_OPEN_TOGGLE:
 		case SHUTTER_CLOSE_TOGGLE:
 		case SHUTTER_STOP:
 			// could be a bit smarter here
@@ -150,7 +152,7 @@ CBusShutterAccessory.prototype.translateShutterToProportional = function(level) 
 	
 	// invert if required
 	if ((typeof translated != 'undefined') && (this.invert == "true")) {
-		var invertedLevel = 100 - level;
+		let invertedLevel = 100 - level;
 		this._log("CBusShutterAccessory", level + " inverted to " + invertedLevel);
 		translated = invertedLevel;
 	}
@@ -176,8 +178,8 @@ CBusShutterAccessory.prototype.getPositionState = function(callback, context) {
 
 CBusShutterAccessory.prototype.getTargetPosition = function(callback, context) {
     setTimeout(function() {
-        this.client.receiveLightStatus(this.id, function(result) {            
-           var proportion = this.translateShutterToProportional(result.level);
+        this.client.receiveLightStatus(this.netId, function(result) {
+           let proportion = this.translateShutterToProportional(result.level);
 	       this._log("CBusShutterAccessory", "getTargetPosition = " + proportion);
 
 			if (typeof proportion != 'undefined') {
@@ -224,10 +226,10 @@ CBusShutterAccessory.prototype.setTargetPosition = function(newPosition, callbac
     	}
     	
     	// set up move to new shutter level    	
-    	var shutterLevel = this.translateProportionalToShutter(newPosition)
+    	let shutterLevel = this.translateProportionalToShutter(newPosition);
         
         // in this framework, the shutter relay position just looks like the brightness of a light
-        this.client.setLightBrightness(this.id, shutterLevel, function() {
+        this.client.setLightBrightness(this.netId, shutterLevel, function() {
             this._log("CBusShutterAccessory", "sent to client: shutter = " + shutterLevel);
    
    			// keep the spinner moving for a little while to give the sense of movement
@@ -248,10 +250,10 @@ CBusShutterAccessory.prototype.setTargetPosition = function(newPosition, callbac
 };
 
 CBusShutterAccessory.prototype.processClientData = function(level) {
-	var translated = this.translateShutterToProportional(level);
+	let translated = this.translateShutterToProportional(level);
 	
 	if (typeof translated != 'undefined') {
-		this._log("CBusShutterAccessory", "client: received " + translated);
+		this._log("CBusShutterAccessory", `client: received ${translated}%`);
 		
 		if (this.cachedTargetPosition != translated) {
 			this.shutterService.getCharacteristic(Characteristic.TargetPosition).setValue(translated, undefined, 'remoteData');

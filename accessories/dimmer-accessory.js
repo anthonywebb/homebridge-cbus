@@ -23,11 +23,11 @@ function CBusDimmerAccessory(platform, accessoryData)
     this.lightService.addCharacteristic(Characteristic.Brightness)
         .on('get', this.getBrightness.bind(this))
         .on('set', this.setBrightness.bind(this));
-};
+}
 
 CBusDimmerAccessory.prototype.getBrightness = function(callback, context) {
     setTimeout(function() {
-        this.client.receiveLightStatus(this.id, function(value) {
+        this.client.receiveLightStatus(this.netId, function(value) {
             this._log("CBusDimmerAccessory", "getBrightness = " + value.level);
                 callback(false, /* value: */ value.level);
             }.bind(this));
@@ -38,7 +38,7 @@ CBusDimmerAccessory.prototype.setBrightness = function(level, callback, context)
     // "context" is helping us avoid a never ending loop
     if(context != 'remoteData'){
         this._log("CBusDimmerAccessory", "setBrightness = " + level);
-        this.client.setLightBrightness(this.id, level, function() {
+        this.client.setLightBrightness(this.netId, level, function() {
             callback();
         });
     } else {

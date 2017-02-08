@@ -5,19 +5,18 @@ module.exports = CBusNetId;
 const test = require('tape');
 const util = require('util');
 
+const cbusUtils = require('./cbus-utils.js');
+
+
 // object representing C-Bus network id (netId) in one of the following formats:
 // network -- '//SHAC/254'
 // application: '//SHAC/254/56'
 // group address: '//SHAC/254/56/191'
 function CBusNetId (project, network, application, group) {
-	if (project.match(/^([A-Z][A-Z0-9]{0,7})$/) == null) {
-		throw `illegal project name '${project}`;
-	}
-	
-	this.project = project;
-	this.network = integerise(network);
-	this.application = integerise(application);
-	this.group = integerise(group);
+	this.project = CBusNetId.validatedProjectName(project);
+	this.network = cbusUtils.integerise(network);
+	this.application = cbusUtils.integerise(application);
+	this.group = cbusUtils.integerise(group);
 }
 
 CBusNetId.prototype.toString = function () {
@@ -54,17 +53,11 @@ CBusNetId.parseNetId = function (netIdString) {
     return new CBusNetId(components[1], components[2], components[3], components[4]);
 };
 
-function integerise(x) {
-	// parse the input as an integer
-	// allow undefined to pass throw, but otherwise throw exception if input isn't expressable as an integer
-	if (typeof x == 'undefined') {
-		return undefined;
+// static factory method
+CBusNetId.validatedProjectName = function (name) {
+	if (name.match(/^([A-Z][A-Z0-9]{0,7})$/) == null) {
+		throw `illegal project name (format /[A-Z][A-Z0-9]{0,7}/) '${name}`;
 	}
 	
-	const parsed = parseInt(x);
-	if ((typeof parsed != 'undefined') && (parsed.toString() !== x.toString())) {
-		throw `not an integer: '${x}'`;
-	}
-	
-	return parsed;
-}
+	return name;
+};

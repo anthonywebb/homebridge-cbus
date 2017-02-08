@@ -9,8 +9,7 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
   return CBusLightAccessory;
 };
 
-function CBusLightAccessory(platform, accessoryData)
-{
+function CBusLightAccessory(platform, accessoryData) {
     //--------------------------------------------------
     //  Initialize the parent
     //--------------------------------------------------
@@ -23,11 +22,11 @@ function CBusLightAccessory(platform, accessoryData)
     this.lightService.getCharacteristic(Characteristic.On)
         .on('get', this.getState.bind(this))
         .on('set', this.setState.bind(this));
-};
+}
 
 CBusLightAccessory.prototype.getState = function(callback, context) {
     setTimeout(function() {
-        this.client.receiveLightStatus(this.id, function(result) {
+        this.client.receiveLightStatus(this.netId, function(result) {
             this._log("CBusLightAccessory", "getState = " + result.level);
             callback(false, /*state: */ result.level ? 1 : 0);
         }.bind(this));
@@ -39,11 +38,11 @@ CBusLightAccessory.prototype.setState = function(value, callback, context) {
     if(context != 'remoteData'){
         this._log("CBusLightAccessory", "setState = " + value);
         if (value) {
-            this.client.turnOnLight(this.id, function() {
+            this.client.turnOnLight(this.netId, function() {
                 callback();
             });
         } else {
-            this.client.turnOffLight(this.id, function() {
+            this.client.turnOffLight(this.netId, function() {
                 callback();
             });
         }
@@ -54,6 +53,5 @@ CBusLightAccessory.prototype.setState = function(value, callback, context) {
 
 CBusLightAccessory.prototype.processClientData = function(level) {
 	this.lightService.getCharacteristic(Characteristic.On)
-		.setValue(level > 0 ? true : false, undefined, 'remoteData');
+		.setValue(level > 0, undefined, 'remoteData');
 };
-

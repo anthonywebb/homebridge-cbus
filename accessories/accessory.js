@@ -1,7 +1,11 @@
 'use strict';
 
 var Service, Characteristic, Accessory, uuid;
-var cbusUtils = require('../cbus-utils.js');
+
+const chalk = require('chalk'); // does not alter string prototype
+
+const cbusUtils = require('../cbus-utils.js');
+const CBusNetId = require('../cbus-netid.js');
 
 module.exports = function (_service, _characteristic, _accessory, _uuid) {
   Service = _service;
@@ -13,70 +17,67 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
 };
 
 function CBusAccessory(platform, accessoryData) {
-    //--------------------------------------------------
-    //  Define some iVars
-    //--------------------------------------------------
+	// type is absolutely required
+	console.assert(typeof accessoryData.type !== `undefined`);
+	
+	// define log before we validate
+	this.log = platform.log;
 
 	// log, at least, must be defined before we validate
-    this.platform       =   platform;
-    this.client         =   this.platform.client;
-    this.log            =   platform.log;
+	// TODO unused? this.platform = platform;
+	this.client = platform.client;
+	this.accessoryData = accessoryData;
+	this.type = accessoryData.type;
+	
+	// ensure we have a name
+	if (typeof accessoryData.name != "string") {
+		throw `missing required 'name' field`;
+	}
+	this.name = accessoryData.name;
+	
+	// ensure we have a valid group address
+	if (typeof accessoryData.id === `undefined`) {
+		throw `accessory '${this.name} missing required 'id' (group address) field`;
+	}
+	
+	let groupAddress;
+	try {
+		groupAddress = cbusUtils.integerise(accessoryData.id);
+	} catch (ex) {
+		throw `id '${accessoryData.id}' for accessory '${this.name} is not an integer`;
+	}
+	
+    // build netId
+
+	this.netId = new CBusNetId(
+		platform.project,
+		accessoryData.network || platform.client.network,
+		accessoryData.application || platform.client.application,
+		groupAddress
+	);
+	
+	this.id = this.netId.getModuleId();
+	
+    // fire our parent
+	const ourUUID = uuid.generate(this.id);
+    Accessory.call(this, this.name, ourUUID);
+
+    // setup service
+    const service = this.getService(Service.AccessoryInformation);
     
-    //--------------------------------------------------
-    //  Accessory data validation
-    //--------------------------------------------------
-
-    /* We got a name? */
-    if (typeof accessoryData.name != "string") {
-        this.log.error("One of your accessories is missing the \"name\" field, which is required. ABORTING.");
-        process.exit(0);
-    }
-
-    /* We got an id? */
-    if (typeof accessoryData.id != "string") {
-        this.log.error("One of your accessories is missing the \"id\" field, which is required. ABORTING.");
-        process.exit(0);
-    } else if (!cbusUtils.verifyModuleId(accessoryData.id)) {
-        this.log.error("The specified id (" + accessoryData.id + ") is invalid. ABORTING.");
-        process.exit(0);
-    }
-    
-    var networkID = accessoryData.network || platform.client.clientNetwork;
-    var applicationID = accessoryData.application || platform.client.clientApplication;
-    
-    //--------------------------------------------------
-    //  Define the rest of our iVars
-    //--------------------------------------------------
-
-    this.accessoryData  =   accessoryData;
-
-    this.id             =   cbusUtils.idForCbusAddress(networkID, applicationID, this.accessoryData.id);
-    this.uuid_base      =   this.id //NB ignore this.accessoryData.uuid_base as it is only based on group id
-    this.name           =   this.accessoryData.name;
-    this.type           =   typeof(this.accessoryData.type) != "undefined" ? this.accessoryData.type : undefined;
-
-    //--------------------------------------------------
-    //  Fire our parent
-    //--------------------------------------------------
-    Accessory.call(this, this.name, uuid.generate(String(this.id)));
-
-    //--------------------------------------------------
-    //  Setup the service
-    //--------------------------------------------------
-    var s = this.getService(Service.AccessoryInformation);
-    
-    s.setCharacteristic(Characteristic.Manufacturer, "CBus")
-        .setCharacteristic(Characteristic.SerialNumber, cbusUtils.cbusAddressForId(this.id));
-    
-    if (this.type) {
-        s.setCharacteristic(Characteristic.Model, this.type);
-    }
-};
+    // configure service
+    service.setCharacteristic(Characteristic.Manufacturer, "Clipsal C-Bus");
+	service.setCharacteristic(Characteristic.SerialNumber, this.netId.toString());
+ 	service.setCharacteristic(Characteristic.Model, this.type);
+}
 
 CBusAccessory.prototype.getServices = function() {
     return this.services;
 };
 
 CBusAccessory.prototype._log = function(tag, message) {
-    this.log.info("[" + tag + "] [" + cbusUtils.cbusAddressForId(this.id) + ", " + this.name + "]: " + message);
+	const file = chalk.green.bold(`[${tag}]`);
+	const accessory = chalk.magenta(`[${this.netId} ${this.name}]`);
+	
+	this.log.info(`${file} ${accessory} ${message}`);
 };

@@ -21,11 +21,11 @@ function CBusMotionAccessory(platform, accessoryData) {
     this.motionService = this.addService(new Service.MotionSensor(this.name));
     this.motionService.getCharacteristic(Characteristic.MotionDetected)
         .on('get', this.getMotionState.bind(this));
-};
+}
 
 CBusMotionAccessory.prototype.getMotionState = function(callback, context) {
     setTimeout(function() {
-        this.client.receiveLightStatus(this.id, function(result) {
+        this.client.receiveLightStatus(this.netId, function(result) {
             this._log("CBusMotionAccessory", "getState = " + result.level);
             callback(false, /*state: */ result.level ? 1 : 0);
         }.bind(this));
@@ -34,6 +34,5 @@ CBusMotionAccessory.prototype.getMotionState = function(callback, context) {
 
 CBusMotionAccessory.prototype.processClientData = function(level) {
 	this.motionService.getCharacteristic(Characteristic.MotionDetected)
-		.setValue(level > 0 ? true : false);
+		.setValue(level > 0);
 };
-              

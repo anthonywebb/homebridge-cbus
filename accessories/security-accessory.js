@@ -21,7 +21,7 @@ function CBusSecurityAccessory(platform, accessoryData) {
     this.motionService = this.addService(new Service.MotionSensor(this.name));
     this.motionService.getCharacteristic(Characteristic.MotionDetected)
     .on('get', this.getMotionState.bind(this));
-};
+}
 
 CBusSecurityAccessory.prototype.getMotionState = function(callback, context) {
     setTimeout(function() {
@@ -34,5 +34,5 @@ CBusSecurityAccessory.prototype.getMotionState = function(callback, context) {
 
 CBusSecurityAccessory.prototype.processClientData = function(level) {
 	this.motionService.getCharacteristic(Characteristic.MotionDetected)
-		.setValue(level > 0 ? true : false);
+		.setValue(level > 0);
 };

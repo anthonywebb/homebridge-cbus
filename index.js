@@ -147,8 +147,6 @@ CBusPlatform.prototype.accessories = function(callback) {
 
     this.client.connect(function() {
         this.log.info('CBus Client is listening to CGate on ' + this.client.clientIpAddress 
-        	+ '... Debug: ' + this.client.clientDebug);
-
         this.log.info("Registering the accessories list...");
         this.foundAccessories = []; /* reset */
 
