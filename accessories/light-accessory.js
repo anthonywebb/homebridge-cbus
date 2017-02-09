@@ -1,4 +1,4 @@
-var Service, Characteristic, CBusAccessory, uuid;
+let Service, Characteristic, CBusAccessory, uuid;
 
 module.exports = function (_service, _characteristic, _accessory, _uuid) {
   Service = _service;
@@ -26,17 +26,17 @@ function CBusLightAccessory(platform, accessoryData) {
 
 CBusLightAccessory.prototype.getState = function(callback, context) {
     setTimeout(function() {
-        this.client.receiveLightStatus(this.netId, function(result) {
-            this._log("CBusLightAccessory", "getState = " + result.level);
-            callback(false, /*state: */ result.level ? 1 : 0);
+        this.client.receiveLightStatus(this.netId, function(message) {
+            this._log("CBusLightAccessory", `getState returned ${message.level}`);
+            callback(false, /*state: */ message.level ? 1 : 0);
         }.bind(this));
     }.bind(this), 50);
 };
 
 CBusLightAccessory.prototype.setState = function(value, callback, context) {
     // "context" is helping us avoid a never ending loop
-    if(context != 'remoteData'){
-        this._log("CBusLightAccessory", "setState = " + value);
+    if (context != 'remoteData'){
+        this._log("CBusLightAccessory", `setState to ${value}`);
         if (value) {
             this.client.turnOnLight(this.netId, function() {
                 callback();
@@ -51,7 +51,9 @@ CBusLightAccessory.prototype.setState = function(value, callback, context) {
     }
 };
 
-CBusLightAccessory.prototype.processClientData = function(level) {
+CBusLightAccessory.prototype.processClientData = function(message) {
+	const level = message.level;
+	
 	this.lightService.getCharacteristic(Characteristic.On)
 		.setValue(level > 0, undefined, 'remoteData');
 };

@@ -79,7 +79,7 @@ N.B. If you are connecting to a remote C-Gate server, you will likely need to co
 (NB. `client_eventport` and `client_statusport` are no longer required, but will be safely ignored)
 
 
-#### Registering accessories
+### Registering accessories
 Currently you must register devices by hand in a config file. In the future we may auto-discover them.
 
 The platform definition in the `config.json` file contains an `accessories` array, which defines the available accessories using the following keys:
@@ -90,7 +90,7 @@ The platform definition in the `config.json` file contains an `accessories` arra
 * `id`: (required) C-Bus address of the device — every accessory in C-Bus has one
 * `invert`: (optional, defaults to false) only used by the shutter relay accessory and indicates that the shutter has been wired to open when commanded closed and vice versa
 
-#### Fully functional example `config.json`:
+### Fully functional example `config.json`:
 ````json
 {
   "bridge": {
@@ -135,6 +135,20 @@ The platform definition in the `config.json` file contains an `accessories` arra
 }
 ````
 
+## Unit testing
+homebridge-cbus uses the excellent [tape unit-testing framework](https://github.com/substack/tape).
+
+To run tests:
+
+````
+npm test
+````
+
+To run tests and generate code coverage reports:
+
+````
+npm run test-coverage
+````
 ## Changes Since 0.5.0
 * 0.5.5:  introduces unit testing and more robust configuration file checking
 * 0.5.4:  fixes issue where some required files were missing

@@ -11,12 +11,13 @@ const DEFAULT_CLIENT_APPLICATION = 56;
 
 const DEFAULT_CLIENT_DEBUG = false;
 
-let log = require('util').log;
-let carrier = require('carrier');
-let net = require('net');
-let util = require('util');
-let chalk = require('chalk'); // does not alter string prototype
+const net = require('net');
+const util = require('util');
+const log = require('util').log;
 let EventEmitter = require('events').EventEmitter;
+
+const carrier = require('carrier');
+const chalk = require('chalk');
 
 const cbusUtils = require('./cbus-utils.js');
 const CBusNetId = require('./cbus-netid.js');
@@ -47,7 +48,6 @@ there are now only categories of messages to parse:
 
 2. an event
     a. 702 application information event
-        // TODO quite possible that the response will have sessionId and commandId parameters
         RX: #e# 20170204-130934.821 702 //SHAC/254/208 3dfc8d80-c4aa-1034-9fa5-fbb6c098d608 [security] system_arm 1 sourceUnit=213
         RX: #e# {timestamp} 702 {netid} {objectId} [security] [verb] [optional parameter(s)] sourceUnit=213
 
@@ -100,25 +100,25 @@ util.inherits(CBusClient, EventEmitter);
  * Opens a connection with the CBus server by binding the client ip address and port.
  */
 CBusClient.prototype.connect = function(callback) {
-    var that = this;
+    const that = this;
 
     this.socket = net.createConnection(this.cgateControlPort, this.cgateIpAddress);
 
     this.socket.on('error', function(error) {
-        that.log('C-Gate socket error: ' + error);
+        that.log.info('C-Gate socket error: ' + error);
         // this is where we need to re-open
     });
 
     this.socket.on('end', function() {
-        that.log('C-Gate socket terminated');
+        that.log.info('C-Gate socket terminated');
     });
 
     this.socket.on('close', function() {
-        that.log('C-Gate socket closed');
+        that.log.info('C-Gate socket closed');
     });
 
     this.socket.on('timeout', function() {
-        that.log('C-Gate socket timed out');
+        that.log.info('C-Gate socket timed out');
     });
 
     carrier.carry(this.socket, function(line) {
@@ -132,17 +132,17 @@ CBusClient.prototype.connect = function(callback) {
             let parts;
 
             if (parts = line.match(SERVICE_READY_REGEX)) {
-                that.log.info('C-Gate server responded ' + parts[1] + ", syntax " + parts[2]);
-                that.log.info('Configuring C-Gate session ...');
+                that.log.info(`Connected to C-Gate server ${parts[1]} (syntax ${parts[2]})`);
+                that.log.info(`Configuring C-Gate session ...`);
                 that.socket.write(EVENTS_REQUEST);
             } else if (parts = line.match(EVENTS_RESPONSE_REGEX)) {
                 // we've connected to cgate and received a response to our command to
                 // set the event level as we want it.
-                that.log(`C-Gate session configured and ready at ${that.cgateControlPort}:${that.cgateIpAddress}`);
+                that.log.info(`C-Gate session configured and ready at ${that.cgateControlPort}:${that.cgateIpAddress}`);
                 that.connectionReady = true;
                 callback();
             } else {
-                that.log(`C-Gate session not ready -- unexpected message: ${line}`);
+                that.log.info(`C-Gate session not ready -- unexpected message: ${line}`);
             }
         } else {
             that._socketReceivedLine(line);
@@ -157,11 +157,11 @@ CBusClient.prototype.disconnect = function() {
     if (typeof(this.socket) == 'undefined') {
         throw new Error('CGate socket has not been initialized yet.');
     }
-    this.socket.close();
+    this.socket.end();
 };
 
 /**
- * CGate level change commands
+ * CGate level commands
  */
 CBusClient.prototype.turnOnLight = function(netId, callback) {
 	const cmd = this._buildSetCommandString(netId, 'on', 100);
@@ -196,25 +196,25 @@ CBusClient.prototype.receiveSecurityStatus = function(netId, callback) {
 // TODO fix! legacy code -- very broken at the moment
 /*
 function _toPrettyString(parsed) {
-	let output;
+	let responseMessage;
 	
 	if (this.type == 'lighting') {
-		output = `unit ${this.sourceUnit} just set ${this.netId} to ${this.level}% over ${this.duration}s`;
+		responseMessage = `unit ${this.sourceUnit} just set ${this.netId} to ${this.level}% over ${this.duration}s`;
 	} else if (this.type == 'info') {
-		output = `${this.netId} group ${this.netId.group} advised current level of ${this.level}%`;
+		responseMessage = `${this.netId} group ${this.netId.group} advised current level of ${this.level}%`;
 	} else if (this.type == 'event') {
-		output = `received event status ${this.statusCode} with message: '${this.eventMessage}'`;
+		responseMessage = `received event status ${this.statusCode} with message: '${this.eventMessage}'`;
 		if (typeof this.timestamp != 'undefined') {
-			output = `at ${this.timestamp} ${output}`;
+			responseMessage = `at ${this.timestamp} ${responseMessage}`;
 		}
 		if (typeof this.commandId != 'undefined') {
-			output = `${output} [commandId: ${this.commandId}]`;
+			responseMessage = `${responseMessage} [commandId: ${this.commandId}]`;
 		}
 	}
 	
 	let result;
-	if (typeof output != 'undefined') {
-		result = output;
+	if (typeof responseMessage != 'undefined') {
+		result = responseMessage;
 	} else {
 		let flat = JSON.stringify(this);
 		result = `untranslated: ${flat}`;
@@ -262,9 +262,9 @@ CBusClient.prototype._sendMessage = function (message, inCallback) {
 
     this.socket.write(request.raw + `\n`, function(err) {
         if (err) {
-            this._log(`error '${err} when sending '${chalk.green(request.raw)}'`);
+            this.log.info(`error '${err} when sending '${chalk.green(request.raw)}'`);
         } else {
-            this._log(`sent command '${chalk.green(request.raw)}'`);
+            this.log.info(`sent command '${chalk.green(request.raw)}'`);
         }
 
         // fire the callback
@@ -273,27 +273,6 @@ CBusClient.prototype._sendMessage = function (message, inCallback) {
         }
     }.bind(this));
 };
-
-/*
-CBusClient.prototype._resolveReceivedMessage = function(buffer, type) {
-	
-    // TODO we used to keep state of each device, but i found it wasn't really doing much, if anything
-    // let's track some state for each device, this way we dont do things like turn on devices that are already on (when dimming)
-    if ((responseObj.netId != null) && (responseObj.level != null)) {
-        this.state[responseObj.netId.moduleId] = {
-            on: (responseObj.level > 0)
-        };
-    }
-
-    // TODO this is important and needs to be reimplemented
-    // broadcast receipt of parsable status updates relating to accessories
-    if ((responseObj.channel == LINE_STATUS)
-        && (typeof responseObj != 'undefined')
-        && (typeof responseObj.netId != 'undefined')) {
-        this.emit('remoteData', responseObj);
-    }
-};
-*/
 
 function _parseResponse(line) {
     //  RX: [123] 200 OK: //SHAC/254/56/3
@@ -337,7 +316,7 @@ function _parseResponse(line) {
 
 		default:
 			// TODO probably should do something special if we get an unexpected result code
-			// console.log(chalk.red(`unexpected reponse code ${responseCode} in line '${response.raw}'`));
+			// console.log.info(chalk.red(`unexpected reponse code ${responseCode} in line '${response.raw}'`));
 			break;
 	}
 
@@ -524,7 +503,7 @@ CBusClient.prototype._resolveResponse = function(response) {
 		this.pendingCommands.delete(response.commandId);
 			
 		response.request = request;
-		this._log(`matched request '${chalk.green(request.raw)}' with '${chalk.green(request.raw)}' ` + chalk.dim(`(${this.pendingCommands.size} pending requests)`));
+		this.log.info(`matched request '${chalk.green(request.raw)}' with '${chalk.green(response.raw)}' ` + chalk.dim(`(${this.pendingCommands.size} pending requests)`));
 		
 		if (typeof request.callback != 'undefined') {
 			request.callback(response);
@@ -533,36 +512,40 @@ CBusClient.prototype._resolveResponse = function(response) {
 		// couldn't find a corresponding request in the pending command cache
 		// should be exceedingly rare
 		// TODO log as unexpected behaviour
-		this._log(chalk.red(`unmatched response '${response.raw}'`));
+		this.log.info(chalk.red(`unmatched response '${response.raw}'`));
 	}
 };
 
 CBusClient.prototype._socketReceivedLine = function(line) {
 	try {
-		const parsedLine = _parseLine(line);
+		const message = _parseLine(line);
 		
-		switch (parsedLine.type) {
+		switch (message.type) {
 			case LINE_RESPONSE:
-				this._resolveResponse(parsedLine);
-				this._log(chalk.blue(`response ${util.inspect(parsedLine, { breakLength: Infinity })}`));
+				this._resolveResponse(message);
+				this.log.info(chalk.blue(`response ${util.inspect(message, { breakLength: Infinity })}`));
 				break;
 			
 			case LINE_EVENT:
-				this._log(chalk.blue(`event ${util.inspect(parsedLine, { breakLength: Infinity })}`));
-				// TODO resolve the response
+				this.log.info(chalk.blue(`event ${util.inspect(message, { breakLength: Infinity })}`));
+				if (message.netId) {
+					this.emit(`remoteData`, message);
+				}
 				break;
 				
 			default:
-				console.assert(false, `illegal parsedLine type ${parsedLine.type}`);
+				console.assert(false, `illegal parsedLine type ${message.type}`);
 		}
 	} catch (ex) {
-		this._log(chalk.red(`received unparsable line: '${line}', exception: ${ex}`));
+		this.log.info(chalk.red(`received unparsable line: '${line}', exception: ${ex}`));
 	}
 };
 
+/*
 CBusClient.prototype._log = function (message) {
 	const fileName = `[` + __filename.slice(__dirname.length + 1, -3) + `]`;
 	this.log.info(`${chalk.green.bold(fileName)} ${message}`);
 };
+*/
 
 module.exports = CBusClient;

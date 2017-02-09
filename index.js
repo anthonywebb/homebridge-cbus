@@ -10,6 +10,7 @@ let CBusAccessory, CBusLightAccessory, CBusDimmerAccessory, CBusMotionAccessory,
 //==========================================================================================
 //  Exports block
 //==========================================================================================
+
 module.exports = function(homebridge) {
     //--------------------------------------------------
     //  Setup the global vars
@@ -48,14 +49,22 @@ module.exports = function(homebridge) {
 //==========================================================================================
 
 function CBusPlatform(log, config) {
-    //--------------------------------------------------
-    //  vars definition
-    //--------------------------------------------------
+	this.accessoryDefinitions = new Map([
+		[ "light", CBusLightAccessory ],
+		[ "dimmer", CBusDimmerAccessory ],
+		[ "motion", CBusMotionAccessory ],
+		[ "security", CBusSecurityAccessory ],
+		[ "shutter", CBusShutterAccessory ]
+	]);
+	
+	//--------------------------------------------------
+	//  vars definition
+	//--------------------------------------------------
 	
     this.config	             = config;
     this.log                 = log;
-    this.foundAccessories    = [];
-    this.client              = undefined;
+    this.registeredAccessories = undefined;
+    this.client = undefined;
 
     //--------------------------------------------------
     //  setup vars
@@ -72,11 +81,11 @@ function CBusPlatform(log, config) {
 	try {
 		this.project = CBusNetId.validatedProjectName(config.client_cbusname);
 	} catch (ex) {
-		throw new Error(`illegal client_cbusname`);
+		throw new Error(`illegal client_cbusname: ${config.client_cbusname}`);
 	}
 	this.network = (typeof(config.client_network) !== `undefined`) ? config.client_network : undefined;
 	this.application = (typeof(config.client_application) !== `undefined`) ? config.client_application : undefined;
-		
+	
     // debug
     this.clientDebug = (typeof(config.client_debug) != `undefined`) ? config.client_debug : false;
 }
@@ -87,81 +96,76 @@ CBusPlatform.prototype.accessories = function(callback) {
     //  Initiate the CBus client
     //--------------------------------------------------
 
-    this.log.info("Connecting to the local C-Gate server...");
+    this.log.info(`Connecting to the local C-Gate server...`);
 
     this.client = new CGateClient(this.cgateIpAddress, this.cgateControlPort,
         this.project, this.network, this.application,
         this.log, this.clientDebug);
 
     // listen for data from the client and ensure that the homebridge UI is updated
-    this.client.on('remoteData', function(data) {
-        if(this.clientDebug){
-            this.log.info("[remote] id:" + data.netId.moduleId);
-        }
+    this.client.on('remoteData', function(message) {
+    	// must have a netId
+    	console.assert(message.netId);
 
-        // TODO change this to a map
-        if (typeof data.netId == undefined) {
-            this.log.info("[remote] :" + data.netId.moduleId);
-        }
-        var devs = this.foundAccessories;
-        for (var i = 0; i < devs.length; i++) {
-            var dev = devs[i];
-            if(dev.id == data.netId.moduleId) {
-                if(this.clientDebug) {
-                    this.log.info(`[remote] id: ${data.netId.moduleId} ${data.netId}, type: ${dev.type}, level: ${data.level}%`);
-                }
-                
-                // if we found a device, it must be supported
-                dev.processClientData(data.level);
-            }
-        }
+		// lookup accessory
+		const accessory = this.registeredAccessories.get(message.netId.getModuleId());
+		if (accessory) {
+			// process if found
+			this.log.info(`[remote] ${message.netId} found. name: ${accessory.name} (${accessory.type}), level: ${message.level}%`);
+			accessory.processClientData(message.level);
+		} else {
+			this.log.info(`[remote] ${message.netId} not registered`);
+		}
     }.bind(this));
 
     this.client.connect(function() {
-        this.log.info("Registering the accessories list...");
-        this.foundAccessories = []; /* reset */
-
-        for (let accessoryData of this.config.accessories) {
-            // make sure we use uuid_base so we dont see uuid collisions
-            // unused? accessoryData.uuid_base = accessoryData.id;
-
-			try {
-				let accessory = this.accessoryFactory(accessoryData);
-				this.foundAccessories.push(accessory);
-			} catch (ex) {
-				this.log.error(`Unable to instantiate accessory of type '${accessoryData.type}' (reason: ${ex}). ABORTING`);
-				process.exit(0);
-			}
-        }
-        
-        callback(this.foundAccessories.sort(function (a, b) {
-            return (a.name > b.name) - (a.name < b.name);
-        }));
+		const accessories = this._createAccessories();
+		
+		// build the lookup map
+		this.registeredAccessories = new Map();
+		for (const accessory of accessories) {
+			this.registeredAccessories.set(accessory.netId.getModuleId(), accessory);
+		}
+		
+		// hand them back to the callback to fire them up
+		this.log.info("Registering the accessories list...");
+		callback(accessories);
     }.bind(this));
 };
 
-CBusPlatform.prototype.accessoryFactory = function(entry) {
-    if (!entry.type) {
-        return undefined;
-    }
+// return a map of newly minted accessories
+CBusPlatform.prototype._createAccessories = function () {
+	this.log.info("Loading the accessories list...");
+	
+	const accessories = [];
+	
+	for (let accessoryData of this.config.accessories) {
+		try {
+			const accessory = this.createAccessory(accessoryData);
+			accessories.push(accessory);
+		} catch (ex) {
+			this.log.error(`Unable to instantiate accessory of type '${accessoryData.type}' (reason: ${ex}). ABORTING`);
+			process.exit(0);
+		}
+	}
+	
+	// sort them for good measure
+	accessories.sort(function (a, b) {
+		return (a.name > b.name) - (a.name < b.name);
+	});
+	
+	return accessories;
+};
 
-    switch (entry.type.toLowerCase()) {
-        case "light":
-            return new CBusLightAccessory(this, entry);
-            
-        case "dimmer":
-            return new CBusDimmerAccessory(this, entry);
-            
-        case "motion":
-            return new CBusMotionAccessory(this, entry);
-            
-        case "security":
-            return new CBusSecurityAccessory(this, entry);
-            
-        case "shutter":
-            return new CBusShutterAccessory(this, entry);
-            
-        default:
-            throw `unknown accessory`;
-    }
+CBusPlatform.prototype.createAccessory = function(entry) {
+	if (!entry.type) {
+		throw `every accessory must have a type`;
+	}
+	
+	const constructor = this.accessoryDefinitions.get(entry.type);
+	if (!constructor) {
+		throw `unknown accessory type '${entry.type}`;
+	}
+	
+	return new constructor(this, entry);
 };

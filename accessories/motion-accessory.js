@@ -1,4 +1,4 @@
-var Service, Characteristic, CBusAccessory, uuid;
+let Service, Characteristic, CBusAccessory, uuid;
 
 module.exports = function (_service, _characteristic, _accessory, _uuid) {
   Service = _service;
@@ -25,14 +25,16 @@ function CBusMotionAccessory(platform, accessoryData) {
 
 CBusMotionAccessory.prototype.getMotionState = function(callback, context) {
     setTimeout(function() {
-        this.client.receiveLightStatus(this.netId, function(result) {
-            this._log("CBusMotionAccessory", "getState = " + result.level);
-            callback(false, /*state: */ result.level ? 1 : 0);
+        this.client.receiveLightStatus(this.netId, function(message) {
+            this._log("CBusMotionAccessory", "getState = " + message.level);
+            callback(false, /*state: */ message.level ? 1 : 0);
         }.bind(this));
     }.bind(this), 50);
 };
 
-CBusMotionAccessory.prototype.processClientData = function(level) {
+CBusMotionAccessory.prototype.processClientData = function(message) {
+	const level = message.level;
+	
 	this.motionService.getCharacteristic(Characteristic.MotionDetected)
 		.setValue(level > 0);
 };

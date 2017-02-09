@@ -1,10 +1,14 @@
 'use strict';
 
+const util = require('util');
+const net = require('net');
+
+const carrier = require('carrier');
 const test = require('tape').test;
 const rewire = require("rewire");
-const util = require('util');
 
 const CGateClient = rewire('../cgate-client.js');
+const CBusNetId = require('../cbus-netid.js');
 
 const _parseLine = CGateClient.__get__('_parseLine');
 const _rawToPercent = CGateClient.__get__('_rawToPercent');
@@ -13,7 +17,7 @@ const _rawToPercent = CGateClient.__get__('_rawToPercent');
 //  Illegal Lines
 //==========================================================================================
 
-test('_parseLine: bad input', function (assert) {
+test('_parseLine: bad requestMessage', function (assert) {
 	assert.plan(4);
 	
 	assert.throws(function () {
@@ -248,6 +252,106 @@ test('parse response: 201', function (assert) {
 	assert.false(response.processed);
 	
 	assert.end();
+});
+
+//==========================================================================================
+//  spin up a server and have a chat
+//==========================================================================================
+
+test('server premature disconnect', function (assert) {
+	assert.plan(1);
+	
+	// create a server object
+	const port = 4001;
+	const NETID = CBusNetId.parseNetId(`//SHAC/254/56/3`);
+	const log = {
+		info: msg => { console.log(msg) }
+	};
+	const client = new CGateClient(`127.0.0.1`, port, `SHAC`, NETID.network, NETID.application, log, true);
+	
+	// try to close it before it's even been opened
+	assert.throws(function () {
+		client.disconnect();
+	});
+	
+	assert.end();
+});
+	
+test('server responses', function (assert) {
+	const port = 4001;
+	let lineCount = 0;
+	
+	const EXCHANGES = [
+		{ requestMessage: `[99] events e7s0c0`,
+			responseMessage: `[99] 200 OK.` },
+		{ requestMessage: `[100] ramp //SHAC/254/56/3 50%`,
+			responseMessage: `[100] 200 OK: //SHAC/254/56/3` },
+		{ requestMessage: `[101] get //SHAC/254/56/3 level`,
+			responseMessage: `[101] 300 //SHAC/254/56/3: level=128` }
+	];
+	
+	const NETID = CBusNetId.parseNetId(`//SHAC/254/56/3`);
+	
+	const log = {
+		info: msg => { /* console.log(msg) */ }
+	};
+	
+	assert.plan(EXCHANGES.length);
+	
+	// spin up a fake g-gate server
+	const server = net.createServer(function(connection) {
+		log.info('server connect');
+		connection.write(`201 Service ready: Clipsal C-Gate Version: v4.5.6 (build 789) #cmd-syntax=2.2\r\n`);
+		
+		carrier.carry(connection, (line) => {
+			const exchange = EXCHANGES[lineCount++];
+			
+			// check request
+			log.info(`req: '${line}'`);
+			log.info(`exp: '${exchange.requestMessage}'`);
+			assert.equal(line, exchange.requestMessage);
+			
+			// send response
+			log.info(`res: '${exchange.responseMessage}'`);
+			connection.write(`${exchange.responseMessage}\n`);
+		});
+	});
+	server.listen(port);
+	
+	const client = new CGateClient(`127.0.0.1`, port, `SHAC`, NETID.network, NETID.application, log, true);
+	
+	// listen for data from the client -- not yet used
+	client.on('remoteData', function(message) {
+		// must have a netId
+		console.assert(message.netId);
+		log.info(util.inspect(message));
+	});
+	
+	client.connect(function() {
+		// at this point we have completed the first exchange ('events e7s0c0')
+
+		let next = function() {
+			if (lineCount !== EXCHANGES.length) {
+				switch (lineCount) {
+					case 1:
+						client.setLightBrightness(NETID, 50, next);
+						break;
+					
+					case 2:
+						client.receiveLightStatus(NETID, next);
+						break;
+				}
+			} else {
+				client.disconnect();
+			}
+		};
+		next();
+	});
+
+	assert.on("end", function() {
+		log.info(`end`);
+		server.close();
+	});
 });
 
 

@@ -213,3 +213,16 @@ test('CBusNetId equals', function (assert) {
 	
 	assert.end();
 });
+
+test('CBusNetId not equals', function (assert) {
+	assert.plan(2);
+	
+	const netId1 = CBusNetId.parseNetId(`//BAR/254/208/128`);
+	const netId2 = CBusNetId.parseNetId(`//BAR/254/208/1`);
+	assert.notDeepEqual(netId1, netId2);
+	
+	const netId3 = new CBusNetId(`BAR`, 254, 208, 126);
+	assert.notDeepEqual(netId2, netId3);
+	
+	assert.end();
+});
