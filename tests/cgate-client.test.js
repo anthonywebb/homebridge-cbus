@@ -44,8 +44,9 @@ test('_parseLine: bad fromClient', function (assert) {
 //  Events
 //==========================================================================================
 
-const TEST_EVENTS = {
-	event756: {
+const TEST_EVENTS = [
+	{
+		name: `event 756`,
 		fromServer: `#e# 20170204-160655.767 756 //SHAC/254 3dfc3f60-c4aa-1034-9e98-fbb6c098d608 SyncState=syncing`,
 		expected: {
 			type: `event`,
@@ -53,8 +54,8 @@ const TEST_EVENTS = {
 			processed: false
 		}
 	},
-	
-	event730newLevel: {
+	{
+	 	name: `event 730 newLevel`,
 		fromServer: `#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new level=43 sourceunit=74 ramptime=10`,
 		expected: {
 			type: `event`,
@@ -66,8 +67,8 @@ const TEST_EVENTS = {
 			processed: true
 		}
 	},
-	
-	event702arm_not_ready: {
+	{
+	name: `event 702 arm_not_ready`,
 		fromServer: `#e# 20170204-130934.821 702 //SHAC/254/208/24 - [security] arm_not_ready sourceUnit=213`,
 		expected: {
 			type: `event`,
@@ -80,8 +81,8 @@ const TEST_EVENTS = {
 			processed: true
 		}
 	},
-	
-	event702zone_unsealed: {
+	{
+	 	name: `event 702 zone_unsealed`,
 		fromServer: `#e# 20170204-130934.821 702 //BVC13/254/208/3 - [security] zone_unsealed sourceUnit=8`,
 		expected: {
 			type: `event`,
@@ -92,8 +93,8 @@ const TEST_EVENTS = {
 			processed: true
 		}
 	},
-	
-	event702zone_sealed: {
+	{
+		name: `event 702 zone_sealed`,
 		fromServer: `#e# 20170204-130934.821 702 //BVC13/254/208/3 - [security] zone_sealed sourceUnit=8`,
 		expected: {
 			type: `event`,
@@ -104,8 +105,8 @@ const TEST_EVENTS = {
 			processed: true
 		}
 	},
-	
-	event702system_arm: {
+	{
+		name: `event 702 system_arm`,
 		fromServer: `#e# 20170204-130934.821 702 //SHAC/254/208 3dfc8d80-c4aa-1034-9fa5-fbb6c098d608 [security] system_arm 1 sourceUnit=213`,
 		expected: {
 			time: `20170204-130934.821`,
@@ -117,8 +118,8 @@ const TEST_EVENTS = {
 			processed: true
 		}
 	},
-	
-	event700heartbeat: {
+	{
+		name: `event 700 heartbeat`,
 		fromServer: `#e# 20170206-134427.023 700 cgate - Heartbeat.`,
 		expected: {
 			time: `20170206-134427.023`,
@@ -127,8 +128,8 @@ const TEST_EVENTS = {
 			processed: false
 		}
 	},
-	
-	event700nomillis: {
+	{
+		name: `event 700 no millis`,
 		fromServer: `#e# 20170206-134427 700 cgate - Heartbeat.`,
 		expected: {
 			time: `20170206-134427`,
@@ -137,100 +138,73 @@ const TEST_EVENTS = {
 			processed: false
 		}
 	},
-	
-	event730float: {
+	{
+		name: `event 730 float`,
 		fromServer: `#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new foo=6.5020`,
 		expected: {
 			type: `event`,
 			foo: 6.502,
 			processed: true
 		}
+	},
+	{
+		name: `event 730 bad level`,
+		fromServer: `#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new level=abc sourceunit=74 ramptime=10`,
+		expected: `exception`
+	},
+	{
+		name: `event 730 missing new`,
+		fromServer: `#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 level=43 sourceunit=74 ramptime=10`,
+		expected: `exception`
+	},
+	{
+		name: `event 730 missing sourceunit`,
+		fromServer: `#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new level=43 sourceunit= ramptime=10`,
+		expected: `exception`
+	},
+	{
+		name: `event 702 missing remainder`,
+		fromServer: `#e# 20170204-130934.821 702 //SHAC/254/208/24 - [security]`,
+		expected: `exception`
 	}
-};
+];
 
 function _testMessagesContains(assert, message, expected) {
-	Object.keys(expected).forEach(function(key) {
+	Object.keys(expected).forEach(key => {
 		const actualProperty = message[key];
 		const expectedProperty = expected[key];
-		console.log(`testing '${actualProperty}' vs '${expectedProperty}'`);
-		assert.deepEquals(actualProperty, expectedProperty);
+		// console.log(`testing '${actualProperty}' vs '${expectedProperty}'`);
+		assert.deepEquals(actualProperty, expectedProperty, key);
 	});
 }
 
-function _testEvent(assert, label) {
-	const testEvent = TEST_EVENTS[label];
-	console.assert(typeof testEvent != `undefined`);
+function _testEvent(assert, descriptor) {
+	console.assert(typeof descriptor != `undefined`);
 	
-	assert.plan(testEvent.expected.length);
-	let event = _parseLine(testEvent.fromServer);
-	_testMessagesContains(assert, event, testEvent.expected);
+	if (descriptor.expected == `exception`) {
+		assert.plan(1);
+		assert.throws(function () {
+			_parseLine(descriptor.fromServer);
+		}, null, descriptor.name);
+	} else {
+		assert.plan(descriptor.expected.length);
+		let event = _parseLine(descriptor.fromServer);
+		_testMessagesContains(assert, event, descriptor.expected);
+	}
 	
 	assert.end();
 }
 
-test('parse event: network message', assert => {
-	_testEvent(assert, 'event756');
-});
-
-test('parse event: new level', assert => {
-	_testEvent(assert, 'event730newLevel');
-});
-
-test('parse event: security group arm_not_ready', assert => {
-	_testEvent(assert, 'event702arm_not_ready');
-});
-
-test('parse event: security zone_unsealed', assert => {
-	_testEvent(assert, 'event702zone_unsealed');
-});
-
-test('parse event: security zone_sealed special handing', assert => {
-	_testEvent(assert, 'event702zone_sealed');
-});
-
-test('parse event: security application system_arm', assert => {
-	_testEvent(assert, 'event702system_arm');
-});
-
-test('parse event: heartbeat, not processed', assert => {
-	_testEvent(assert, 'event700heartbeat');
-});
-
-test('parse event: no milliseconds', assert => {
-	_testEvent(assert, 'event700nomillis');
-});
-
-test('parse response: value is float', assert => {
-	_testEvent(assert, 'event730float');
-});
-
-test('parse event: bad new level', function (assert) {
-	assert.plan(3);
-	
-	assert.throws(function () {
-		_parseLine(`#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new level=abc sourceunit=74 ramptime=10`);
+function _runEventTests() {
+	TEST_EVENTS.forEach(descriptor => {
+		test(`BLAH parse event: ${descriptor.name}`, assert => {
+			_testEvent(assert, descriptor);
+		});
 	});
-	
-	assert.throws(function () {
-		_parseLine(`#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 level=43 sourceunit=74 ramptime=10`);
-	});
-	
-	assert.throws(function () {
-		_parseLine(`#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new level=43 sourceunit= ramptime=10`);
-	});
-	
-	assert.end();
-});
+}
 
-test('parse event: application message missing remainder', function (assert) {
-	assert.plan(1);
-	
-	assert.throws(function () {
-		_parseLine(`#e# 20170204-130934.821 702 //SHAC/254/208/24 - [security]`);
-	});
-	
-	assert.end();
-});
+// run all of the above tests
+_runEventTests();
 
 
 //==========================================================================================
@@ -325,7 +299,7 @@ test('server responses', function (assert) {
 	let lineCount = 0;
 	
 	const log = {
-		info: msg => console.log(msg)
+		info: msg => { /* console.log(msg) */ }
 	};
 	const NETID = CBusNetId.parse(`//SHAC/254/56/3`);
 	const client = new CGateClient(`127.0.0.1`, port, `SHAC`, NETID.network, NETID.application, log, true);
