@@ -42,7 +42,7 @@ CBusNetId.prototype.getModuleId = function () {
 };
 
 // static factory method
-CBusNetId.parseNetId = function (netIdString) {
+CBusNetId.parse = function (netIdString) {
     const components = netIdString.match(/^\/\/([A-Z][A-Z0-9]{0,7})\/(\d{1,3})(?:\/(\d{1,3})(?:\/(\d{1,3}))?)?$/);
     
     if (!components) {

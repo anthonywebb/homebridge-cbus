@@ -194,27 +194,28 @@ CBusClient.prototype.receiveSecurityStatus = function(netId, callback) {
 //==========================================================================================
 
 // TODO fix! legacy code -- very broken at the moment
+
 /*
 function _toPrettyString(parsed) {
-	let responseMessage;
+	let output;
 	
 	if (this.type == 'lighting') {
-		responseMessage = `unit ${this.sourceUnit} just set ${this.netId} to ${this.level}% over ${this.duration}s`;
+		output = `unit ${this.sourceUnit} just set ${this.netId} to ${this.level}% over ${this.duration}s`;
 	} else if (this.type == 'info') {
-		responseMessage = `${this.netId} group ${this.netId.group} advised current level of ${this.level}%`;
+		output = `${this.netId} group ${this.netId.group} advised current level of ${this.level}%`;
 	} else if (this.type == 'event') {
-		responseMessage = `received event status ${this.statusCode} with message: '${this.eventMessage}'`;
+		output = `received event status ${this.statusCode} with message: '${this.eventMessage}'`;
 		if (typeof this.timestamp != 'undefined') {
-			responseMessage = `at ${this.timestamp} ${responseMessage}`;
+			output = `at ${this.timestamp} ${output}`;
 		}
 		if (typeof this.commandId != 'undefined') {
-			responseMessage = `${responseMessage} [commandId: ${this.commandId}]`;
+			output = `${output} [commandId: ${this.commandId}]`;
 		}
 	}
 	
 	let result;
-	if (typeof responseMessage != 'undefined') {
-		result = responseMessage;
+	if (typeof output != 'undefined') {
+		result = output;
 	} else {
 		let flat = JSON.stringify(this);
 		result = `untranslated: ${flat}`;
@@ -223,6 +224,7 @@ function _toPrettyString(parsed) {
 	return result;
 }
 */
+
 
 CBusClient.prototype._buildGetCommandString = function(netId, command) {
     return `get ${netId} ${command}`;
@@ -304,7 +306,7 @@ function _parseResponse(line) {
 				throw `not in 'level=xxx' format`;
 			}
 
-			response.netId = CBusNetId.parseNetId(parsed[1]);
+			response.netId = CBusNetId.parse(parsed[1]);
 			response.level = _rawToPercent(parseInt(parsed[2]));
 			response.processed = true;
 			break;
@@ -409,7 +411,7 @@ function _parseEvent(line) {
                 throw `not in 'netid objectId [applicationName] remainder' format`;
             }
 
-            event.netId = CBusNetId.parseNetId(infoParts[1]);
+            event.netId = CBusNetId.parse(infoParts[1]);
             // event.objectId = infoParts[2];
             event.application = infoParts[3];
             event.processed = true;
@@ -448,7 +450,7 @@ function _parseEvent(line) {
                 throw `not in 'new remainder' format`;
             }
 
-            event.netId = CBusNetId.parseNetId(attributes[1]);
+            event.netId = CBusNetId.parse(attributes[1]);
             // event.objectId = attributes[2];
             event.processed = true;
 	

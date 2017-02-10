@@ -12,8 +12,9 @@ module.exports.fixInheritance = function(subclass, superclass) {
     }
 };
 
-// parse the requestMessage as an integer
-// allow undefined to pass throw, but otherwise throw exception if requestMessage isn't an integer or a string version of an integer
+// parse the fromClient as an integer
+// allow undefined to pass through, but otherwise throw exception if fromClient
+// isn't an integer or a string version of an integer
 module.exports.integerise = function (x) {
 	if (typeof x == 'undefined') {
 		return undefined;
