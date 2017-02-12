@@ -36,7 +36,7 @@ CBusDimmerAccessory.prototype.getBrightness = function(callback, context) {
 
 CBusDimmerAccessory.prototype.setBrightness = function(level, callback, context) {
     // "context" is helping us avoid a never ending loop
-    if (context != 'remoteData'){
+    if (context != `event`){
         this._log("CBusDimmerAccessory", `setBrightness to ${level}%`);
         this.client.setLightBrightness(this.netId, level, function() {
             callback();
@@ -51,14 +51,14 @@ CBusDimmerAccessory.prototype.processClientData = function(message) {
 	
 	// set the brightness characteristic
 	this.lightService.getCharacteristic(Characteristic.Brightness)
-		.setValue(level, undefined, 'remoteData');
+		.setValue(level, undefined, `event`);
 	
 	// pick up the special cases of 'on' and 'off'
 	if (level == 100) {
 		this.lightService.getCharacteristic(Characteristic.On)
-			.setValue(true, undefined, 'remoteData');    
+			.setValue(true, undefined, `event`);
 	} else if (level == 0) { 
 		this.lightService.getCharacteristic(Characteristic.On)
-			.setValue(false, undefined, 'remoteData');   
+			.setValue(false, undefined, `event`);
 	}
 };

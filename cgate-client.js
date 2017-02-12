@@ -22,9 +22,8 @@ const chalk = require('chalk');
 const cbusUtils = require('./cbus-utils.js');
 const CBusNetId = require('./cbus-netid.js');
 
-const LINE_EVENT = `event`;
-const LINE_RESPONSE = `response`;
-const LINE_UNKNOWN = `unknown`;
+const EVENT_TYPE = `event`;
+const RESPONSE_TYPE = `response`;
 
 
 //==========================================================================================
@@ -106,7 +105,6 @@ CBusClient.prototype.connect = function(callback) {
 
     this.socket.on('error', function(error) {
         that.log.info('C-Gate socket error: ' + error);
-        // this is where we need to re-open
     });
 
     this.socket.on('end', function() {
@@ -115,9 +113,12 @@ CBusClient.prototype.connect = function(callback) {
 
     this.socket.on('close', function() {
         that.log.info('C-Gate socket closed');
+		// TODO i think this is where we need to reopen the socket if it is closed
     });
-
-    this.socket.on('timeout', function() {
+	
+	// from node documentation: By default net.Socket do not have a timeout.
+	// so not sure how we would get this
+	this.socket.on('timeout', function() {
         that.log.info('C-Gate socket timed out');
     });
 
@@ -178,8 +179,8 @@ CBusClient.prototype.receiveLightStatus = function(netId, callback) {
     this._sendMessage(cmd, callback);
 };
 
-CBusClient.prototype.setLightBrightness = function(netId, value, callback) {
-	const cmd = this._buildSetCommandString(netId, 'ramp', value);
+CBusClient.prototype.setLightBrightness = function(netId, level, callback, delay) {
+	const cmd = this._buildSetCommandString(netId, 'ramp', level, delay);
     this._sendMessage(cmd, callback);
 };
 
@@ -230,8 +231,10 @@ CBusClient.prototype._buildGetCommandString = function(netId, command) {
     return `get ${netId} ${command}`;
 };
 
-CBusClient.prototype._buildSetCommandString = function(netId, command, level, delay) {
-    var message;
+CBusClient.prototype._buildSetCommandString = function(netId, command, level, duration) {
+	console.assert(command.match(/^(on|off|ramp)$/));
+	
+    let message;
 
     if (command == 'on') {
         message = `on ${netId}`;
@@ -240,22 +243,20 @@ CBusClient.prototype._buildSetCommandString = function(netId, command, level, de
     } else if (command == 'ramp') {
         console.assert(level <= 100);
         message = `ramp ${netId} ${level}%`;
-        if (delay) {
-            message += ` ${delay}`;
+        if (duration) {
+            message += ` ${duration}`;
         }
-    } else {
-        console.assert(false);
     }
 
     return message;
 };
 
-CBusClient.prototype._sendMessage = function (message, inCallback) {
+CBusClient.prototype._sendMessage = function (message, callback) {
     let nextCommandId = this.commandId++;
 
     const request = {
         message: message,
-        callback: inCallback,
+        callback: callback,
         raw: `[${nextCommandId}] ${message}`
     };
 
@@ -267,11 +268,6 @@ CBusClient.prototype._sendMessage = function (message, inCallback) {
             this.log.info(`error '${err} when sending '${chalk.green(request.raw)}'`);
         } else {
             this.log.info(`sent command '${chalk.green(request.raw)}'`);
-        }
-
-        // fire the callback
-        if (typeof(callback) != "undefined") {
-            callback(message);
         }
     }.bind(this));
 };
@@ -300,14 +296,25 @@ function _parseResponse(line) {
 			// TX: get //SHAC/254/56/3 level
 			// RX: 300 //SHAC/254/56/3: level=0
 			// parse '//SHAC/254/56/3: level=0' into netId, level
-			const OBJ_INFO_REGEX = /^(.*): level=(\d{0,3})$/;
+			const OBJ_INFO_REGEX = /^(.*): (level|zonestate)=(\d{0,3})$/;
 			let parsed = message.match(OBJ_INFO_REGEX);
 			if (!parsed) {
-				throw `not in 'level=xxx' format`;
+				throw `not in '(level|zonestate)=xxx' format`;
 			}
 
 			response.netId = CBusNetId.parse(parsed[1]);
-			response.level = _rawToPercent(parseInt(parsed[2]));
+			const attribute = parsed[2];
+			const value = parseInt(parsed[3]);
+			switch(attribute) {
+				case `level`:
+					response.level = _rawToPercent(value);
+					break;
+					
+				case `zonestate`:
+					response.zonestate = _rawToZoneState(value);
+					break;
+			}
+			
 			response.processed = true;
 			break;
 
@@ -315,6 +322,8 @@ function _parseResponse(line) {
 			// result from setting a level
 			response.processed = true;
 			break;
+			
+		// TODO probably should handle error `401 Bad object or device ID`
 
 		default:
 			// TODO probably should do something special if we get an unexpected result code
@@ -325,6 +334,8 @@ function _parseResponse(line) {
     return response;
 }
 
+// convert levels from 0-255 to 0-100 to agree with the table in
+// the help document 'C-Bus to percent level lookup table'
 function _rawToPercent(raw) {
 	if (typeof raw !== `number`) {
 		throw `illegal raw type: ${typeof raw}`;
@@ -334,10 +345,28 @@ function _rawToPercent(raw) {
 		throw `illegal raw level: ${raw}`;
 	}
 	
-	// convert levels from 0-255 to 0-100 to agree with the table in
-	// the help document 'C-Bus to percent level lookup table'
-	// return Math.floor(((raw + 2) / 255) * 100);
 	return Math.floor(((raw + 2) / 255) * 100);
+}
+
+// valid values for zonestate:
+// 0 = sealed
+// 1 = unsealed
+// 2 = open
+// 3 = short
+// -1 = unknown
+function _rawToZoneState(raw) {
+	const LABELS = [ `sealed`, `unsealed`, `open`, `short` ];
+	let result;
+	
+	if (raw == -1) {
+		result = `unknown`
+	} else if (raw < LABELS.length) {
+		result = LABELS[raw];
+	} else {
+		throw `illegal zonestate label: ${raw}`;
+	}
+	
+	return result;
 }
 
 // extracts key=value pairs and adds to target
@@ -354,7 +383,7 @@ function _parseProperties(message, target) {
 			let value = keyValue[1];
             
             if ((key.length == 0) || (value.length == 0)) {
-            	throw `bad key=value: '${keyValue}'`;
+            	throw `bad key=value: '${key}'`;
 			}
 			
             // parse it if it's a number
@@ -422,17 +451,10 @@ function _parseEvent(line) {
 			// convert application events to levels
 			// TODO this probably belongs in the security accessory
 			if (event.application == `security`) {
-				const subType = event.remainder[0];
-				switch (subType) {
-					case `zone_unsealed`:
-					case `zone_open`:
-					case `zone_short`:
-						event.level = 100;
-						break;
-						
-					case `zone_sealed`:
-						event.level = 0;
-						break;
+				const ZONE_REGEX = /^zone_([a-z]+)$/;
+				const parsed = event.remainder[0].match(ZONE_REGEX);
+				if (parsed) {
+					event.zonestate = parsed[1];
 				}
 			}
 			break;
@@ -484,12 +506,12 @@ function _parseLine(line) {
 	if (parts = line.match(RESPONSE_REGEX)) {
 		// event response without a prefix 'e', so it's a *r*esponse to one of _our_ commands
 		parsedLine = _parseResponse(line);
-		parsedLine.type = LINE_RESPONSE;
+		parsedLine.type = RESPONSE_TYPE;
 	} else if (parts = line.match(CHANNEL_REGEX)) {
 		parsedLine = _parseEvent(parts[1]);
-		parsedLine.type = LINE_EVENT;
+		parsedLine.type = EVENT_TYPE;
 	} else {
-		throw `unrecognised structure'`;
+		throw `unrecognised structure`;
 	}
 	parsedLine.raw = line;
 	
@@ -521,33 +543,24 @@ CBusClient.prototype._resolveResponse = function(response) {
 CBusClient.prototype._socketReceivedLine = function(line) {
 	try {
 		const message = _parseLine(line);
+		console.assert((message.type == RESPONSE_TYPE) || (message.type == EVENT_TYPE), `illegal parsedLine type ${message.type}`);
 		
 		switch (message.type) {
-			case LINE_RESPONSE:
+			case RESPONSE_TYPE:
 				this._resolveResponse(message);
 				this.log.info(chalk.blue(`response ${util.inspect(message, { breakLength: Infinity })}`));
+				this.emit(`response`, message);
 				break;
 			
-			case LINE_EVENT:
+			case EVENT_TYPE:
 				this.log.info(chalk.blue(`event ${util.inspect(message, { breakLength: Infinity })}`));
-				if (message.netId) {
-					this.emit(`remoteData`, message);
-				}
+				this.emit(`event`, message);
 				break;
-				
-			default:
-				console.assert(false, `illegal parsedLine type ${message.type}`);
 		}
 	} catch (ex) {
 		this.log.info(chalk.red(`received unparsable line: '${line}', exception: ${ex}`));
+		this.emit(`junk`, ex, line);
 	}
 };
-
-/*
-CBusClient.prototype._log = function (message) {
-	const fileName = `[` + __filename.slice(__dirname.length + 1, -3) + `]`;
-	this.log.info(`${chalk.green.bold(fileName)} ${message}`);
-};
-*/
 
 module.exports = CBusClient;

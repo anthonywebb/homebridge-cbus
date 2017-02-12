@@ -192,7 +192,7 @@ CBusShutterAccessory.prototype.getTargetPosition = function(callback, context) {
 
 CBusShutterAccessory.prototype.setTargetPosition = function(newPosition, callback, context) {
     // "context" is helping us avoid a never ending loop
-    if (context != 'remoteData') {
+    if (context != `event`) {
         this._log("CBusShutterAccessory", `setTargetPosition = ${newPosition} (was ${this.cachedTargetPosition})`);
 
 		// tell homekit that the window covering is moving
@@ -252,7 +252,7 @@ CBusShutterAccessory.prototype.processClientData = function(message) {
 		this._log("CBusShutterAccessory", `client: received ${translated}%`);
 		
 		if (this.cachedTargetPosition != translated) {
-			this.shutterService.getCharacteristic(Characteristic.TargetPosition).setValue(translated, undefined, 'remoteData');
+			this.shutterService.getCharacteristic(Characteristic.TargetPosition).setValue(translated, undefined, `event`);
 
 			//  move over 2 seconds
 			setTimeout(function() {
@@ -262,9 +262,9 @@ CBusShutterAccessory.prototype.processClientData = function(message) {
 				// simulate the shutter relay, we won't know when it has stopped. 
 				// so just assume it gets there immediately.		
 				this.shutterService.getCharacteristic(Characteristic.CurrentPosition)
-					.setValue(this.cachedTargetPosition, undefined, 'remoteData');
+					.setValue(this.cachedTargetPosition, undefined, `event`);
 				this.shutterService.getCharacteristic(Characteristic.PositionState)
-					.setValue(Characteristic.PositionState.STOPPED, undefined, 'remoteData');
+					.setValue(Characteristic.PositionState.STOPPED, undefined, `event`);
 			}.bind(this), SPIN_TIME);
 		}
 	} else {

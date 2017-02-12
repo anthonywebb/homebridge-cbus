@@ -103,18 +103,17 @@ CBusPlatform.prototype.accessories = function(callback) {
         this.log, this.clientDebug);
 
     // listen for data from the client and ensure that the homebridge UI is updated
-    this.client.on('remoteData', function(message) {
-    	// must have a netId
-    	console.assert(message.netId);
-
-		// lookup accessory
-		const accessory = this.registeredAccessories.get(message.netId.getModuleId());
-		if (accessory) {
-			// process if found
-			this.log.info(`[remote] ${message.netId} found. name: ${accessory.name} (${accessory.type}), level: ${message.level}%`);
-			accessory.processClientData(message.level);
-		} else {
-			this.log.info(`[remote] ${message.netId} not registered`);
+    this.client.on(`event`, function(message) {
+    	if (message.netId) {
+			// lookup accessory
+			const accessory = this.registeredAccessories.get(message.netId.getModuleId());
+			if (accessory) {
+				// process if found
+				this.log.info(`[remote] ${message.netId} found. name: ${accessory.name} (${accessory.type}), level: ${message.level}%`);
+				accessory.processClientData(message.level);
+			} else {
+				this.log.info(`[remote] ${message.netId} not registered`);
+			}
 		}
     }.bind(this));
 

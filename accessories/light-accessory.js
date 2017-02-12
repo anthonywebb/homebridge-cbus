@@ -35,7 +35,7 @@ CBusLightAccessory.prototype.getState = function(callback, context) {
 
 CBusLightAccessory.prototype.setState = function(value, callback, context) {
     // "context" is helping us avoid a never ending loop
-    if (context != 'remoteData'){
+    if (context != `event`){
         this._log("CBusLightAccessory", `setState to ${value}`);
         if (value) {
             this.client.turnOnLight(this.netId, function() {
@@ -55,5 +55,5 @@ CBusLightAccessory.prototype.processClientData = function(message) {
 	const level = message.level;
 	
 	this.lightService.getCharacteristic(Characteristic.On)
-		.setValue(level > 0, undefined, 'remoteData');
+		.setValue(level > 0, undefined, `event`);
 };
