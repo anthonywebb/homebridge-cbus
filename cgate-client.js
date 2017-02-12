@@ -241,7 +241,7 @@ CBusClient.prototype._buildSetCommandString = function(netId, command, level, du
     } else if (command == 'off') {
         message = `off ${netId}`;
     } else if (command == 'ramp') {
-        console.assert(level <= 100);
+        console.assert(level <= 100, `level <= 100; (was ${level})`);
         message = `ramp ${netId} ${level}%`;
         if (duration) {
             message += ` ${duration}`;
@@ -267,7 +267,7 @@ CBusClient.prototype._sendMessage = function (message, callback) {
         if (err) {
             this.log.info(`error '${err} when sending '${chalk.green(request.raw)}'`);
         } else {
-            this.log.info(`sent command '${chalk.green(request.raw)}'`);
+            this.log.info(`sent command '${chalk.green.bold(request.raw)}'`);
         }
     }.bind(this));
 };
@@ -441,15 +441,14 @@ function _parseEvent(line) {
             }
 
             event.netId = CBusNetId.parse(infoParts[1]);
-            // event.objectId = infoParts[2];
+            // event.objectId = infoParts[2];		// no current need for objectIds
             event.application = infoParts[3];
             event.processed = true;
 
             // pull our parameters
 			_parseProperties(infoParts[4], event);
 	
-			// convert application events to levels
-			// TODO this probably belongs in the security accessory
+			// parse security application events
 			if (event.application == `security`) {
 				const ZONE_REGEX = /^zone_([a-z]+)$/;
 				const parsed = event.remainder[0].match(ZONE_REGEX);
@@ -527,7 +526,7 @@ CBusClient.prototype._resolveResponse = function(response) {
 		this.pendingCommands.delete(response.commandId);
 			
 		response.request = request;
-		this.log.info(`matched request '${chalk.green(request.raw)}' with '${chalk.green(response.raw)}' ` + chalk.dim(`(${this.pendingCommands.size} pending requests)`));
+		this.log.info(`matched response '${chalk.magenta.underline(response.raw)}' to request '${chalk.magenta.underline(request.raw)}' ` + chalk.dim(`(${this.pendingCommands.size} pending requests)`));
 		
 		if (typeof request.callback != 'undefined') {
 			request.callback(response);

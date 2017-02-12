@@ -26,10 +26,10 @@ function CBusSecurityAccessory(platform, accessoryData) {
 CBusSecurityAccessory.prototype.getMotionState = function(callback, context) {
     setTimeout(function() {
 	   this.client.receiveSecurityStatus(this.id, function(message) {
-		  this._log(`CBusSecurityAccessory`, `getState = ${message.level}`);
-		  callback(false, /*state: */ message.level ? 1 : 0);
-		  }.bind(this));
-	   }.bind(this), 50);
+		  this._log(`CBusSecurityAccessory`, `zonestate = ${message.zonestate}`);
+		  callback(false, message.level ? 1 : 0);
+	   }.bind(this));
+	}.bind(this), 50);
 };
 
 CBusSecurityAccessory.prototype.processClientData = function(message) {

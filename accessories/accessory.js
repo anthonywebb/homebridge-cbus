@@ -76,7 +76,7 @@ CBusAccessory.prototype.getServices = function() {
 };
 
 CBusAccessory.prototype._log = function(tag, message) {
-	const file = chalk.green.bold(`[${tag}]`);
+	const file = chalk.gray.bold(`[${tag}]`);
 	const accessory = chalk.magenta(`[${this.netId} ${this.name}]`);
 	
 	this.log.info(`${file} ${accessory} ${message}`);

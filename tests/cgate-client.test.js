@@ -122,7 +122,7 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[105] receiveSecurityStatus`,
 		clientAction: function () {
-			gClient.receiveSecurityStatus(CBusNetId.parse(`//SHAC/254/208/15`), () => { console.log(`received zone status`); } );
+			gClient.receiveSecurityStatus(CBusNetId.parse(`//SHAC/254/208/15`), () => { log.info(`received zone status`); } );
 		},
 		fromClient: `[105] get //SHAC/254/208/15 zonestate`,
 		fromServer: `[105] 300 //SHAC/254/208/15: zonestate=1`,
@@ -304,7 +304,7 @@ const TEST_DESCRIPTORS = [
 		exception: /bad key=value: 'sourceunit'/
 	},
 	{
-		name: `parse response: 200`,
+		name: `response 200`,
 		fromServer: `[123] 200 OK: //SHAC/254/56/3`,
 		expected: {
 			type: `response`,
@@ -315,7 +315,7 @@ const TEST_DESCRIPTORS = [
 		}
 	},
 	{
-	name: `parse response: 300`,
+	name: `response 300`,
 	fromServer: `[456] 300 //SHAC/254/56/3: level=129`,
 		expected: {
 			type: `response`,
@@ -328,31 +328,31 @@ const TEST_DESCRIPTORS = [
 		}
 	},
 	{
-		name: `parse response: bad level 1`,
+		name: `bad response level 1`,
 		fromServer: `[456] 300 //SHAC/254/56/3: level=abc`,
 		expected: `exception`,
 		exception: /not in '\(level|zonestate\)=xxx' format/
 	},
 	{
-		name: `parse response: bad level 2`,
+		name: `bad response level 2`,
 		fromServer: `[456] 300 //SHAC/254/56/3: level=-1`,
 		expected: `exception`,
 		exception: /not in '\(level|zonestate\)=xxx' format/
 	},
 	{
-		name: `parse response: bad level 3`,
+		name: `bad response level 3`,
 		fromServer: `[456] 300 //SHAC/254/56/3: level=1000`,
 		expected: `exception`,
 		exception: /not in '\(level|zonestate\)=xxx' format/
 	},
 	{
-		name: `parse response: bad level 4`,
+		name: `bad response level 4`,
 		fromServer: `[456] 300 //SHAC/254/56/3: level=300`,
 		expected: `exception`,
 		exception: /illegal raw level: 300/
 	},
 	{
-		name: `parse response: 201`,
+		name: `bad response 201`,
 		fromServer: `[789] 201 some string we don't expect`,
 		expected: {
 			type: `response`,
@@ -378,59 +378,6 @@ function _validateMessageAgainstExpected(message, expected, name) {
 		assert.end();
 	});
 }
-
-/*
-function _testCalleeThrowsAsExpected(callee, line, exception, name) {
-	console.assert(typeof callee == `function`);
-	console.assert(typeof line == `string`);
-	console.assert(exception instanceof RegExp);
-	console.assert(typeof name == `string`);
-	
-	log.info(`====> scheduling test for '${name}'`);
-	
-	test(name, assert => {
-		assert.plan(1);
-		assert.throws(function () {
-				callee(line);
-			},
-			exception,
-			name);
-		assert.end();
-	});
-}*/
-
-/*
-function _testDescriptor(descriptor, callee) {
-	console.assert(typeof descriptor == `object`);
-	console.assert(typeof callee == `function`);
-	
-	if (descriptor.expected == `exception`) {
-		_testCalleeThrowsAsExpected(
-			callee,
-			descriptor.fromServer,
-			descriptor.exception,
-			descriptor.name);
-	} else {
-		const message = callee(descriptor.fromServer);
-		_validateMessageAgainstExpected(
-			message,
-			descriptor.expected,
-			descriptor.name);
-	}
-}
-
-function _executeTests() {
-	TEST_DESCRIPTORS.forEach(descriptor => {
-		// skip the entries that are marked as matched
-		if (!descriptor.expected.matched === true) {
-			_testDescriptor(descriptor, _parseLine);
-		}
-	});
-}
-
-// run all of the above tests
-// _executeTests();
-*/
 
 //==========================================================================================
 //  spin up a mock cgate server and have a chat
@@ -515,7 +462,7 @@ test('server responses', function (assert) {
 				}
 				
 				// check request is what we expected
-				assert.equal(req, exp, `ensuring fromClient meets expectation`);
+				assert.equal(req, exp, `${testDescriptor.name}: ensuring fromClient meets expectation`);
 				
 				// send response
 				connection.write(`${res}\n`);
@@ -577,7 +524,7 @@ test('server responses', function (assert) {
 				throw ex;
 			},
 			exceptionRegex,
-			`junk generated when testing '${descriptor.name}' must match expected exception regex`);
+			`${descriptor.name}: exception matches regex '${descriptor.exception}'`);
 		descriptorIndex++;
 		next();
 	});

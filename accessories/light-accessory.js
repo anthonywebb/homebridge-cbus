@@ -20,11 +20,11 @@ function CBusLightAccessory(platform, accessoryData) {
     //--------------------------------------------------
     this.lightService = this.addService(new Service.Lightbulb(this.name));
     this.lightService.getCharacteristic(Characteristic.On)
-        .on('get', this.getState.bind(this))
-        .on('set', this.setState.bind(this));
+        .on('get', this.getOn.bind(this))
+        .on('set', this.setOn.bind(this));
 }
 
-CBusLightAccessory.prototype.getState = function(callback, context) {
+CBusLightAccessory.prototype.getOn = function(callback, context) {
     setTimeout(function() {
         this.client.receiveLightStatus(this.netId, function(message) {
             this._log("CBusLightAccessory", `getState returned ${message.level}`);
@@ -33,11 +33,13 @@ CBusLightAccessory.prototype.getState = function(callback, context) {
     }.bind(this), 50);
 };
 
-CBusLightAccessory.prototype.setState = function(value, callback, context) {
+CBusLightAccessory.prototype.setOn = function(message, callback, context) {
+	console.assert(typeof message.value != `undefined`);
+	
     // "context" is helping us avoid a never ending loop
     if (context != `event`){
         this._log("CBusLightAccessory", `setState to ${value}`);
-        if (value) {
+        if (message.value) {
             this.client.turnOnLight(this.netId, function() {
                 callback();
             });
@@ -52,6 +54,7 @@ CBusLightAccessory.prototype.setState = function(value, callback, context) {
 };
 
 CBusLightAccessory.prototype.processClientData = function(message) {
+	console.assert(typeof message.value != `undefined`);
 	const level = message.level;
 	
 	this.lightService.getCharacteristic(Characteristic.On)

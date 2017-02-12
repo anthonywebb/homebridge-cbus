@@ -27,7 +27,7 @@ module.exports = function(homebridge) {
     // load
     CBusAccessory = require('./accessories/accessory.js')(Service, Characteristic, Accessory, uuid);
     CBusLightAccessory = require('./accessories/light-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
-    CBusDimmerAccessory = require('./accessories/dimmer-accessory.js')(Service, Characteristic, CBusLightAccessory, uuid);
+    CBusDimmerAccessory = require('./accessories/dimmer-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
     CBusMotionAccessory = require('./accessories/motion-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
     CBusSecurityAccessory = require('./accessories/security-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
     CBusShutterAccessory = require('./accessories/shutter-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
@@ -109,8 +109,8 @@ CBusPlatform.prototype.accessories = function(callback) {
 			const accessory = this.registeredAccessories.get(message.netId.getModuleId());
 			if (accessory) {
 				// process if found
-				this.log.info(`[remote] ${message.netId} found. name: ${accessory.name} (${accessory.type}), level: ${message.level}%`);
-				accessory.processClientData(message.level);
+				this.log.info(`[remote] ${message.netId} ${accessory.name} (${accessory.type}), level: ${message.level}%`);
+				accessory.processClientData(message);
 			} else {
 				this.log.info(`[remote] ${message.netId} not registered`);
 			}
