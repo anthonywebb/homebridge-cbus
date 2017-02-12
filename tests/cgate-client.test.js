@@ -26,9 +26,24 @@ log.info = log;
 //==========================================================================================
 
 //forward declaration
-var gClient;
+let gClient;
 
+//
 const TEST_DESCRIPTORS = [
+	{
+		name: `event that had asserted`,
+		fromServer: `#e# 20170213-083355.401 730 //SHAC/254/56/72 3df847c0-c4aa-1034-9edf-fbb6c098d608 new level=255 sourceunit=12 ramptime=0 sessionId=cmd987 commandId=106`,
+		expected: {
+			type: `event`,
+			code: 730,
+			level: 100,
+			sourceunit: 12,
+			ramptime: 0,
+			sessionId: `cmd987`,
+			commandId: 106,
+			processed: true
+		}
+	},
 	{
 		name: `[100] turnOnLight`,
 		clientAction: function () {
@@ -365,7 +380,7 @@ const TEST_DESCRIPTORS = [
 ];
 
 function _validateMessageAgainstExpected(message, expected, name) {
-	console.assert(typeof expected == `object`);
+	console.assert(typeof expected == `object`, `_validateMessageAgainstExpected: expected must be an object`);
 	
 	log.info(`====> scheduling test for '${name}'`);
 	test(name, assert => {
@@ -519,7 +534,7 @@ test('server responses', function (assert) {
 		log.info(`junk received '${line}', ex '${ex}' (index ${descriptorIndex})`);
 		const descriptor = TEST_DESCRIPTORS[descriptorIndex];
 		const exceptionRegex = descriptor.exception;
-		console.assert(exceptionRegex instanceof RegExp);
+		console.assert(exceptionRegex instanceof RegExp, `descriptor.exception must be a regex`);
 		assert.throws(function () {
 				throw ex;
 			},

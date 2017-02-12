@@ -232,7 +232,7 @@ CBusClient.prototype._buildGetCommandString = function(netId, command) {
 };
 
 CBusClient.prototype._buildSetCommandString = function(netId, command, level, duration) {
-	console.assert(command.match(/^(on|off|ramp)$/));
+	console.assert(command.match(/^(on|off|ramp)$/), `command not one of on|off|ramp`);
 	
     let message;
 
@@ -241,7 +241,7 @@ CBusClient.prototype._buildSetCommandString = function(netId, command, level, du
     } else if (command == 'off') {
         message = `off ${netId}`;
     } else if (command == 'ramp') {
-        console.assert(level <= 100, `level <= 100; (was ${level})`);
+        console.assert(level <= 100, `level ${level} not in range 0..100`);
         message = `ramp ${netId} ${level}%`;
         if (duration) {
             message += ` ${duration}`;
@@ -279,7 +279,7 @@ function _parseResponse(line) {
     const RESPONSE_REGEX = /^\[(\S+)\] (\d{3}) (.*)/;
 
     let parts = line.match(RESPONSE_REGEX);
-	console.assert(parts);	// impossible to not have parts
+	console.assert(parts, `impossible to not have response parts`);
 
     let response = {
         commandId: parseInt(parts[1]),     // it appears that the Map object thinks that "200" != 200

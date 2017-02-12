@@ -18,7 +18,7 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
 
 function CBusAccessory(platform, accessoryData) {
 	// type is absolutely required
-	console.assert(typeof accessoryData.type !== `undefined`);
+	console.assert(typeof accessoryData.type !== `undefined`, `accessoryData.type must not be undefined`);
 	
 	// define log before we validate
 	this.log = platform.log;

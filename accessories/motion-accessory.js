@@ -1,5 +1,8 @@
 let Service, Characteristic, CBusAccessory, uuid;
 
+const cbusUtils = require('../cbus-utils.js');
+const FILE_ID = cbusUtils.extractIdentifierFromFileName(__filename);
+
 module.exports = function (_service, _characteristic, _accessory, _uuid) {
   Service = _service;
   Characteristic = _characteristic;
@@ -26,7 +29,7 @@ function CBusMotionAccessory(platform, accessoryData) {
 CBusMotionAccessory.prototype.getMotionState = function(callback, context) {
     setTimeout(function() {
         this.client.receiveLightStatus(this.netId, function(message) {
-            this._log("CBusMotionAccessory", "getState = " + message.level);
+            this._log(FILE_ID, "getState = " + message.level);
             callback(false, /*state: */ message.level ? 1 : 0);
         }.bind(this));
     }.bind(this), 50);

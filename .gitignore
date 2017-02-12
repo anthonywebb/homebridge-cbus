@@ -39,4 +39,4 @@ jspm_packages
 
 # IDEA config
 .idea/*
-/.nyc_output/
+

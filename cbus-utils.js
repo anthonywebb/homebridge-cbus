@@ -1,6 +1,7 @@
 'use strict';
 
 const inherits = require('util').inherits;
+const path = require('path');
 
 // necessary because Accessory is defined after we have defined all of our classes
 module.exports.fixInheritance = function(subclass, superclass) {
@@ -26,4 +27,10 @@ module.exports.integerise = function (x) {
 	}
 	
 	return parsed;
+};
+
+// given a fully qualified path name from __filename, return just the file name, minus the '.js' suffix
+module.exports.extractIdentifierFromFileName = function (filename) {
+	const name = filename.slice(filename.lastIndexOf(path.sep) + 1);
+	return name.slice(0, name.length - 3);
 };

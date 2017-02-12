@@ -27,7 +27,7 @@ module.exports = function(homebridge) {
     // load
     CBusAccessory = require('./accessories/accessory.js')(Service, Characteristic, Accessory, uuid);
     CBusLightAccessory = require('./accessories/light-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
-    CBusDimmerAccessory = require('./accessories/dimmer-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
+    CBusDimmerAccessory = require('./accessories/dimmer-accessory.js')(Service, Characteristic, CBusLightAccessory, uuid);
     CBusMotionAccessory = require('./accessories/motion-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
     CBusSecurityAccessory = require('./accessories/security-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
     CBusShutterAccessory = require('./accessories/shutter-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
