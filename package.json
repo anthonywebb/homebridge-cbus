@@ -30,16 +30,16 @@
   },
   "dependencies": {
     "carrier": "^0.3.0",
-    "colours": "^1.1.2"
+    "chalk": "^1.1.3"
   },
   "devDependencies": {
+    "debug": "^2.6.1",
     "tap": "10.0.2",
     "tape": "^4.6.3",
     "rewire": "^2.5.2"
   },
   "scripts": {
-    "test": "tape tests/*.js",
-    "test-coverage": "tap tests/*.js --cov --coverage-report=html",
-    "test-unit": "node $NODE_DEBUG_OPTION ./node_modules/tape/bin/tape tests/*.js"
+    "test": "node $NODE_DEBUG_OPTION ./node_modules/tape/bin/tape tests/*.js",
+    "test-coverage": "tap tests/*.js --cov --coverage-report=html"
   }
 }

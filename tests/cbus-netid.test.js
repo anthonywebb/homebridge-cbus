@@ -75,7 +75,7 @@ test('constructor bad alpha', function (assert) {
 test('construct network address netId', function (assert) {
 	assert.plan(4);
 	
-	const netId = CBusNetId.parseNetId(`//SHAC1/254`);
+	const netId = CBusNetId.parse(`//SHAC1/254`);
 	assert.equal(netId.project, 'SHAC1');
 	assert.equal(netId.network, 254);
 	assert.equal(netId.application, undefined);
@@ -87,7 +87,7 @@ test('construct network address netId', function (assert) {
 test('construct group address netId', function (assert) {
 	assert.plan(4);
 	
-	const netId = CBusNetId.parseNetId(`//SHAC1/254/57/123`);
+	const netId = CBusNetId.parse(`//SHAC1/254/57/123`);
 	assert.equal(netId.project, 'SHAC1');
 	assert.equal(netId.network, 254);
 	assert.equal(netId.application, 57);
@@ -99,7 +99,7 @@ test('construct group address netId', function (assert) {
 test('construct application netId', function (assert) {
 	assert.plan(4);
 	
-	const netId = CBusNetId.parseNetId(`//S31415/254/57`);
+	const netId = CBusNetId.parse(`//S31415/254/57`);
 	assert.equal(netId.project, 'S31415');
 	assert.equal(netId.network, 254);
 	assert.equal(netId.application, 57);
@@ -112,7 +112,7 @@ test('construct illegal group address', function (assert) {
 	assert.plan(1);
 	
 	assert.throws(function () {
-		CBusNetId.parseNetId(`//SHAC/254/57/`);
+		CBusNetId.parse(`//SHAC/254/57/`);
 	});
 	
 	assert.end();
@@ -123,17 +123,17 @@ test('construct illegal application address', function (assert) {
 	
 	assert.throws(function () {
 		// non numerical group
-		CBusNetId.parseNetId(`//SHAC/254/57/abc`);
+		CBusNetId.parse(`//SHAC/254/57/abc`);
 	});
 	
 	assert.throws(function () {
 		// non numerical group
-		CBusNetId.parseNetId(`//SHAC/254/57/3.124`);
+		CBusNetId.parse(`//SHAC/254/57/3.124`);
 	});
 	
 	assert.throws(function () {
 		// non numerical group
-		CBusNetId.parseNetId(`//SHAC/254a/57/3.124`);
+		CBusNetId.parse(`//SHAC/254a/57/3.124`);
 	});
 	
 	assert.end();
@@ -144,7 +144,7 @@ test('construct malformed address', function (assert) {
 	
 	assert.throws(function () {
 		// template mismatch
-		CBusNetId.parseNetId(`whoopty doo`);
+		CBusNetId.parse(`whoopty doo`);
 	});
 	
 	assert.end();
@@ -155,12 +155,12 @@ test('construct illegal whitespace', function (assert) {
 	
 	assert.throws(function () {
 		// trailing space
-		CBusNetId.parseNetId(`//SHAC/254/57/ `);
+		CBusNetId.parse(`//SHAC/254/57/ `);
 	});
 	
 	assert.throws(function () {
 		// leading space
-		CBusNetId.parseNetId(` //SHAC/254/57/`);
+		CBusNetId.parse(` //SHAC/254/57/`);
 	});
 	
 	assert.end();
@@ -171,22 +171,22 @@ test('construct illegal project name', function (assert) {
 	
 	assert.throws(function () {
 		// non numerical group
-		CBusNetId.parseNetId(`//S,3AC/254/56`);
+		CBusNetId.parse(`//S,3AC/254/56`);
 	});
 	
 	assert.throws(function () {
 		// first char not alpha
-		CBusNetId.parseNetId(`//1SHAC/254/56`);
+		CBusNetId.parse(`//1SHAC/254/56`);
 	});
 	
 	assert.throws(function () {
 		// name too long
-		CBusNetId.parseNetId(`//S12345678/254/56`);
+		CBusNetId.parse(`//S12345678/254/56`);
 	});
 	
 	assert.throws(function () {
 		// name empty
-		CBusNetId.parseNetId(`///254/56/191`);
+		CBusNetId.parse(`///254/56/191`);
 	});
 	
 	assert.end();
@@ -195,7 +195,7 @@ test('construct illegal project name', function (assert) {
 test('getModuleId', function (assert) {
 	assert.plan(1);
 	
-	const netId = CBusNetId.parseNetId(`//S31415/254/208/128`);
+	const netId = CBusNetId.parse(`//S31415/254/208/128`);
 	assert.equal(netId.getModuleId(), `fed080`);
 	
 	assert.end();
@@ -204,12 +204,25 @@ test('getModuleId', function (assert) {
 test('CBusNetId equals', function (assert) {
 	assert.plan(2);
 	
-	const netId1 = CBusNetId.parseNetId(`//S31415/254/208/128`);
-	const netId2 = CBusNetId.parseNetId(`//S31415/254/208/128`);
+	const netId1 = CBusNetId.parse(`//S31415/254/208/128`);
+	const netId2 = CBusNetId.parse(`//S31415/254/208/128`);
 	assert.deepEquals(netId1, netId2);
 	
 	const netId3 = new CBusNetId(`S31415`, 254, 208, 128);
 	assert.deepEquals(netId2, netId3);
+	
+	assert.end();
+});
+
+test('CBusNetId not equals', function (assert) {
+	assert.plan(2);
+	
+	const netId1 = CBusNetId.parse(`//BAR/254/208/128`);
+	const netId2 = CBusNetId.parse(`//BAR/254/208/1`);
+	assert.notDeepEqual(netId1, netId2);
+	
+	const netId3 = new CBusNetId(`BAR`, 254, 208, 126);
+	assert.notDeepEqual(netId2, netId3);
 	
 	assert.end();
 });
