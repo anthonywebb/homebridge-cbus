@@ -95,7 +95,6 @@ CBusPlatform.prototype.accessories = function(callback) {
     //--------------------------------------------------
     //  Initiate the CBus client
     //--------------------------------------------------
-
     this.log.info(`Connecting to the local C-Gate server...`);
 
     this.client = new CGateClient(this.cgateIpAddress, this.cgateControlPort,
@@ -118,6 +117,11 @@ CBusPlatform.prototype.accessories = function(callback) {
     }.bind(this));
 
     this.client.connect(function() {
+		this.client.getDB(result => {
+			const portion = result.snippet.slice(0, 200);
+			this.log.info(`snippet '${portion}' (${result.snippet.length} bytes)`);
+		});
+    	
 		const accessories = this._createAccessories();
 		
 		// build the lookup map
