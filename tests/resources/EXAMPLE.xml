@@ -1,0 +1,1896 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Installation>
+    <OID>4ba125c0-fe17-1026-a721-eb1d096ee5cc</OID>
+    <DBVersion>2.3</DBVersion>
+    <Version>1.0</Version>
+    <Modified>2004-10-12T10:25:12.156+09:30</Modified>
+    <Project>
+        <OID>4ba3bdd0-fe17-1026-a724-eb1d096ee5cc</OID>
+        <TagName>EXAMPLE</TagName>
+        <Address>EXAMPLE</Address>
+        <Description>C-Bus project generated from live network</Description>
+        <Network>
+            <OID>555c9a40-fe17-1026-a725-eb1d096ee5cc</OID>
+            <TagName>Local</TagName>
+            <Address>254</Address>
+            <NetworkNumber>254</NetworkNumber>
+            <Interface>
+                <OID>55688120-fe17-1026-a726-eb1d096ee5cc</OID>
+                <InterfaceType>serial</InterfaceType>
+                <InterfaceAddress>COM1</InterfaceAddress>
+            </Interface>
+            <Application>
+                <OID>55c0b340-fe17-1026-a727-eb1d096ee5cc</OID>
+                <TagName>Lighting</TagName>
+                <Address>56</Address>
+                <Group>
+                    <OID>560cfe80-fe17-1026-a72d-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+                <Group>
+                    <OID>6f72c3a0-fe17-1026-a733-eb1d096ee5cc</OID>
+                    <TagName>Kitchen1</TagName>
+                    <Address>32</Address>
+                </Group>
+                <Group>
+                    <OID>6f8a9160-fe17-1026-a734-eb1d096ee5cc</OID>
+                    <TagName>Kitchen2</TagName>
+                    <Address>33</Address>
+                </Group>
+                <Group>
+                    <OID>6f98e940-fe17-1026-a735-eb1d096ee5cc</OID>
+                    <TagName>Dining1</TagName>
+                    <Address>34</Address>
+                    <TagsDLT>
+                        <TagDLT>
+                            <OID>739d2ce0-1f0b-102b-a35c-97f93388fc40</OID>
+                            <LanguageID>1</LanguageID>
+                            <FlavourID>1</FlavourID>
+                            <TagType>TEXT</TagType>
+                            <TagValue>Dining1</TagValue>
+                        </TagDLT>
+                    </TagsDLT>
+                </Group>
+                <Group>
+                    <OID>6fb0b700-fe17-1026-a736-eb1d096ee5cc</OID>
+                    <TagName>Dining2</TagName>
+                    <Address>35</Address>
+                    <TagsDLT>
+                        <TagDLT>
+                            <OID>73b018a0-1f0b-102b-a35d-97f93388fc40</OID>
+                            <LanguageID>1</LanguageID>
+                            <FlavourID>1</FlavourID>
+                            <TagType>TEXT</TagType>
+                            <TagValue>Dining2</TagValue>
+                        </TagDLT>
+                    </TagsDLT>
+                </Group>
+                <Group>
+                    <OID>6fbc9de0-fe17-1026-a737-eb1d096ee5cc</OID>
+                    <TagName>Lounge</TagName>
+                    <Address>36</Address>
+                    <TagsDLT>
+                        <TagDLT>
+                            <OID>73c59c70-1f0b-102b-a35e-97f93388fc40</OID>
+                            <LanguageID>1</LanguageID>
+                            <FlavourID>1</FlavourID>
+                            <TagType>TEXT</TagType>
+                            <TagValue>Lounge</TagValue>
+                        </TagDLT>
+                    </TagsDLT>
+                </Group>
+                <Group>
+                    <OID>6fcaf5c0-fe17-1026-a738-eb1d096ee5cc</OID>
+                    <TagName>Sprinkler1</TagName>
+                    <Address>37</Address>
+                </Group>
+                <Group>
+                    <OID>6fe2c380-fe17-1026-a739-eb1d096ee5cc</OID>
+                    <TagName>Sprinkler2</TagName>
+                    <Address>38</Address>
+                </Group>
+                <Group>
+                    <OID>6ffa9140-fe17-1026-a73a-eb1d096ee5cc</OID>
+                    <TagName>Porch</TagName>
+                    <Address>39</Address>
+                </Group>
+                <Group>
+                    <OID>70bbbe60-fe17-1026-a73b-eb1d096ee5cc</OID>
+                    <TagName>Wine Cellar</TagName>
+                    <Address>40</Address>
+                </Group>
+                <Group>
+                    <OID>71e5bf70-fe17-1026-a73c-eb1d096ee5cc</OID>
+                    <TagName>Group 81</TagName>
+                    <Address>81</Address>
+                </Group>
+                <Group>
+                    <OID>725f5c40-fe17-1026-a73d-eb1d096ee5cc</OID>
+                    <TagName>Pavillion internal</TagName>
+                    <Address>45</Address>
+                </Group>
+                <Group>
+                    <OID>728310e0-fe17-1026-a73e-eb1d096ee5cc</OID>
+                    <TagName>Pool Deck</TagName>
+                    <Address>46</Address>
+                </Group>
+                <Group>
+                    <OID>728ef7c0-fe17-1026-a73f-eb1d096ee5cc</OID>
+                    <TagName>Garden Lights</TagName>
+                    <Address>42</Address>
+                    <TagsDLT>
+                        <TagDLT>
+                            <OID>eff1e660-1f0a-102b-a35b-97f93388fc40</OID>
+                            <LanguageID>1</LanguageID>
+                            <FlavourID>1</FlavourID>
+                            <TagType>TEXT</TagType>
+                            <TagValue>Garden</TagValue>
+                        </TagDLT>
+                    </TagsDLT>
+                </Group>
+                <Group>
+                    <OID>729adea0-fe17-1026-a740-eb1d096ee5cc</OID>
+                    <TagName>Conservatory</TagName>
+                    <Address>41</Address>
+                </Group>
+                <Group>
+                    <OID>72a93680-fe17-1026-a741-eb1d096ee5cc</OID>
+                    <TagName>Pavillion lights</TagName>
+                    <Address>44</Address>
+                </Group>
+                <Group>
+                    <OID>72b51d60-fe17-1026-a742-eb1d096ee5cc</OID>
+                    <TagName>Potting Shed</TagName>
+                    <Address>43</Address>
+                </Group>
+                <Group>
+                    <OID>84d4dad0-fe17-1026-a751-eb1d096ee5cc</OID>
+                    <TagName>Group 16</TagName>
+                    <Address>16</Address>
+                </Group>
+                <Group>
+                    <OID>84eca890-fe17-1026-a752-eb1d096ee5cc</OID>
+                    <TagName>Cellar Chiller</TagName>
+                    <Address>63</Address>
+                </Group>
+                <Group>
+                    <OID>84fb0070-fe17-1026-a753-eb1d096ee5cc</OID>
+                    <TagName>Pool Lights</TagName>
+                    <Address>47</Address>
+                </Group>
+                <Group>
+                    <OID>8512ce30-fe17-1026-a754-eb1d096ee5cc</OID>
+                    <TagName>Barbeque area</TagName>
+                    <Address>48</Address>
+                </Group>
+                <Group>
+                    <OID>85212610-fe17-1026-a755-eb1d096ee5cc</OID>
+                    <TagName>Group 31</TagName>
+                    <Address>31</Address>
+                </Group>
+                <Group>
+                    <OID>8538f3d0-fe17-1026-a756-eb1d096ee5cc</OID>
+                    <TagName>Group 15</TagName>
+                    <Address>15</Address>
+                </Group>
+                <Group>
+                    <OID>7ef2a250-1f0b-102b-a360-97f93388fc40</OID>
+                    <TagName>Group 0</TagName>
+                    <Address>0</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>55cc9a20-fe17-1026-a728-eb1d096ee5cc</OID>
+                <TagName>Telephony</TagName>
+                <Address>224</Address>
+                <Group>
+                    <OID>561b5660-fe17-1026-a72e-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>55d88100-fe17-1026-a729-eb1d096ee5cc</OID>
+                <TagName>Trigger Control</TagName>
+                <Address>202</Address>
+                <Group>
+                    <OID>56273d40-fe17-1026-a72f-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+                <Group>
+                    <OID>7c7ee9c0-fe17-1026-a746-eb1d096ee5cc</OID>
+                    <TagName>Main Area Scene Trigger</TagName>
+                    <Address>127</Address>
+                    <Level Value="0">
+                        <OID>7c992880-fe17-1026-a748-eb1d096ee5cc</OID>
+                        <TagName>Level 0</TagName>
+                        <Address>0</Address>
+                        <TagsDLT/>
+                    </Level>
+                    <Level Value="63">
+                        <OID>7cb36740-fe17-1026-a749-eb1d096ee5cc</OID>
+                        <TagName>Level 63</TagName>
+                        <Address>63</Address>
+                        <TagsDLT/>
+                    </Level>
+                    <Level Value="175">
+                        <OID>7cc1bf20-fe17-1026-a74a-eb1d096ee5cc</OID>
+                        <TagName>Level 175</TagName>
+                        <Address>175</Address>
+                        <TagsDLT/>
+                    </Level>
+                    <Level Value="127">
+                        <OID>7cd260f0-fe17-1026-a74b-eb1d096ee5cc</OID>
+                        <TagName>Level 127</TagName>
+                        <Address>127</Address>
+                        <TagsDLT/>
+                    </Level>
+                    <Level Value="95">
+                        <OID>7ce302c0-fe17-1026-a74c-eb1d096ee5cc</OID>
+                        <TagName>Level 95</TagName>
+                        <Address>95</Address>
+                        <TagsDLT/>
+                    </Level>
+                    <Level Value="255">
+                        <OID>d7c341b0-1f0a-102b-a35a-97f93388fc40</OID>
+                        <TagName>Main Area Scene</TagName>
+                        <Address>255</Address>
+                        <TagsDLT>
+                            <TagDLT>
+                                <OID>73d63e40-1f0b-102b-a35f-97f93388fc40</OID>
+                                <LanguageID>1</LanguageID>
+                                <FlavourID>1</FlavourID>
+                                <TagType>TEXT</TagType>
+                                <TagValue>Scene 1</TagValue>
+                            </TagDLT>
+                        </TagsDLT>
+                    </Level>
+                </Group>
+                <Group>
+                    <OID>88e44890-fe17-1026-a759-eb1d096ee5cc</OID>
+                    <TagName>Closet light</TagName>
+                    <Address>80</Address>
+                </Group>
+                <Group>
+                    <OID>88f2a070-fe17-1026-a75a-eb1d096ee5cc</OID>
+                    <TagName>Hallway light</TagName>
+                    <Address>81</Address>
+                </Group>
+                <Group>
+                    <OID>8900f850-fe17-1026-a75b-eb1d096ee5cc</OID>
+                    <TagName>Group 34</TagName>
+                    <Address>34</Address>
+                </Group>
+                <Group>
+                    <OID>890f2920-fe17-1026-a75c-eb1d096ee5cc</OID>
+                    <TagName>Group 35</TagName>
+                    <Address>35</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>55e48ef0-fe17-1026-a72a-eb1d096ee5cc</OID>
+                <TagName>Enable Control</TagName>
+                <Address>203</Address>
+                <Group>
+                    <OID>56359520-fe17-1026-a730-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+                <Group>
+                    <OID>7f034420-1f0b-102b-a361-97f93388fc40</OID>
+                    <TagName>Group 0</TagName>
+                    <Address>0</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>55f075d0-fe17-1026-a72b-eb1d096ee5cc</OID>
+                <TagName>Heating</TagName>
+                <Address>136</Address>
+                <Group>
+                    <OID>56417c00-fe17-1026-a731-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>55fea6a0-fe17-1026-a72c-eb1d096ee5cc</OID>
+                <TagName>Unused</TagName>
+                <Address>255</Address>
+                <Group>
+                    <OID>564d62e0-fe17-1026-a732-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+            </Application>
+            <Unit>
+                <OID>75f2e340-fe17-1026-a743-eb1d096ee5cc</OID>
+                <TagName>LEFTPCI</TagName>
+                <Address>1</Address>
+                <UnitType>PCLOCAL4</UnitType>
+                <UnitName>NEWUNIT</UnitName>
+                <SerialNumber>999999.3</SerialNumber>
+                <FirmwareVersion>4.2.00</FirmwareVersion>
+                <PP Name="UnitAddress" Value="0x1"/>
+                <PP Name="Application" Value="0xff 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="NEWUNIT "/>
+                <PP Name="ConnectApplicationsMode" Value="0"/>
+                <PP Name="MonitorMMISALMode" Value="0"/>
+                <PP Name="DiagnosticTrigger" Value="0xff"/>
+                <PP Name="ClockGenEnable" Value="1"/>
+                <PP Name="Burden" Value="1"/>
+                <PP Name="ServiceType" Value="0xff"/>
+                <PP Name="HenryPassword" Value="0xff"/>
+                <PP Name="PowerUp" Value="0x0"/>
+                <PP Name="LocalSAL" Value="0"/>
+                <PP Name="SerialNo" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="CustType" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5500PC</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>7d688670-fe17-1026-a74d-eb1d096ee5cc</OID>
+                <TagName>Barbeque area PIR</TagName>
+                <Address>9</Address>
+                <UnitType>SENPIRSS</UnitType>
+                <UnitName>NEWUNIT</UnitName>
+                <FirmwareVersion>1.2.67</FirmwareVersion>
+                <PP Name="LightLevelStore1" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="LightLevelStore2" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="EEPROMChecksumActive" Value="0xff"/>
+                <PP Name="EEPROMChecksum" Value="0xff"/>
+                <PP Name="UnitAddress" Value="0x9"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="NEWUNIT "/>
+                <PP Name="DebounceTime" Value="0x3"/>
+                <PP Name="LongPressTime" Value="0x19"/>
+                <PP Name="JPCommand" Value="0x7 0xd 0xd 0xd"/>
+                <PP Name="SRCommand" Value="0x0 0x7 0xf 0xf"/>
+                <PP Name="LPCommand" Value="0x0 0x7 0x7 0x0"/>
+                <PP Name="LRCommand" Value="0x0 0x0 0xf 0xf"/>
+                <PP Name="BlockAllocation" Value="0x1 0x1 0x4 0x8"/>
+                <PP Name="LearnMode" Value="0"/>
+                <PP Name="LearnAnyApp" Value="0"/>
+                <PP Name="LearnedFlag" Value="1"/>
+                <PP Name="EEPROMChecksumAlarm" Value="1"/>
+                <PP Name="EnableGroupLogic" Value="0xff"/>
+                <PP Name="RampRate" Value="0x1 0x3"/>
+                <PP Name="StatusReportInterval" Value="0x3"/>
+                <PP Name="AreaGroupAddress" Value="0xff"/>
+                <PP Name="TimerHighByte" Value="0x0 0x1 0x1 0x0"/>
+                <PP Name="TimerLowByte" Value="0x0 0x2c 0x2c 0x0"/>
+                <PP Name="TimerExpiryCommand" Value="0xf 0xf 0xf 0xf"/>
+                <PP Name="GroupAddress" Value="0x30 0xff 0xff 0xff"/>
+                <PP Name="EnableGroupAddress" Value="0xff"/>
+                <PP Name="IndicatorBlockAssignment" Value="0x0"/>
+                <PP Name="IndicatorFunction" Value="0x2"/>
+                <PP Name="PatchEnable" Value="0x9d 0x40"/>
+                <PP Name="SerialNo" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="CUSTYPE" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5751</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>7f72ae50-fe17-1026-a74e-eb1d096ee5cc</OID>
+                <TagName>Temperature trigger for wine</TagName>
+                <Address>11</Address>
+                <UnitType>SENTEMP</UnitType>
+                <UnitName>TMPCTRL</UnitName>
+                <FirmwareVersion>1.00</FirmwareVersion>
+                <PP Name="EEPROMChecksumActive" Value="0xff"/>
+                <PP Name="EEPROMChecksum" Value="0xff"/>
+                <PP Name="UnitAddress" Value="0xb"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="UnitName" Value="TMPCTRL "/>
+                <PP Name="LearnMode" Value="0"/>
+                <PP Name="LearnAnyApp" Value="0"/>
+                <PP Name="LearnedFlag" Value="1"/>
+                <PP Name="OffsetMode" Value="0xff"/>
+                <PP Name="StatusReportInterval" Value="0x3"/>
+                <PP Name="AreaGroupAddress" Value="0xff"/>
+                <PP Name="EnableGroupAddress" Value="0xff"/>
+                <PP Name="OffsetGroupAddress" Value="0xff"/>
+                <PP Name="ControlGroupAddress" Value="0x3f"/>
+                <PP Name="IndicatorIndex" Value="0x2"/>
+                <PP Name="IndicatorFunction" Value="0x2"/>
+                <PP Name="TemperatureHigh" Value="0xe"/>
+                <PP Name="TemperatureLow" Value="0xc"/>
+                <PP Name="TemperatureOffset" Value="0x0"/>
+                <PP Name="PatchEnable" Value="0x9d 0x40"/>
+                <PP Name="CUSTYPE" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5031TS</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>80f9c380-fe17-1026-a74f-eb1d096ee5cc</OID>
+                <TagName>Pavillion key unit</TagName>
+                <Address>13</Address>
+                <UnitType>KEYM8</UnitType>
+                <UnitName>8KEYNEO</UnitName>
+                <SerialNumber>100045.320</SerialNumber>
+                <FirmwareVersion>1.4.0</FirmwareVersion>
+                <PP Name="LightIndex" Value="0x0"/>
+                <PP Name="LightLevel"
+                    Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="EEPROMCheckSumActive" Value="0xff"/>
+                <PP Name="EEPROM Checksum" Value="0x0"/>
+                <PP Name="UnitAddress" Value="0xd"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="UnitName" Value="8KEYNEO "/>
+                <PP Name="DebounceTime" Value="0x3"/>
+                <PP Name="LongPressTime" Value="0x19"/>
+                <PP Name="IndicatorBrightness" Value="0xff"/>
+                <PP Name="TimerDuration" Value="0x2"/>
+                <PP Name="IndicatorPressedLevel" Value="0x7"/>
+                <PP Name="EnableNightlight" Value="0"/>
+                <PP Name="DisableTimerFlash" Value="0"/>
+                <PP Name="IDBacklightIllumination" Value="0"/>
+                <PP Name="FirstKeyThrowAway" Value="0"/>
+                <PP Name="EnableNightlightOnPCx" Value="0"/>
+                <PP Name="EnableNightlightOnPA6" Value="0"/>
+                <PP Name="EnableNightlightControl" Value="0"/>
+                <PP Name="DisableIR" Value="0"/>
+                <PP Name="IRBank" Value="0x0"/>
+                <PP Name="BlockAllocation" Value="0x10 0x4 0x40 0x20 0x1 0x2 0x8 0x80"/>
+                <PP Name="EEPROMLevelStore" Value="0"/>
+                <PP Name="LearnMode" Value="0"/>
+                <PP Name="LearnAnyApp" Value="0"/>
+                <PP Name="LearnedFlag" Value="1"/>
+                <PP Name="EEPROMChecksumAlarm" Value="1"/>
+                <PP Name="RampRate" Value="0x1 0x3"/>
+                <PP Name="StatusReportInterval" Value="0x3"/>
+                <PP Name="AreaGroupAddress" Value="0xff"/>
+                <PP Name="TimerExpiryCommand" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0xf"/>
+                <PP Name="GroupAddress" Value="0x2d 0x2e 0x2a 0x26 0x29 0x2c 0x2b 0x30 0xff"/>
+                <PP Name="ControlAppGroupAddress" Value="0xff"/>
+                <PP Name="IndicatorBlockAssignment" Value="0x4 0x2 0x6 0x5 0x0 0x1 0x3 0x7"/>
+                <PP Name="PrimaryColour" Value="0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1"/>
+                <PP Name="IndicatorFunction" Value="0x2 0x2 0x2 0x2 0x2 0x2 0x2 0x2"/>
+                <PP Name="SceneKeySelector" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="JPCommand" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="SRCommand" Value="0xb 0xb 0xb 0xb 0xb 0xb 0xb 0xb"/>
+                <PP Name="LPCommand" Value="0x2 0x2 0x2 0x2 0x2 0x2 0x2 0x2"/>
+                <PP Name="LRCommand" Value="0xe 0xe 0xe 0xe 0xe 0xe 0xe 0xe"/>
+                <PP Name="LightLevelStore1" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="LightLevelStore2" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xfe 0xf0"/>
+                <PP Name="TimerHighByte" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="TimerLowByte" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0xa"/>
+                <PP Name="SceneTablePointer" Value="0xa2 0xb6 0xca 0xde 0xff 0xff 0xff 0xff"/>
+                <PP Name="PatchEnable" Value="0xff 0xff"/>
+                <PP Name="SceneTable"
+                    Value="0x0 0x2 0x10 0x2 0x20 0x2 0x3f 0xf2 0x2f 0xf2 0x30 0x2 0x1f 0xf2 0xf 0xf2 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SerialNo" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="CUSTYPE" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5058NL</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>85d18a50-fe17-1026-a757-eb1d096ee5cc</OID>
+                <TagName>Gateway to Wireless Net</TagName>
+                <Address>42</Address>
+                <UnitType>GATEWLSN</UnitType>
+                <UnitName>WG</UnitName>
+                <SerialNumber>1048575.4095</SerialNumber>
+                <FirmwareVersion>4.3.00</FirmwareVersion>
+                <PP Name="EEPROMCheckSumActive" Value="0xff"/>
+                <PP Name="EEPROM Checksum" Value="0x0"/>
+                <PP Name="UnitAddress" Value="0x2a"/>
+                <PP Name="Application" Value="0xff 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="WG      "/>
+                <PP Name="ApplicationConnectEnabled" Value="1"/>
+                <PP Name="BridgeCount" Value="0x0"/>
+                <PP Name="MMITunnelingEnable" Value="0"/>
+                <PP Name="BridgeAddress" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="FIFOBufferMonitor" Value="0xff"/>
+                <PP Name="TriggerAddress" Value="0xff"/>
+                <PP Name="ClockGenEnable" Value="0"/>
+                <PP Name="Burden" Value="0"/>
+                <PP Name="ServiceType" Value="0xff"/>
+                <PP Name="CustomManufactorer" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SerialNo" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="CustType" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5800WCGA</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>870c2d30-fe17-1026-a758-eb1d096ee5cc</OID>
+                <TagName>Light switch in hallway</TagName>
+                <Address>32</Address>
+                <UnitType>KEY2</UnitType>
+                <UnitName>2KEY</UnitName>
+                <SerialNumber>79009.82</SerialNumber>
+                <FirmwareVersion>1.2.67</FirmwareVersion>
+                <PP Name="LightIndex" Value="0x0"/>
+                <PP Name="LightLevel"
+                    Value="0x0 0x0 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="LightLevelStore1" Value="0x66 0xff 0xff 0xff"/>
+                <PP Name="LightLevelStore2" Value="0x5b 0x66 0x5b 0x4c"/>
+                <PP Name="EEPROMChecksumActive" Value="0xff"/>
+                <PP Name="EEPROMChecksum" Value="0xff"/>
+                <PP Name="UnitAddress" Value="0x20"/>
+                <PP Name="Application" Value="0xca 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="2KEY    "/>
+                <PP Name="DebounceTime" Value="0x3"/>
+                <PP Name="LongPressTime" Value="0x19"/>
+                <PP Name="JPCommand" Value="0xb 0xb 0xb 0xb"/>
+                <PP Name="SRCommand" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="LPCommand" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="LRCommand" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="BlockAllocation" Value="0x1 0x2 0x4 0x8"/>
+                <PP Name="EEPROMLevelStore" Value="0"/>
+                <PP Name="EEPROMLevelRecall" Value="0"/>
+                <PP Name="LearnMode" Value="0"/>
+                <PP Name="LearnAnyApp" Value="0"/>
+                <PP Name="LearnedFlag" Value="1"/>
+                <PP Name="EEPROMChecksumAlarm" Value="1"/>
+                <PP Name="RampRate" Value="0x1 0x1"/>
+                <PP Name="StatusReportInterval" Value="0x3"/>
+                <PP Name="AreaGroupAddress" Value="0xff"/>
+                <PP Name="TimerHighByte" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="TimerLowByte" Value="0x5 0x0 0x0 0x0"/>
+                <PP Name="TimerExpiryCommand" Value="0xf 0x0 0xf 0xf"/>
+                <PP Name="GroupAddress" Value="0x50 0x51 0x22 0x23 0xff 0xff 0xff 0xff"/>
+                <PP Name="IndicatorBlockAssignment" Value="0x0 0x1 0x2 0x3"/>
+                <PP Name="IndicatorFunction" Value="0x0 0x2 0x2 0x2"/>
+                <PP Name="PatchEnable" Value="0xff 0xff"/>
+                <PP Name="CUSTYPE" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="IndicatorBrightness" Value="0xff"/>
+                <CatalogNumber>5032N</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>897a6e10-fe17-1026-a75d-eb1d096ee5cc</OID>
+                <TagName>Bridge to upstairs</TagName>
+                <Address>253</Address>
+                <UnitType>BRIDGE2N</UnitType>
+                <UnitName>BRIDGE</UnitName>
+                <SerialNumber>77440.47</SerialNumber>
+                <FirmwareVersion>4.1.00</FirmwareVersion>
+                <PP Name="EEPROMCheckSumActive" Value="0xff"/>
+                <PP Name="EEPROM Checksum" Value="0x0"/>
+                <PP Name="UnitAddress" Value="0xfd"/>
+                <PP Name="Application" Value="0xff 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="BRIDGE  "/>
+                <PP Name="ApplicationConnectEnabled" Value="1"/>
+                <PP Name="BridgeCount" Value="0x0"/>
+                <PP Name="MMITunnelingEnable" Value="0"/>
+                <PP Name="BridgeAddress" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="FIFOBufferMonitor" Value="0xff"/>
+                <PP Name="TriggerAddress" Value="0xff"/>
+                <PP Name="ClockGenEnable" Value="0"/>
+                <PP Name="Burden" Value="0"/>
+                <PP Name="ServiceType" Value="0xff"/>
+                <PP Name="CustomManufactorer" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SerialNo" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="CustType" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5500NB</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>7f41c930-1f0a-102b-a358-97f93388fc40</OID>
+                <TagName>House dimmer</TagName>
+                <Address>3</Address>
+                <UnitType>DIMDN8</UnitType>
+                <UnitName>8CHDIM</UnitName>
+                <SerialNumber>78388.26</SerialNumber>
+                <FirmwareVersion>1.6.00</FirmwareVersion>
+                <PP Name="LightLevel" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="UnitAddress" Value="0x0"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="8CHDIM  "/>
+                <PP Name="InterLockingChannel" Value="0x0"/>
+                <PP Name="LogicGA13Associations" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="LogicGA14Associations" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="LogicGA15Associations" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="LogicGA16Associations" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="RestrikeChannel" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="LogicFunction" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="ClockGenEnable" Value="1"/>
+                <PP Name="LocalToggleEnable" Value="1"/>
+                <PP Name="NetworkPriority" Value="1"/>
+                <PP Name="LearnMode" Value="0"/>
+                <PP Name="LearnAnyApplication" Value="0"/>
+                <PP Name="LearnedFlag" Value="1"/>
+                <PP Name="Burden" Value="0"/>
+                <PP Name="CheckSum" Value="1"/>
+                <PP Name="LevelStoreEnable" Value="1 1 1 1 1 1 1 1"/>
+                <PP Name="LogicLevelStoreEnable" Value="1 1 1 1"/>
+                <PP Name="RestrikeDelay" Value="0x0"/>
+                <PP Name="AreaGroupAddress" Value="0xff"/>
+                <PP Name="PowerUpDelay" Value="0x5 0x5 0x5 0x5 0x5 0x5 0x5 0x5"/>
+                <PP Name="GroupAddress"
+                    Value="0x20 0x21 0x22 0x23 0x24 0x27 0x25 0x26 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="MinDimmingLevel" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="MaxDimmingLevel" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SerialNo" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="CustType" Value="0x44 0x49 0x4d 0x44 0x4e 0x38 0x20 0x20"/>
+                <CatalogNumber>L5508D1A</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>d226cb50-1f0a-102b-a359-97f93388fc40</OID>
+                <TagName>Lounge DLT</TagName>
+                <Address>5</Address>
+                <Description>Lounge DLT unit</Description>
+                <UnitType>KEYBL5</UnitType>
+                <UnitName>LOUNGDLT</UnitName>
+                <SerialNumber>69.42</SerialNumber>
+                <FirmwareVersion>2.1.00</FirmwareVersion>
+                <PP Name="LightIndex" Value="0x0"/>
+                <PP Name="LightLevel"
+                    Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="EEPROMCheckSumActive" Value="0xff"/>
+                <PP Name="EEPROM Checksum" Value="0x0"/>
+                <PP Name="UnitAddress" Value="0x5"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="UnitName" Value="LOUNGDLT"/>
+                <PP Name="DebounceTime" Value="0x3"/>
+                <PP Name="LongPressTime" Value="0x19"/>
+                <PP Name="IndicatorBrightness" Value="0xff"/>
+                <PP Name="TimerDuration" Value="0xf"/>
+                <PP Name="IndicatorPressedLevel" Value="0xf"/>
+                <PP Name="EnableNightlight" Value="0"/>
+                <PP Name="DisableTimerFlash" Value="0"/>
+                <PP Name="FirstKeyThrowAway" Value="0"/>
+                <PP Name="EnableNightlightControl" Value="0"/>
+                <PP Name="BlockAllocation" Value="0x1 0x2 0x4 0x8 0x10 0x20 0x40 0x80"/>
+                <PP Name="EEPROMLevelStore" Value="0"/>
+                <PP Name="KeyDisableGroupInvert" Value="1"/>
+                <PP Name="LearnMode" Value="0"/>
+                <PP Name="LearnAnyApp" Value="0"/>
+                <PP Name="LearnedFlag" Value="1"/>
+                <PP Name="EEPROMChecksumAlarm" Value="1"/>
+                <PP Name="HardwareConfiguration" Value="0xff"/>
+                <PP Name="RampRate" Value="0x1 0x3"/>
+                <PP Name="StatusReportInterval" Value="0x3"/>
+                <PP Name="AreaGroupAddress" Value="0xff"/>
+                <PP Name="CorridorOfficeGroupBlock" Value="0x1"/>
+                <PP Name="CorridorGroupBlock" Value="0x0"/>
+                <PP Name="CorridorLinkEnable" Value="0"/>
+                <PP Name="SecondApplicationBlocks" Value="0x0"/>
+                <PP Name="TimerExpiryCommand" Value="0xf 0xf 0xf 0xf 0xf 0xf 0xf 0xf"/>
+                <PP Name="GroupAddress" Value="0x22 0x23 0x24 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="KeyDisableGroup" Value="0xff"/>
+                <PP Name="JoinPrimaryApplication" Value="0xff"/>
+                <PP Name="DualJoinPrimaryApplication" Value="0xff"/>
+                <PP Name="CorridorMasterGroup" Value="0xff"/>
+                <PP Name="JoinSecondaryApplication" Value="0xff"/>
+                <PP Name="DualJoinSecondaryApplication" Value="0xff"/>
+                <PP Name="ControlAppGroupAddress" Value="0x7f"/>
+                <PP Name="IndicatorBlockAssignment" Value="0x0 0x1 0x2 0x0 0x4 0x5 0x6 0x7"/>
+                <PP Name="IndicatorFunction" Value="0x2 0x2 0x2 0x2 0x0 0x0 0x0 0x0"/>
+                <PP Name="SceneKeySelector" Value="0x0 0x0 0x0 0x1 0x0 0x0 0x0 0x0"/>
+                <PP Name="JPCommand" Value="0x0 0x0 0x0 0xe 0x0 0x0 0x0 0x0"/>
+                <PP Name="SRCommand" Value="0xb 0xb 0xb 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="LPCommand" Value="0x2 0x2 0x2 0xf 0x0 0x0 0x0 0x0"/>
+                <PP Name="LRCommand" Value="0xe 0xe 0xe 0xf 0x0 0x0 0x0 0x0"/>
+                <PP Name="LightLevelStore1" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="LightLevelStore2" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="TimerHighByte" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="TimerLowByte" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="SceneTablePointer" Value="0xa2 0xb6 0xca 0xde 0xff 0xff 0xff 0xff"/>
+                <PP Name="PatchEnable" Value="0xff 0xff"/>
+                <PP Name="SceneTable"
+                    Value="0x20 0xb2 0x21 0xb2 0x24 0x7f 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SerialNo" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="CUSTYPE" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="EnablePageFallback" Value="1"/>
+                <PP Name="EnableIndicatorPressedLevel" Value="1"/>
+                <PP Name="EnableNightlightOnUserKeys" Value="0"/>
+                <PP Name="EnableNightlightOnToggleKey" Value="0"/>
+                <PP Name="IndicatorMode" Value="0x1"/>
+                <PP Name="35bit2" Value="0"/>
+                <PP Name="DisableKeySlider" Value="0"/>
+                <PP Name="InvertDisplay" Value="0"/>
+                <PP Name="HideClock" Value="0"/>
+                <PP Name="EnableScheduling" Value="0"/>
+                <PP Name="EnableDynamicLabels" Value="1"/>
+                <PP Name="LabelFlavourLSB" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="LabelFlavourMSB" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <CatalogNumber>5085DL</CatalogNumber>
+            </Unit>
+        </Network>
+        <Network>
+            <OID>900b5690-fe17-1026-a75e-eb1d096ee5cc</OID>
+            <TagName>Upstairs</TagName>
+            <Address>253</Address>
+            <NetworkNumber>253</NetworkNumber>
+            <Interface>
+                <OID>9014f380-fe17-1026-a75f-eb1d096ee5cc</OID>
+                <InterfaceType>bridge</InterfaceType>
+                <InterfaceAddress>254/p/253</InterfaceAddress>
+            </Interface>
+            <Application>
+                <OID>90b48ee0-fe17-1026-a760-eb1d096ee5cc</OID>
+                <TagName>Lighting</TagName>
+                <Address>56</Address>
+                <Group>
+                    <OID>910f3200-fe17-1026-a766-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+                <Group>
+                    <OID>a8129d20-fe17-1026-a76d-eb1d096ee5cc</OID>
+                    <TagName>Bar Heater Master</TagName>
+                    <Address>81</Address>
+                </Group>
+                <Group>
+                    <OID>a820cdf0-fe17-1026-a76e-eb1d096ee5cc</OID>
+                    <TagName>Bar Heater children 1</TagName>
+                    <Address>82</Address>
+                </Group>
+                <Group>
+                    <OID>a82f25d0-fe17-1026-a76f-eb1d096ee5cc</OID>
+                    <TagName>Bar Heater children 2</TagName>
+                    <Address>83</Address>
+                </Group>
+                <Group>
+                    <OID>a83d7db0-fe17-1026-a770-eb1d096ee5cc</OID>
+                    <TagName>Group 243</TagName>
+                    <Address>243</Address>
+                </Group>
+                <Group>
+                    <OID>a91da480-fe17-1026-a771-eb1d096ee5cc</OID>
+                    <TagName>Group 127</TagName>
+                    <Address>127</Address>
+                </Group>
+                <Group>
+                    <OID>aa0e6d20-fe17-1026-a772-eb1d096ee5cc</OID>
+                    <TagName>Master Bedroom Main</TagName>
+                    <Address>32</Address>
+                </Group>
+                <Group>
+                    <OID>aa1c9df0-fe17-1026-a773-eb1d096ee5cc</OID>
+                    <TagName>Master Bedroom right side</TagName>
+                    <Address>33</Address>
+                </Group>
+                <Group>
+                    <OID>aa2af5d0-fe17-1026-a774-eb1d096ee5cc</OID>
+                    <TagName>Master Bedroom left side</TagName>
+                    <Address>34</Address>
+                </Group>
+                <Group>
+                    <OID>aa394db0-fe17-1026-a775-eb1d096ee5cc</OID>
+                    <TagName>Children's bedroom 1</TagName>
+                    <Address>35</Address>
+                </Group>
+                <Group>
+                    <OID>bcf3eb90-fe17-1026-a77b-eb1d096ee5cc</OID>
+                    <TagName>Children's bedroom 2</TagName>
+                    <Address>36</Address>
+                </Group>
+                <Group>
+                    <OID>bd024370-fe17-1026-a77c-eb1d096ee5cc</OID>
+                    <TagName>Master Bathroom</TagName>
+                    <Address>37</Address>
+                </Group>
+                <Group>
+                    <OID>bd107440-fe17-1026-a77d-eb1d096ee5cc</OID>
+                    <TagName>Upstairs Toilet</TagName>
+                    <Address>38</Address>
+                </Group>
+                <Group>
+                    <OID>bd1ecc20-fe17-1026-a77e-eb1d096ee5cc</OID>
+                    <TagName>Upstairs Fan</TagName>
+                    <Address>39</Address>
+                </Group>
+                <Group>
+                    <OID>bd2d2400-fe17-1026-a77f-eb1d096ee5cc</OID>
+                    <TagName>Jacuzzi</TagName>
+                    <Address>80</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>90c557c0-fe17-1026-a761-eb1d096ee5cc</OID>
+                <TagName>Telephony</TagName>
+                <Address>224</Address>
+                <Group>
+                    <OID>911d89e0-fe17-1026-a767-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>90d3afa0-fe17-1026-a762-eb1d096ee5cc</OID>
+                <TagName>Trigger Control</TagName>
+                <Address>202</Address>
+                <Group>
+                    <OID>912be1c0-fe17-1026-a768-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+                <Group>
+                    <OID>bcd9acd0-fe17-1026-a77a-eb1d096ee5cc</OID>
+                    <TagName>Group 127</TagName>
+                    <Address>127</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>90e1e070-fe17-1026-a763-eb1d096ee5cc</OID>
+                <TagName>Enable Control</TagName>
+                <Address>203</Address>
+                <Group>
+                    <OID>913a1290-fe17-1026-a769-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>90f03850-fe17-1026-a764-eb1d096ee5cc</OID>
+                <TagName>Heating</TagName>
+                <Address>136</Address>
+                <Group>
+                    <OID>91486a70-fe17-1026-a76a-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>90fe9030-fe17-1026-a765-eb1d096ee5cc</OID>
+                <TagName>Unused</TagName>
+                <Address>255</Address>
+                <Group>
+                    <OID>9156c250-fe17-1026-a76b-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+            </Application>
+            <Unit>
+                <OID>aeeaeee0-fe17-1026-a776-eb1d096ee5cc</OID>
+                <TagName>Relay serving upstairs</TagName>
+                <Address>1</Address>
+                <Description>this is mainly for heating and cooling related functions</Description>
+                <UnitType>RELDN4</UnitType>
+                <UnitName>NEWUNIT</UnitName>
+                <SerialNumber>78572.18</SerialNumber>
+                <FirmwareVersion>1.2.18</FirmwareVersion>
+                <PP Name="LightLevel" Value="0xff 0xff 0xff 0xff 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="UnitAddress" Value="0x1"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="NEWUNIT "/>
+                <PP Name="InterLockingChannel" Value="0x0"/>
+                <PP Name="LogicGA13Associations" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="LogicGA14Associations" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="LogicGA15Associations" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="LogicGA16Associations" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="RestrikeChannel" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="LogicFunction" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="ClockGenEnable" Value="1"/>
+                <PP Name="LocalToggleEnable" Value="1"/>
+                <PP Name="NetworkPriority" Value="1"/>
+                <PP Name="LearnMode" Value="0"/>
+                <PP Name="LearnAnyApplication" Value="0"/>
+                <PP Name="LearnedFlag" Value="0"/>
+                <PP Name="Burden" Value="1"/>
+                <PP Name="CheckSum" Value="1"/>
+                <PP Name="LevelStoreEnable" Value="1 1 1 1"/>
+                <PP Name="LogicLevelStoreEnable" Value="1 1 1 1"/>
+                <PP Name="RestrikeDelay" Value="0x3c"/>
+                <PP Name="AreaGroupAddress" Value="0xff"/>
+                <PP Name="PowerUpDelay" Value="0x5 0x5 0x5 0x5"/>
+                <PP Name="GroupAddress"
+                    Value="0x51 0x52 0x53 0x27 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="MinDimmingLevel" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="MaxDimmingLevel" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="SerialNo" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="CustType" Value="0x52 0x45 0x4c 0x44 0x4e 0x34 0x20 0x20"/>
+                <CatalogNumber>5504RVF</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>b217ebe0-fe17-1026-a777-eb1d096ee5cc</OID>
+                <TagName>Key unit for heaters</TagName>
+                <Address>6</Address>
+                <UnitType>KEY4</UnitType>
+                <UnitName>NEWUNIT</UnitName>
+                <SerialNumber>77586.146</SerialNumber>
+                <FirmwareVersion>1.2.66</FirmwareVersion>
+                <PP Name="LightIndex" Value="0x0"/>
+                <PP Name="LightLevel"
+                    Value="0x0 0x0 0x0 0x0 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="LightLevelStore1" Value="0x0 0x47 0xff 0xff"/>
+                <PP Name="LightLevelStore2" Value="0x3f 0x4c 0xf2 0xff"/>
+                <PP Name="EEPROMChecksumActive" Value="0xff"/>
+                <PP Name="EEPROMChecksum" Value="0xff"/>
+                <PP Name="UnitAddress" Value="0x6"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="NEWUNIT "/>
+                <PP Name="DebounceTime" Value="0x3"/>
+                <PP Name="LongPressTime" Value="0x19"/>
+                <PP Name="JPCommand" Value="0x0 0x0 0xd 0xf"/>
+                <PP Name="SRCommand" Value="0x3 0x3 0x0 0x0"/>
+                <PP Name="LPCommand" Value="0x5 0x4 0x0 0x0"/>
+                <PP Name="LRCommand" Value="0xe 0xe 0x0 0x0"/>
+                <PP Name="BlockAllocation" Value="0x4 0x2 0x8 0x1"/>
+                <PP Name="EEPROMLevelStore" Value="0"/>
+                <PP Name="EEPROMLevelRecall" Value="0"/>
+                <PP Name="LearnMode" Value="0"/>
+                <PP Name="LearnAnyApp" Value="0"/>
+                <PP Name="LearnedFlag" Value="1"/>
+                <PP Name="EEPROMChecksumAlarm" Value="1"/>
+                <PP Name="RampRate" Value="0x1 0x3"/>
+                <PP Name="StatusReportInterval" Value="0x3"/>
+                <PP Name="AreaGroupAddress" Value="0xff"/>
+                <PP Name="TimerHighByte" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="TimerLowByte" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="TimerExpiryCommand" Value="0xf 0x0 0xf 0xf"/>
+                <PP Name="GroupAddress" Value="0x27 0x52 0x51 0x53 0xff 0xff 0xff 0xff"/>
+                <PP Name="IndicatorBlockAssignment" Value="0x2 0x1 0x3 0x0"/>
+                <PP Name="IndicatorFunction" Value="0x2 0x2 0x2 0x2"/>
+                <PP Name="PatchEnable" Value="0xff 0xff"/>
+                <PP Name="CUSTYPE" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="IndicatorBrightness" Value="0xff"/>
+                <CatalogNumber>5034N</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>b5854d40-fe17-1026-a778-eb1d096ee5cc</OID>
+                <TagName>This is the CNI</TagName>
+                <Address>7</Address>
+                <UnitType>PC_INT_1</UnitType>
+                <UnitName>NEWUNIT</UnitName>
+                <FirmwareVersion>3.13</FirmwareVersion>
+                <PP Name="UnitAddress" Value="0x7"/>
+                <PP Name="Application" Value="0xff 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="NEWUNIT "/>
+                <PP Name="ConnectApplicationsMode" Value="0"/>
+                <PP Name="MonitorMMISALMode" Value="0"/>
+                <PP Name="DiagnosticTrigger" Value="0xff"/>
+                <PP Name="ClockGenEnable" Value="1"/>
+                <PP Name="Burden" Value="0"/>
+                <PP Name="ServiceType" Value="0xff"/>
+                <PP Name="HenryPassword" Value="0xff"/>
+                <PP Name="PowerUp" Value="0x0"/>
+                <PP Name="LocalSAL" Value="0"/>
+                <PP Name="SerialNo" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="CustType" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5100PC</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>b6ed41b0-fe17-1026-a779-eb1d096ee5cc</OID>
+                <TagName>Master bedroom key switch</TagName>
+                <Address>8</Address>
+                <UnitType>KEYM4</UnitType>
+                <UnitName>NEWUNIT</UnitName>
+                <SerialNumber>69.39</SerialNumber>
+                <FirmwareVersion>1.3.19</FirmwareVersion>
+                <PP Name="LightIndex" Value="0x0"/>
+                <PP Name="LightLevel"
+                    Value="0x0 0x0 0x0 0x0 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="EEPROMCheckSumActive" Value="0xff"/>
+                <PP Name="EEPROM Checksum" Value="0x0"/>
+                <PP Name="UnitAddress" Value="0x8"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="UnitName" Value="NEWUNIT "/>
+                <PP Name="DebounceTime" Value="0x3"/>
+                <PP Name="LongPressTime" Value="0x19"/>
+                <PP Name="IndicatorBrightness" Value="0xff"/>
+                <PP Name="TimerDuration" Value="0x5"/>
+                <PP Name="IndicatorPressedLevel" Value="0xf"/>
+                <PP Name="EnableNightlight" Value="0"/>
+                <PP Name="DisableTimerFlash" Value="0"/>
+                <PP Name="IDBacklightIllumination" Value="0"/>
+                <PP Name="FirstKeyThrowAway" Value="0"/>
+                <PP Name="EnableNightlightOnPCx" Value="0"/>
+                <PP Name="EnableNightlightOnPA6" Value="0"/>
+                <PP Name="EnableNightlightControl" Value="0"/>
+                <PP Name="DisableIR" Value="0"/>
+                <PP Name="IRBank" Value="0x0"/>
+                <PP Name="BlockAllocation" Value="0x1 0x2 0x4 0x8 0x10 0x20 0x40 0x80"/>
+                <PP Name="EEPROMLevelStore" Value="0"/>
+                <PP Name="LearnMode" Value="0"/>
+                <PP Name="LearnAnyApp" Value="0"/>
+                <PP Name="LearnedFlag" Value="1"/>
+                <PP Name="EEPROMChecksumAlarm" Value="1"/>
+                <PP Name="RampRate" Value="0x1 0x3"/>
+                <PP Name="StatusReportInterval" Value="0x3"/>
+                <PP Name="AreaGroupAddress" Value="0xff"/>
+                <PP Name="TimerExpiryCommand" Value="0xf 0xf 0xf 0xf 0xf 0xf 0xf 0xf"/>
+                <PP Name="GroupAddress" Value="0x20 0x21 0x22 0x23 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="ControlAppGroupAddress" Value="0x7f"/>
+                <PP Name="IndicatorBlockAssignment" Value="0x0 0x1 0x2 0x3 0x4 0x5 0x6 0x7"/>
+                <PP Name="PrimaryColour" Value="0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1"/>
+                <PP Name="IndicatorFunction" Value="0x2 0x2 0x2 0x2 0x2 0x2 0x2 0x2"/>
+                <PP Name="SceneKeySelector" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="JPCommand" Value="0x0 0x0 0x0 0x0 0xb 0xb 0xb 0xb"/>
+                <PP Name="SRCommand" Value="0xb 0xb 0xb 0xb 0x0 0x0 0x0 0x0"/>
+                <PP Name="LPCommand" Value="0x2 0x2 0x2 0x2 0x0 0x0 0x0 0x0"/>
+                <PP Name="LRCommand" Value="0xe 0xe 0xe 0xe 0x0 0x0 0x0 0x0"/>
+                <PP Name="LightLevelStore1" Value="0x3f 0xff 0xff 0xff 0xff 0xff 0xff 0xf7"/>
+                <PP Name="LightLevelStore2" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xef"/>
+                <PP Name="TimerHighByte" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="TimerLowByte" Value="0x0 0x0 0x50 0x50 0x0 0x0 0x0 0xa"/>
+                <PP Name="SceneTablePointer" Value="0xa2 0xb6 0xca 0xde 0xff 0xff 0xff 0xff"/>
+                <PP Name="PatchEnable" Value="0xff 0xff"/>
+                <PP Name="SceneTable"
+                    Value="0x20 0xff 0x21 0xe5 0x22 0xcc 0x23 0xb2 0x24 0x99 0x25 0x7f 0x26 0x66 0x27 0x4c 0x50 0xff 0xff 0xff 0x20 0x0 0x21 0x0 0x22 0x0 0x23 0x0 0x24 0x0 0x25 0x0 0x26 0x0 0x27 0x0 0x50 0x0 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SerialNo" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="CUSTYPE" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5054NL</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>bdc34980-fe17-1026-a780-eb1d096ee5cc</OID>
+                <TagName>Bathroom light control</TagName>
+                <Address>16</Address>
+                <UnitType>SENLL</UnitType>
+                <UnitName>NEWUNIT</UnitName>
+                <FirmwareVersion>1.00</FirmwareVersion>
+                <PP Name="EEPROMChecksumActive" Value="0xff"/>
+                <PP Name="EEPROMChecksum" Value="0xff"/>
+                <PP Name="UnitAddress" Value="0x10"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="UnitName" Value="NEWUNIT "/>
+                <PP Name="LearnMode" Value="0"/>
+                <PP Name="LearnAnyApp" Value="0"/>
+                <PP Name="LearnedFlag" Value="1"/>
+                <PP Name="TargetLUX" Value="0x8c"/>
+                <PP Name="StatusReportInterval" Value="0x3"/>
+                <PP Name="AreaGroupAddress" Value="0xff"/>
+                <PP Name="LevelGroupAddress" Value="0x25"/>
+                <PP Name="OnOffGroupAddress" Value="0xff"/>
+                <PP Name="EnableGroupAddress" Value="0xff"/>
+                <PP Name="LED" Value="0x1"/>
+                <PP Name="IndicatorFunction" Value="0x2"/>
+                <PP Name="Hystersis" Value="0x0"/>
+                <PP Name="PatchEnable" Value="0x9d 0x40"/>
+                <PP Name="CUSTYPE" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5031PE</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>c02f4070-fe17-1026-a781-eb1d096ee5cc</OID>
+                <TagName>Alternate network interface</TagName>
+                <Address>128</Address>
+                <UnitType>PCINT4</UnitType>
+                <UnitName>NEWUNIT</UnitName>
+                <SerialNumber>69.38</SerialNumber>
+                <FirmwareVersion>4.2.00</FirmwareVersion>
+                <PP Name="UnitAddress" Value="0x80"/>
+                <PP Name="Application" Value="0xff 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="NEWUNIT "/>
+                <PP Name="ConnectApplicationsMode" Value="0"/>
+                <PP Name="MonitorMMISALMode" Value="0"/>
+                <PP Name="DiagnosticTrigger" Value="0xff"/>
+                <PP Name="ClockGenEnable" Value="0"/>
+                <PP Name="Burden" Value="0"/>
+                <PP Name="ServiceType" Value="0xff"/>
+                <PP Name="HenryPassword" Value="0xff"/>
+                <PP Name="PowerUp" Value="0x0"/>
+                <PP Name="LocalSAL" Value="0"/>
+                <PP Name="SerialNo" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="CustType" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5500PC</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>c1bae980-fe17-1026-a782-eb1d096ee5cc</OID>
+                <TagName>Bridge to the downstairs network</TagName>
+                <Address>254</Address>
+                <UnitType>BRIDGE2F</UnitType>
+                <UnitName>NEWUNIT</UnitName>
+                <SerialNumber>77440.40</SerialNumber>
+                <FirmwareVersion>4.1.00</FirmwareVersion>
+                <PP Name="EEPROMCheckSumActive" Value="0xff"/>
+                <PP Name="EEPROM Checksum" Value="0x0"/>
+                <PP Name="UnitAddress" Value="0xfe"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="NEWUNIT "/>
+                <PP Name="ApplicationConnectEnabled" Value="1"/>
+                <PP Name="BridgeCount" Value="0x0"/>
+                <PP Name="MMITunnelingEnable" Value="0"/>
+                <PP Name="BridgeAddress" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="FIFOBufferMonitor" Value="0xff"/>
+                <PP Name="TriggerAddress" Value="0xff"/>
+                <PP Name="ClockGenEnable" Value="1"/>
+                <PP Name="Burden" Value="0"/>
+                <PP Name="ServiceType" Value="0xff"/>
+                <PP Name="CustomManufactorer" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SerialNo" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="CustType" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5500NB</CatalogNumber>
+            </Unit>
+        </Network>
+        <Network>
+            <OID>d57e44d0-fe17-1026-a783-eb1d096ee5cc</OID>
+            <TagName>Net. 42</TagName>
+            <Address>42</Address>
+            <NetworkNumber>42</NetworkNumber>
+            <Interface>
+                <OID>d587bab0-fe17-1026-a784-eb1d096ee5cc</OID>
+                <InterfaceType>bridge</InterfaceType>
+                <InterfaceAddress>254/p/42</InterfaceAddress>
+            </Interface>
+            <Application>
+                <OID>d62c3810-fe17-1026-a785-eb1d096ee5cc</OID>
+                <TagName>Lighting</TagName>
+                <Address>56</Address>
+                <Group>
+                    <OID>d69ea8f0-fe17-1026-a78b-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+                <Group>
+                    <OID>e8fc59c0-fe17-1026-a791-eb1d096ee5cc</OID>
+                    <TagName>Garden Lights</TagName>
+                    <Address>42</Address>
+                </Group>
+                <Group>
+                    <OID>e90cfb90-fe17-1026-a792-eb1d096ee5cc</OID>
+                    <TagName>Potting Shed</TagName>
+                    <Address>43</Address>
+                </Group>
+                <Group>
+                    <OID>e91dc470-fe17-1026-a793-eb1d096ee5cc</OID>
+                    <TagName>Barbeque</TagName>
+                    <Address>34</Address>
+                </Group>
+                <Group>
+                    <OID>e92e6640-fe17-1026-a794-eb1d096ee5cc</OID>
+                    <TagName>Group 35</TagName>
+                    <Address>35</Address>
+                </Group>
+                <Group>
+                    <OID>e93f0810-fe17-1026-a795-eb1d096ee5cc</OID>
+                    <TagName>Group 36</TagName>
+                    <Address>36</Address>
+                </Group>
+                <Group>
+                    <OID>e94fd0f0-fe17-1026-a796-eb1d096ee5cc</OID>
+                    <TagName>Group 37</TagName>
+                    <Address>37</Address>
+                </Group>
+                <Group>
+                    <OID>e96072c0-fe17-1026-a797-eb1d096ee5cc</OID>
+                    <TagName>Group 38</TagName>
+                    <Address>38</Address>
+                </Group>
+                <Group>
+                    <OID>e9711490-fe17-1026-a798-eb1d096ee5cc</OID>
+                    <TagName>Group 39</TagName>
+                    <Address>39</Address>
+                </Group>
+                <Group>
+                    <OID>ebafb9f0-fe17-1026-a799-eb1d096ee5cc</OID>
+                    <TagName>Pavillion lights</TagName>
+                    <Address>44</Address>
+                </Group>
+                <Group>
+                    <OID>edc839b0-fe17-1026-a79a-eb1d096ee5cc</OID>
+                    <TagName>Pool deck</TagName>
+                    <Address>46</Address>
+                </Group>
+                <Group>
+                    <OID>ee089e10-fe17-1026-a79b-eb1d096ee5cc</OID>
+                    <TagName>Pool lights</TagName>
+                    <Address>47</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>d63a8ff0-fe17-1026-a786-eb1d096ee5cc</OID>
+                <TagName>Telephony</TagName>
+                <Address>224</Address>
+                <Group>
+                    <OID>d6ad00d0-fe17-1026-a78c-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>d648e7d0-fe17-1026-a787-eb1d096ee5cc</OID>
+                <TagName>Trigger Control</TagName>
+                <Address>202</Address>
+                <Group>
+                    <OID>d6bda2a0-fe17-1026-a78d-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+                <Group>
+                    <OID>3965cee0-f11b-1027-8011-b6f11b5a4c76</OID>
+                    <TagName>Group 1</TagName>
+                    <Address>1</Address>
+                    <Level Value="1">
+                        <OID>3c6ca640-f11b-1027-8012-b6f11b5a4c76</OID>
+                        <TagName>Level 1</TagName>
+                        <Address>1</Address>
+                        <TagsDLT/>
+                    </Level>
+                    <Level Value="2">
+                        <OID>06112200-f11c-1027-8015-b6f11b5a4c76</OID>
+                        <TagName>Level 2</TagName>
+                        <Address>2</Address>
+                        <TagsDLT/>
+                    </Level>
+                </Group>
+            </Application>
+            <Application>
+                <OID>d6573fb0-fe17-1026-a788-eb1d096ee5cc</OID>
+                <TagName>Enable Control</TagName>
+                <Address>203</Address>
+                <Group>
+                    <OID>d6ce6b80-fe17-1026-a78e-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                    <Level Value="255">
+                        <OID>c8fd2b90-6545-1028-a20c-8e014e0fd949</OID>
+                        <TagName>Level 255</TagName>
+                        <Address>255</Address>
+                        <TagsDLT/>
+                    </Level>
+                </Group>
+                <Group>
+                    <OID>dcb55160-6547-1028-b3c4-f81609408799</OID>
+                    <TagName>Main Switch Key Sets control</TagName>
+                    <Address>1</Address>
+                    <Level Value="1">
+                        <OID>e5b95cc0-6547-1028-b3c5-f81609408799</OID>
+                        <TagName>Main Key Set 1</TagName>
+                        <Address>1</Address>
+                        <TagsDLT/>
+                    </Level>
+                    <Level Value="2">
+                        <OID>ecf5ee90-6547-1028-b3c6-f81609408799</OID>
+                        <TagName>Main Key Set 2</TagName>
+                        <Address>2</Address>
+                        <TagsDLT/>
+                    </Level>
+                </Group>
+            </Application>
+            <Application>
+                <OID>d667e180-fe17-1026-a789-eb1d096ee5cc</OID>
+                <TagName>Heating</TagName>
+                <Address>136</Address>
+                <Group>
+                    <OID>d6df0d50-fe17-1026-a78f-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+                <Group>
+                    <OID>845a4210-6546-1028-b3c1-f81609408799</OID>
+                    <TagName>Main heater</TagName>
+                    <Address>0</Address>
+                </Group>
+                <Group>
+                    <OID>b2b9bfa0-6546-1028-b3c2-f81609408799</OID>
+                    <TagName>Pool heater</TagName>
+                    <Address>1</Address>
+                </Group>
+            </Application>
+            <Application>
+                <OID>d6788350-fe17-1026-a78a-eb1d096ee5cc</OID>
+                <TagName>Unused</TagName>
+                <Address>255</Address>
+                <Group>
+                    <OID>d6fe0700-fe17-1026-a790-eb1d096ee5cc</OID>
+                    <TagName>&lt;Unused&gt;</TagName>
+                    <Address>255</Address>
+                </Group>
+            </Application>
+            <Unit>
+                <OID>314ff9c0-fe18-1026-a79f-eb1d096ee5cc</OID>
+                <TagName>Wireless gateway to Local Net</TagName>
+                <Address>254</Address>
+                <UnitType>WGATE5F</UnitType>
+                <UnitName>WG</UnitName>
+                <SerialNumber>100101.1605</SerialNumber>
+                <FirmwareVersion>1.8.0</FirmwareVersion>
+                <PP Name="SerialNo" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="Manufacturer" Value="0x0"/>
+                <PP Name="ModelName" Value="WGATE5N"/>
+                <PP Name="AllowFactoryClear" Value="0"/>
+                <PP Name="RepeaterKind" Value="0x0"/>
+                <PP Name="HouseCode" Value="0x47 0x23 0x0 0x0"/>
+                <PP Name="MaxTransmitAttempts" Value="0x6"/>
+                <PP Name="MaxAvoidanceCollisions" Value="0x14"/>
+                <PP Name="MaxPacketCollisions" Value="0x10"/>
+                <PP Name="PropagateCollisions" Value="1"/>
+                <PP Name="UseSecurity" Value="1"/>
+                <PP Name="RepeatSALTransmission" Value="1"/>
+                <PP Name="LockFlag" Value="0x0"/>
+                <PP Name="UnitAddress" Value="0xfe"/>
+                <PP Name="Application" Value="0xff 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="UnitName" Value="WG      "/>
+                <PP Name="Password" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="StatusMonitorApplication" Value="0x38"/>
+                <PP Name="AllowMasterLearn" Value="0"/>
+                <PP Name="AllowLightingLearn" Value="0"/>
+                <PP Name="ApplicationConnectEnabled" Value="1"/>
+                <PP Name="ForwardingMode" Value="0"/>
+                <PP Name="SynchroniseToWired" Value="0"/>
+                <PP Name="ForwardingRoute" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="LicensePool"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="ResetCount" Value="0x0"/>
+                <PP Name="SpuriousInterruptCount" Value="0x0"/>
+                <PP Name="NMICount" Value="0x0"/>
+                <PP Name="StackOverflowCount" Value="0x0"/>
+                <CatalogNumber>5800WCGA</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>f9ed7c90-f11a-1027-8010-b6f11b5a4c76</OID>
+                <TagName>Main switch</TagName>
+                <Address>1</Address>
+                <UnitType>WRM8R2</UnitType>
+                <UnitName>MAINSW</UnitName>
+                <SerialNumber>1.4033</SerialNumber>
+                <FirmwareVersion>1.8.0</FirmwareVersion>
+                <PP Name="SerialNo" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="Manufacturer" Value="0x0"/>
+                <PP Name="ChannelRelayDelay" Value="0x6"/>
+                <PP Name="AllowFactoryClear" Value="0"/>
+                <PP Name="FeatureSet" Value="0x0"/>
+                <PP Name="KeyControlModifier" Value="0x0"/>
+                <PP Name="RepeaterKind" Value="0x0"/>
+                <PP Name="HouseCode" Value="0x47 0x23 0x0 0x0"/>
+                <PP Name="MaxTransmitAttempts" Value="0x6"/>
+                <PP Name="MaxAvoidanceCollisions" Value="0x14"/>
+                <PP Name="MaxPacketCollisions" Value="0x10"/>
+                <PP Name="PropagateCollisions" Value="1"/>
+                <PP Name="UseSecurity" Value="1"/>
+                <PP Name="RepeatSALTransmission" Value="1"/>
+                <PP Name="LockFlag" Value="0x0"/>
+                <PP Name="TemperatureThreshold" Value="0x50"/>
+                <PP Name="UnitAddress" Value="0x1"/>
+                <PP Name="Application" Value="0x38 0x88"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="UnitName" Value="MAINSW  "/>
+                <PP Name="LearnAllowed" Value="1"/>
+                <PP Name="LearnMasterMode" Value="1"/>
+                <PP Name="LearnNetworkAllowed" Value="1"/>
+                <PP Name="LearnedFlag" Value="0"/>
+                <PP Name="DefaultDNCYCTimer" Value="0xf"/>
+                <PP Name="StatusRequestInterval" Value="0x1e"/>
+                <PP Name="Password" Value="0x20 0x20 0x20 0x20 0x20 0x20 0x20 0x20"/>
+                <PP Name="KeyDebounceDuration" Value="0x3"/>
+                <PP Name="KeyDoubleClickDuration" Value="0xf"/>
+                <PP Name="KeyLongPressDuration" Value="0x19"/>
+                <PP Name="KeyExtraLongPressDuration" Value="0x1ab"/>
+                <PP Name="KeyMaskAllowed" Value="0x0"/>
+                <PP Name="KeyMaskSave" Value="0x0"/>
+                <PP Name="KeyCurrentMask" Value="0xffff"/>
+                <PP Name="KeyEnableMask1" Value="0xffff"/>
+                <PP Name="KeyEnableMask2" Value="0xffff"/>
+                <PP Name="KeyEnableMask3" Value="0xffff"/>
+                <PP Name="KeyEnableMask4" Value="0xffff"/>
+                <PP Name="KeyMaskNetworkVariable" Value="0xff"/>
+                <PP Name="KeyMaskNetworkVariableLevels" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="KeyOffsetAllowed" Value="0x1"/>
+                <PP Name="KeyOffsetSave" Value="0x1"/>
+                <PP Name="KeyCurrentOffset" Value="0x0"/>
+                <PP Name="KeyOffsets" Value="0x0 0x8 0x0 0x0"/>
+                <PP Name="KeyOffsetNetworkVariable" Value="0x1"/>
+                <PP Name="KeyOffsetNetworkVariableLevels" Value="0x1 0x2 0xff 0xff"/>
+                <PP Name="IndicatorBrightnessActivity" Value="0xff"/>
+                <PP Name="IndicatorBrightnessBackground" Value="0x60"/>
+                <PP Name="IndicatorBrightnessNightlight" Value="0x1"/>
+                <PP Name="IndicatorBrightnessActivityTimeout" Value="0xb7"/>
+                <PP Name="IndicatorBrightnessActivityGroup" Value="0xff"/>
+                <PP Name="IndicatorBrightnessBackgroundGroup" Value="0xff"/>
+                <PP Name="IndicatorBrightnessNightlightGroup" Value="0xff"/>
+                <PP Name="OutputMinimumLevel" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="OutputMaximumLevel" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="OutputGroup" Value="0x22 0x2a 0xff 0xff"/>
+                <PP Name="OutputLevelThreshold" Value="0x1 0x1 0x1 0x1"/>
+                <PP Name="OutputMapping" Value="0x1 0x1 0x1 0x1"/>
+                <PP Name="OutputLevelSaved" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="OutputGroupSecondary" Value="0 0 0 0"/>
+                <PP Name="OutputLevelSave" Value="0"/>
+                <PP Name="OutputLevelRestore" Value="0"/>
+                <PP Name="Key1CommandLookup" Value="0x0 0x3 0x14 0xe 0x0 0x0"/>
+                <PP Name="Key2CommandLookup" Value="0x0 0x3 0x2 0xe 0x0 0x0"/>
+                <PP Name="Key3CommandLookup" Value="0x0 0xb 0x14 0xe 0x0 0x0"/>
+                <PP Name="Key4CommandLookup" Value="0x0 0xb 0x2 0xe 0x0 0x0"/>
+                <PP Name="Key5CommandLookup" Value="0x0 0x10 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key6CommandLookup" Value="0x0 0x10 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key7CommandLookup" Value="0xc0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key8CommandLookup" Value="0xc4 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key9CommandLookup" Value="0xb 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key10CommandLookup" Value="0xb 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key11CommandLookup" Value="0xb 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key12CommandLookup" Value="0xb 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key13CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key14CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key15CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key16CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key1Parameter1" Value="0x0 0x0 0x1 0x0 0x0 0x0"/>
+                <PP Name="Key2Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key3Parameter1" Value="0x0 0x0 0x1 0x0 0x0 0x0"/>
+                <PP Name="Key4Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key5Parameter1" Value="0x0 0xb2 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key6Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key7Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key8Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key9Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key10Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key11Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key12Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key13Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key14Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key15Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key16Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key1Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key2Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key3Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key4Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key5Parameter2" Value="0x0 0x1 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key6Parameter2" Value="0x0 0x1 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key7Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key8Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key9Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key10Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key11Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key12Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key13Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key14Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key15Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key16Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="KeyMacroPool"
+                    Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key1BlockMap" Value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key2BlockMap" Value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key3BlockMap" Value="0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key4BlockMap" Value="0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key5BlockMap" Value="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key6BlockMap" Value="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key7BlockMap" Value="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key8BlockMap" Value="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key9BlockMap" Value="0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0"/>
+                <PP Name="Key10BlockMap" Value="0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0"/>
+                <PP Name="Key11BlockMap" Value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0"/>
+                <PP Name="Key12BlockMap" Value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0"/>
+                <PP Name="Key13BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0"/>
+                <PP Name="Key14BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0"/>
+                <PP Name="Key15BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"/>
+                <PP Name="Key16BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/>
+                <PP Name="BlockGroupSecondary" Value="0 0 0 0 0 0 0 0 1 1 1 1 0 0 0 0"/>
+                <PP Name="BlockGroup"
+                    Value="0x22 0xff 0x2a 0xff 0x2c 0xff 0x2e 0xff 0x0 0xff 0x1 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="BlockMemory1"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="BlockMemory2"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="BlockExpiryCommand" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="BlockExpiryParameter1"
+                    Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="BlockExpiryParameter2"
+                    Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="IndicatorControlByte"
+                    Value="0x2 0x2 0x2 0x2 0x2 0x2 0xc2 0xc2 0x2 0x2 0x2 0x2 0x0 0x0 0x0 0x0"/>
+                <PP Name="IndicatorInformationSource"
+                    Value="0x0 0x0 0x2 0x2 0x4 0x4 0x1 0x1 0x8 0x8 0xa 0xa 0xc 0xd 0xe 0xf"/>
+                <PP Name="IndicatorColourControl" Value="0x44 0x44 0x44 0x44 0x44 0x44 0x44 0x44"/>
+                <PP Name="IndicatorLowerLimit" Value="0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1"/>
+                <PP Name="IndicatorUpperLimit"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0x1 0x1 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneTriggerGroup" Value="0x1 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneTriggerLevel" Value="0x1 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneTriggerRate" Value="0x1 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="SceneVectorOffset" Value="0x0 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneVector"
+                    Value="0x2c 0x9e 0x2e 0xdd 0x2f 0xb0 0x2b 0xf4 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="Remote1Identity" Value="0x7f 0xd5 0x70 0x18"/>
+                <PP Name="Remote2Identity" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="Remote1KeyMap" Value="0x4 0x3 0x2 0x1 0x0 0xff 0xff 0xff 0xc 0xb 0xa 0x9 0x8 0xff 0xff 0xff"/>
+                <PP Name="Remote2KeyMap"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="InstallSWNumber" Value="0xa6b"/>
+                <PP Name="ResetCount" Value="0x0"/>
+                <PP Name="SpuriousInterruptCount" Value="0x0"/>
+                <PP Name="NMICount" Value="0x0"/>
+                <PP Name="StackOverflowCount" Value="0x0"/>
+                <PP Name="ModelName" Value="WRM8R2"/>
+                <PP Name="InstalledKeys" Value="0x8"/>
+                <PP Name="InstalledChannels" Value="0x2"/>
+                <PP Name="ChannelRelayMask" Value="0x3"/>
+                <CatalogNumber>5858R42AA</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>61edeff0-f11b-1027-8013-b6f11b5a4c76</OID>
+                <TagName>Control Unit</TagName>
+                <Address>2</Address>
+                <UnitType>WRM8D1</UnitType>
+                <UnitName>CTRL</UnitName>
+                <SerialNumber>1.4045</SerialNumber>
+                <FirmwareVersion>1.8.0</FirmwareVersion>
+                <PP Name="SerialNo" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="Manufacturer" Value="0x0"/>
+                <PP Name="ChannelRelayDelay" Value="0x6"/>
+                <PP Name="AllowFactoryClear" Value="0"/>
+                <PP Name="FeatureSet" Value="0x0"/>
+                <PP Name="KeyControlModifier" Value="0x0"/>
+                <PP Name="RepeaterKind" Value="0x0"/>
+                <PP Name="HouseCode" Value="0x47 0x23 0x0 0x0"/>
+                <PP Name="MaxTransmitAttempts" Value="0x6"/>
+                <PP Name="MaxAvoidanceCollisions" Value="0x14"/>
+                <PP Name="MaxPacketCollisions" Value="0x10"/>
+                <PP Name="PropagateCollisions" Value="1"/>
+                <PP Name="UseSecurity" Value="1"/>
+                <PP Name="RepeatSALTransmission" Value="1"/>
+                <PP Name="LockFlag" Value="0x0"/>
+                <PP Name="TemperatureThreshold" Value="0x50"/>
+                <PP Name="UnitAddress" Value="0x2"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="UnitName" Value="CTRL    "/>
+                <PP Name="LearnAllowed" Value="1"/>
+                <PP Name="LearnMasterMode" Value="1"/>
+                <PP Name="LearnNetworkAllowed" Value="1"/>
+                <PP Name="LearnedFlag" Value="0"/>
+                <PP Name="DefaultDNCYCTimer" Value="0xf"/>
+                <PP Name="StatusRequestInterval" Value="0x1e"/>
+                <PP Name="Password" Value="0x20 0x20 0x20 0x20 0x20 0x20 0x20 0x20"/>
+                <PP Name="KeyDebounceDuration" Value="0x3"/>
+                <PP Name="KeyDoubleClickDuration" Value="0xf"/>
+                <PP Name="KeyLongPressDuration" Value="0x19"/>
+                <PP Name="KeyExtraLongPressDuration" Value="0x1ab"/>
+                <PP Name="KeyMaskAllowed" Value="0x0"/>
+                <PP Name="KeyMaskSave" Value="0x0"/>
+                <PP Name="KeyCurrentMask" Value="0xffff"/>
+                <PP Name="KeyEnableMask1" Value="0xffff"/>
+                <PP Name="KeyEnableMask2" Value="0xffff"/>
+                <PP Name="KeyEnableMask3" Value="0xffff"/>
+                <PP Name="KeyEnableMask4" Value="0xffff"/>
+                <PP Name="KeyMaskNetworkVariable" Value="0xff"/>
+                <PP Name="KeyMaskNetworkVariableLevels" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="KeyOffsetAllowed" Value="0x0"/>
+                <PP Name="KeyOffsetSave" Value="0x1"/>
+                <PP Name="KeyCurrentOffset" Value="0x0"/>
+                <PP Name="KeyOffsets" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="KeyOffsetNetworkVariable" Value="0xff"/>
+                <PP Name="KeyOffsetNetworkVariableLevels" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="IndicatorBrightnessActivity" Value="0xff"/>
+                <PP Name="IndicatorBrightnessBackground" Value="0x60"/>
+                <PP Name="IndicatorBrightnessNightlight" Value="0x1"/>
+                <PP Name="IndicatorBrightnessActivityTimeout" Value="0xb7"/>
+                <PP Name="IndicatorBrightnessActivityGroup" Value="0xff"/>
+                <PP Name="IndicatorBrightnessBackgroundGroup" Value="0xff"/>
+                <PP Name="IndicatorBrightnessNightlightGroup" Value="0xff"/>
+                <PP Name="OutputMinimumLevel" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="OutputMaximumLevel" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="OutputGroup" Value="0x23 0xff 0xff 0xff"/>
+                <PP Name="OutputLevelThreshold" Value="0x1 0x1 0x1 0x1"/>
+                <PP Name="OutputMapping" Value="0x1 0x1 0x1 0x1"/>
+                <PP Name="OutputLevelSaved" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="OutputGroupSecondary" Value="0 0 0 0"/>
+                <PP Name="OutputLevelSave" Value="1"/>
+                <PP Name="OutputLevelRestore" Value="1"/>
+                <PP Name="Key1CommandLookup" Value="0xb 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key2CommandLookup" Value="0xb 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key3CommandLookup" Value="0xb 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key4CommandLookup" Value="0xb 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key5CommandLookup" Value="0xb 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key6CommandLookup" Value="0xb 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key7CommandLookup" Value="0x80 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key8CommandLookup" Value="0x80 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key9CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key10CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key11CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key12CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key13CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key14CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key15CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key16CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key1Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key2Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key3Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key4Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key5Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key6Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key7Parameter1" Value="0x1 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key8Parameter1" Value="0x1 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key9Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key10Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key11Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key12Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key13Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key14Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key15Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key16Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key1Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key2Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key3Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key4Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key5Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key6Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key7Parameter2" Value="0x1 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key8Parameter2" Value="0x2 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key9Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key10Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key11Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key12Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key13Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key14Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key15Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key16Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="KeyMacroPool"
+                    Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key1BlockMap" Value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key2BlockMap" Value="0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key3BlockMap" Value="0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key4BlockMap" Value="0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key5BlockMap" Value="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key6BlockMap" Value="0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key7BlockMap" Value="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key8BlockMap" Value="0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key9BlockMap" Value="0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0"/>
+                <PP Name="Key10BlockMap" Value="0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0"/>
+                <PP Name="Key11BlockMap" Value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0"/>
+                <PP Name="Key12BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0"/>
+                <PP Name="Key13BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0"/>
+                <PP Name="Key14BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0"/>
+                <PP Name="Key15BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"/>
+                <PP Name="Key16BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/>
+                <PP Name="BlockGroupSecondary" Value="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="BlockGroup"
+                    Value="0x23 0x24 0x25 0x26 0x27 0x2c 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="BlockMemory1"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="BlockMemory2"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="BlockExpiryCommand" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="BlockExpiryParameter1"
+                    Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="BlockExpiryParameter2"
+                    Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="IndicatorControlByte"
+                    Value="0x2 0x2 0x2 0x2 0x2 0x2 0x82 0x82 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="IndicatorInformationSource"
+                    Value="0x0 0x1 0x2 0x3 0x4 0x5 0x1 0x1 0x8 0x9 0xa 0xb 0xc 0xd 0xe 0xf"/>
+                <PP Name="IndicatorColourControl" Value="0x44 0x44 0x44 0x44 0x44 0x44 0x44 0x44"/>
+                <PP Name="IndicatorLowerLimit" Value="0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x2 0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1"/>
+                <PP Name="IndicatorUpperLimit"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0x1 0x2 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneTriggerGroup" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneTriggerLevel" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneTriggerRate" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="SceneVectorOffset" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneVector"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="Remote1Identity" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="Remote2Identity" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="Remote1KeyMap"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="Remote2KeyMap"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="InstallSWNumber" Value="0x9894"/>
+                <PP Name="ResetCount" Value="0x0"/>
+                <PP Name="SpuriousInterruptCount" Value="0x0"/>
+                <PP Name="NMICount" Value="0x0"/>
+                <PP Name="StackOverflowCount" Value="0x0"/>
+                <PP Name="ModelName" Value="WRM8D1"/>
+                <PP Name="InstalledKeys" Value="0x8"/>
+                <PP Name="InstalledChannels" Value="0x1"/>
+                <PP Name="ChannelRelayMask" Value="0x0"/>
+                <CatalogNumber>5858D2L1AA</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>e9666b10-f11b-1027-8014-b6f11b5a4c76</OID>
+                <TagName>Additional 4 key unit</TagName>
+                <Address>3</Address>
+                <UnitType>WRB4D2</UnitType>
+                <UnitName>FOURKEY</UnitName>
+                <SerialNumber>1.4051</SerialNumber>
+                <FirmwareVersion>1.8.0</FirmwareVersion>
+                <PP Name="SerialNo" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="Manufacturer" Value="0x0"/>
+                <PP Name="ChannelRelayDelay" Value="0x6"/>
+                <PP Name="AllowFactoryClear" Value="0"/>
+                <PP Name="FeatureSet" Value="0x0"/>
+                <PP Name="KeyControlModifier" Value="0x0"/>
+                <PP Name="RepeaterKind" Value="0x0"/>
+                <PP Name="HouseCode" Value="0x47 0x23 0x0 0x0"/>
+                <PP Name="MaxTransmitAttempts" Value="0x6"/>
+                <PP Name="MaxAvoidanceCollisions" Value="0x14"/>
+                <PP Name="MaxPacketCollisions" Value="0x10"/>
+                <PP Name="PropagateCollisions" Value="1"/>
+                <PP Name="UseSecurity" Value="1"/>
+                <PP Name="RepeatSALTransmission" Value="1"/>
+                <PP Name="LockFlag" Value="0x0"/>
+                <PP Name="TemperatureThreshold" Value="0x50"/>
+                <PP Name="UnitAddress" Value="0x3"/>
+                <PP Name="Application" Value="0x38 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="UnitName" Value="FOURKEY "/>
+                <PP Name="LearnAllowed" Value="1"/>
+                <PP Name="LearnMasterMode" Value="1"/>
+                <PP Name="LearnNetworkAllowed" Value="1"/>
+                <PP Name="LearnedFlag" Value="0"/>
+                <PP Name="DefaultDNCYCTimer" Value="0xf"/>
+                <PP Name="StatusRequestInterval" Value="0x1e"/>
+                <PP Name="Password" Value="0x20 0x20 0x20 0x20 0x20 0x20 0x20 0x20"/>
+                <PP Name="KeyDebounceDuration" Value="0x3"/>
+                <PP Name="KeyDoubleClickDuration" Value="0xf"/>
+                <PP Name="KeyLongPressDuration" Value="0x19"/>
+                <PP Name="KeyExtraLongPressDuration" Value="0x1ab"/>
+                <PP Name="KeyMaskAllowed" Value="0x0"/>
+                <PP Name="KeyMaskSave" Value="0x0"/>
+                <PP Name="KeyCurrentMask" Value="0xffff"/>
+                <PP Name="KeyEnableMask1" Value="0xffff"/>
+                <PP Name="KeyEnableMask2" Value="0xffff"/>
+                <PP Name="KeyEnableMask3" Value="0xffff"/>
+                <PP Name="KeyEnableMask4" Value="0xffff"/>
+                <PP Name="KeyMaskNetworkVariable" Value="0xff"/>
+                <PP Name="KeyMaskNetworkVariableLevels" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="KeyOffsetAllowed" Value="0x0"/>
+                <PP Name="KeyOffsetSave" Value="0x1"/>
+                <PP Name="KeyCurrentOffset" Value="0x0"/>
+                <PP Name="KeyOffsets" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="KeyOffsetNetworkVariable" Value="0xff"/>
+                <PP Name="KeyOffsetNetworkVariableLevels" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="IndicatorBrightnessActivity" Value="0xff"/>
+                <PP Name="IndicatorBrightnessBackground" Value="0x60"/>
+                <PP Name="IndicatorBrightnessNightlight" Value="0x1"/>
+                <PP Name="IndicatorBrightnessActivityTimeout" Value="0xb7"/>
+                <PP Name="IndicatorBrightnessActivityGroup" Value="0xff"/>
+                <PP Name="IndicatorBrightnessBackgroundGroup" Value="0xff"/>
+                <PP Name="IndicatorBrightnessNightlightGroup" Value="0xff"/>
+                <PP Name="OutputMinimumLevel" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="OutputMaximumLevel" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="OutputGroup" Value="0x2c 0x2e 0xff 0xff"/>
+                <PP Name="OutputLevelThreshold" Value="0x1 0x1 0x1 0x1"/>
+                <PP Name="OutputMapping" Value="0x1 0x1 0x1 0x1"/>
+                <PP Name="OutputLevelSaved" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="OutputGroupSecondary" Value="0 0 0 0"/>
+                <PP Name="OutputLevelSave" Value="0"/>
+                <PP Name="OutputLevelRestore" Value="0"/>
+                <PP Name="Key1CommandLookup" Value="0x0 0xc0 0xc2 0xc3 0x0 0x0"/>
+                <PP Name="Key2CommandLookup" Value="0x0 0xc4 0xc1 0xc3 0x0 0x0"/>
+                <PP Name="Key3CommandLookup" Value="0x0 0xa 0x5 0xe 0x0 0x0"/>
+                <PP Name="Key4CommandLookup" Value="0x0 0x9 0x4 0xe 0x0 0x0"/>
+                <PP Name="Key5CommandLookup" Value="0xb 0x7 0x0 0x7 0x0 0x0"/>
+                <PP Name="Key6CommandLookup" Value="0xb 0x7 0x0 0x7 0x0 0x0"/>
+                <PP Name="Key7CommandLookup" Value="0x0 0x10 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key8CommandLookup" Value="0x0 0xc 0x9 0x0 0x0 0x0"/>
+                <PP Name="Key9CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key10CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key11CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key12CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key13CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key14CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key15CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key16CommandLookup" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key1Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key2Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key3Parameter1" Value="0x0 0x0 0x1 0x0 0x0 0x0"/>
+                <PP Name="Key4Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key5Parameter1" Value="0x0 0xa 0x0 0xa 0x0 0x0"/>
+                <PP Name="Key6Parameter1" Value="0x0 0xa 0x0 0xa 0x0 0x0"/>
+                <PP Name="Key7Parameter1" Value="0x0 0x7f 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key8Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key9Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key10Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key11Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key12Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key13Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key14Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key15Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key16Parameter1" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key1Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key2Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key3Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key4Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key5Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key6Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key7Parameter2" Value="0x0 0x1 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key8Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key9Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key10Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key11Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key12Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key13Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key14Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key15Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key16Parameter2" Value="0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="KeyMacroPool"
+                    Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="Key1BlockMap" Value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key2BlockMap" Value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key3BlockMap" Value="0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key4BlockMap" Value="0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key5BlockMap" Value="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key6BlockMap" Value="0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key7BlockMap" Value="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key8BlockMap" Value="0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0"/>
+                <PP Name="Key9BlockMap" Value="0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0"/>
+                <PP Name="Key10BlockMap" Value="0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0"/>
+                <PP Name="Key11BlockMap" Value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0"/>
+                <PP Name="Key12BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0"/>
+                <PP Name="Key13BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0"/>
+                <PP Name="Key14BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0"/>
+                <PP Name="Key15BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"/>
+                <PP Name="Key16BlockMap" Value="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1"/>
+                <PP Name="BlockGroupSecondary" Value="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                <PP Name="BlockGroup"
+                    Value="0x2c 0xff 0x2e 0xff 0x23 0x24 0x25 0x26 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="BlockMemory1"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xcc 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="BlockMemory2"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="BlockExpiryCommand" Value="0x0 0x0 0x0 0x0 0xf 0xf 0x0 0xf 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="BlockExpiryParameter1"
+                    Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="BlockExpiryParameter2"
+                    Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="IndicatorControlByte"
+                    Value="0xc2 0xc2 0x2 0x2 0x4 0x4 0x2 0x2 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="IndicatorInformationSource"
+                    Value="0x1 0x1 0x2 0x2 0x4 0x5 0x6 0x7 0x8 0x9 0xa 0xb 0xc 0xd 0xe 0xf"/>
+                <PP Name="IndicatorColourControl" Value="0x44 0x44 0x44 0x44 0x44 0x44 0x44 0x44"/>
+                <PP Name="IndicatorLowerLimit"
+                    Value="0x2 0x2 0x1 0x1 0x1 0x1 0x19 0x19 0x1 0x1 0x1 0x1 0x1 0x1 0x1 0x1"/>
+                <PP Name="IndicatorUpperLimit"
+                    Value="0x2 0x2 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneTriggerGroup" Value="0x1 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneTriggerLevel" Value="0x2 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneTriggerRate" Value="0x1 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+                <PP Name="SceneVectorOffset" Value="0x0 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="SceneVector"
+                    Value="0x2c 0xff 0x2e 0xff 0x2f 0xff 0x2b 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="Remote1Identity" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="Remote2Identity" Value="0xff 0xff 0xff 0xff"/>
+                <PP Name="Remote1KeyMap"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="Remote2KeyMap"
+                    Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <PP Name="InstallSWNumber" Value="0x721f"/>
+                <PP Name="ResetCount" Value="0x0"/>
+                <PP Name="SpuriousInterruptCount" Value="0x0"/>
+                <PP Name="NMICount" Value="0x0"/>
+                <PP Name="StackOverflowCount" Value="0x0"/>
+                <PP Name="ModelName" Value="WRB4D2"/>
+                <PP Name="InstalledKeys" Value="0x4"/>
+                <PP Name="InstalledChannels" Value="0x2"/>
+                <PP Name="ChannelRelayMask" Value="0x0"/>
+                <CatalogNumber>5884D1L2AA</CatalogNumber>
+            </Unit>
+            <Unit>
+                <OID>e665e5e0-6546-1028-b3c3-f81609408799</OID>
+                <TagName>Remote 01</TagName>
+                <Address>100</Address>
+                <Description>Remote to control the Main Switch</Description>
+                <UnitType>WTXU</UnitType>
+                <UnitName>REMOTE</UnitName>
+                <SerialNumber>100109.1407</SerialNumber>
+                <FirmwareVersion>0</FirmwareVersion>
+                <PP Name="UnitAddress" Value="0x64"/>
+                <PP Name="Application" Value="0xff 0xff"/>
+                <PP Name="Project" Value="EXAMPLE "/>
+                <PP Name="NetworkAddress" Value="0xff"/>
+                <PP Name="UnitName" Value="REMOTE  "/>
+                <PP Name="SerialNo" Value="0x0 0x0 0x0 0x0"/>
+                <PP Name="CustType" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff"/>
+                <CatalogNumber>5888TXBA</CatalogNumber>
+            </Unit>
+        </Network>
+    </Project>
+    <InstallationDetail>
+        <OID>4ba36fb0-fe17-1026-a722-eb1d096ee5cc</OID>
+        <SystemLocation>[unknown]</SystemLocation>
+        <HardwarePlatform>[unknown]</HardwarePlatform>
+        <Hostname>vmjacks2000</Hostname>
+        <OSName>Windows 2000</OSName>
+        <OSVersion>5.0</OSVersion>
+        <HardwareLocation>[unknown]</HardwareLocation>
+        <MaintenanceEmail>[unknown]</MaintenanceEmail>
+        <Installer>
+            <OID>4ba396c0-fe17-1026-a723-eb1d096ee5cc</OID>
+            <Name>[unknown]</Name>
+        </Installer>
+    </InstallationDetail>
+</Installation>

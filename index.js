@@ -1,5 +1,9 @@
 'use strict';
 
+const util = require('util');
+
+const xml2js = require('xml2js');
+
 const CGateClient = require('./cgate-client.js');
 const CBusNetId = require('./cbus-netid.js');
 const cbusUtils = require('./cbus-utils.js');
@@ -104,6 +108,8 @@ CBusPlatform.prototype.accessories = function(callback) {
     // listen for data from the client and ensure that the homebridge UI is updated
     this.client.on(`event`, function(message) {
     	if (message.netId) {
+			const dbLabel = this.getNetLabel(message.netId);
+			
 			// lookup accessory
 			const accessory = this.registeredAccessories.get(message.netId.getModuleId());
 			if (accessory) {
@@ -111,15 +117,40 @@ CBusPlatform.prototype.accessories = function(callback) {
 				this.log.info(`[remote] ${message.netId} ${accessory.name} (${accessory.type}), level: ${message.level}%`);
 				accessory.processClientData(message);
 			} else {
-				this.log.info(`[remote] ${message.netId} not registered`);
+				this.log.info(`[remote] ${message.netId} not registered ('${dbLabel}')`);
 			}
 		}
     }.bind(this));
 
     this.client.connect(function() {
 		this.client.getDB(result => {
-			const portion = result.snippet.slice(0, 200);
-			this.log.info(`snippet '${portion}' (${result.snippet.length} bytes)`);
+			// const portion = result.snippet.content.slice(0, 200);
+			this.log.info(`snippet ${util.inspect(result.snippet)} (${result.snippet.content.length} bytes)`);
+			
+			xml2js.parseString(result.snippet.content, {
+				normalizeTags: true
+			}, (err, result) => {
+				this.applications = new Map();
+				result.network.application.forEach(srcApplication => {
+					const application = {
+						address: cbusUtils.integerise(srcApplication.address[0]),
+						name: srcApplication.tagname[0],
+						groups: new Map()
+					};
+					this.applications.set(application.address, application);
+					
+					// now descend into groups
+					srcApplication.group.forEach(srcGroup => {
+						const group = {
+							address: cbusUtils.integerise(srcGroup.address[0]),
+							name: srcGroup.tagname[0]
+						};
+						application.groups.set(group.address, group);
+					});
+				});
+				// this.log.info(`done`);
+				// console.log(util.inspect(this.applications));
+			});
 		});
     	
 		const accessories = this._createAccessories();
@@ -134,6 +165,39 @@ CBusPlatform.prototype.accessories = function(callback) {
 		this.log.info("Registering the accessories list...");
 		callback(accessories);
     }.bind(this));
+};
+
+CBusPlatform.prototype.getNetLabel = function(netId) {
+	console.assert(this.project === netId.project, `getGroupName can only search in default project`);
+	console.assert(this.network === netId.network, `getGroupName can only search in default network`);
+	
+	let name;
+	if (typeof netId.application != `undefined`) {
+		// we have an application identifier
+		const application = this.applications.get(netId.application);
+		if (application) {
+			// we found the application
+			if (typeof netId.group == `undefined`) {
+				// we don't have a group; use the application name
+				name = application.name;
+			} else {
+				// group is defined
+				const group = application.groups.get(netId.group);
+				if (group) {
+					// we found the group
+					name = group.name;
+				}
+			}
+		}
+	} else {
+		name = `network`;
+	}
+	
+	if (typeof name == `undefined`) {
+		name = `not-found`;
+	}
+	
+	return name;
 };
 
 // return a map of newly minted accessories

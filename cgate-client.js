@@ -549,7 +549,11 @@ CBusClient.prototype._resolveResponse = function(response) {
 			// response signalling end of a snippet
 			console.assert(typeof this.snippet != `undefined`, `unexpected snippet end response`);
 			console.assert(response.commandId == this.snippet.commandId, `snippet extend commandId mismatch ${this.snippet.commandId} vs ${response.commandId}`);
-			response.snippet = this.snippet.content;
+			response.snippet = this.snippet;
+			response.snippet.inspect = function(depth, opts) {
+				const abbreviated = cbusUtils.truncateString(this.content.replace(`\n`, ``), 100);
+				return `'${abbreviated}'`;
+			};
 			response.processed = true;
 			
 			// clear out the snippet so it's ready to be used again
@@ -603,29 +607,23 @@ CBusClient.prototype._socketReceivedLine = function(line) {
 		switch (message.type) {
 			case RESPONSE_TYPE:
 				this._resolveResponse(message);
-				this.log.info(chalk.blue(`response ${util.inspect(message, { breakLength: Infinity })}`));
+				this.log.info(chalk.blue(`rx response ${util.inspect(message, { breakLength: Infinity })}`));
 				this.emit(`response`, message);
 				break;
 			
 			case EVENT_TYPE:
-				this.log.info(chalk.blue(`event ${util.inspect(message, { breakLength: Infinity })}`));
+				this.log.info(chalk.blue(`rx event ${util.inspect(message, { breakLength: Infinity })}`));
 				this.emit(`event`, message);
 				break;
 				
 			case SNIPPET_TYPE:
 				this._resolveSnippetFragment(message);
-				let debugMessage = `snippet ${message.code}`;
-				if (typeof message.remainder != `undefined`) {
-					debugMessage = `${debugMessage} ${message.remainder}`;
-					if (debugMessage.length > 100) {
-						debugMessage = debugMessage.slice(0, 120).concat(`…`);
-					}
-				}
-				this.log.info(chalk.blue(debugMessage));
+				const logStr = cbusUtils.truncateString(message.remainder);
+				this.log.info(chalk.blue(`rx snippet ${message.code} '${logStr}'`));
 				break;
 		}
 	} catch (ex) {
-		this.log.info(chalk.red(`received unparsable line: '${line}', exception: ${ex}`));
+		this.log.info(chalk.red(`rx unparsable line: '${line}', exception: ${ex}`));
 		this.emit(`junk`, ex, line);
 	}
 };
