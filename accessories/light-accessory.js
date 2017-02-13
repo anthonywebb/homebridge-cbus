@@ -1,4 +1,9 @@
-var Service, Characteristic, CBusAccessory, uuid;
+let Service, Characteristic, CBusAccessory, uuid;
+
+const chalk = require('chalk');
+
+const cbusUtils = require('../cbus-utils.js');
+const FILE_ID = cbusUtils.extractIdentifierFromFileName(__filename);
 
 module.exports = function (_service, _characteristic, _accessory, _uuid) {
   Service = _service;
@@ -9,51 +14,63 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
   return CBusLightAccessory;
 };
 
-function CBusLightAccessory(platform, accessoryData)
-{
+function CBusLightAccessory(platform, accessoryData) {
     //--------------------------------------------------
     //  Initialize the parent
     //--------------------------------------------------
     CBusAccessory.call(this, platform, accessoryData);
+
+	//--------------------------------------------------
+	//  State variable
+	//--------------------------------------------------
+	this.currentLevel = 0;	// TODO how do we prime this?
 
     //--------------------------------------------------
     //  Register the on-off service
     //--------------------------------------------------
     this.lightService = this.addService(new Service.Lightbulb(this.name));
     this.lightService.getCharacteristic(Characteristic.On)
-        .on('get', this.getState.bind(this))
-        .on('set', this.setState.bind(this));
+        .on('get', this.getOn.bind(this))
+        .on('set', this.setOn.bind(this));
+}
+
+CBusLightAccessory.prototype.getOn = function(callback, context) {
+	setTimeout(function() {
+		this.client.receiveLightStatus(this.netId, function(message) {
+			this.currentLevel = message.level;
+			this._log(FILE_ID, `receiveLightStatus returned ${message.level}`);
+			callback(false, this.currentLevel > 0);
+		}.bind(this));
+	}.bind(this), 50);
 };
 
-CBusLightAccessory.prototype.getState = function(callback, context) {
-    setTimeout(function() {
-        this.client.receiveLightStatus(this.id, function(result) {
-            this._log("CBusLightAccessory", "getState = " + result.level);
-            callback(false, /*state: */ result.level ? 1 : 0);
-        }.bind(this));
-    }.bind(this), 50);
+CBusLightAccessory.prototype.setOn = function(turnOn, callback, context) {
+	// "context" is helping us avoid a never ending loop
+	if (context != `event`) {
+		const isOn = this.currentLevel > 0;
+		
+		if (isOn == turnOn) {
+			this._log(FILE_ID, `setOn: no state change from ${this.currentLevel}%`);
+			callback();
+		} else {
+			const oldLevel = this.currentLevel;
+			const newLevel = turnOn ? 100 : 0;
+			this.currentLevel = newLevel;
+			this._log(FILE_ID, `setOn changing level to ${newLevel}% ` + chalk.dim(`from ${oldLevel}%`));
+			this.client.setLightBrightness(this.netId, newLevel, function() {
+				callback();
+			});
+		}
+	} else {
+		// this._log(SCRIPT_NAME, `ignoring setOn 'event'`);
+		callback();
+	}
 };
 
-CBusLightAccessory.prototype.setState = function(value, callback, context) {
-    // "context" is helping us avoid a never ending loop
-    if(context != 'remoteData'){
-        this._log("CBusLightAccessory", "setState = " + value);
-        if (value) {
-            this.client.turnOnLight(this.id, function() {
-                callback();
-            });
-        } else {
-            this.client.turnOffLight(this.id, function() {
-                callback();
-            });
-        }
-    } else {
-        callback();
-    }
-};
-
-CBusLightAccessory.prototype.processClientData = function(level) {
+CBusLightAccessory.prototype.processClientData = function(message) {
+	console.assert(typeof message.level != `undefined`, `message.level must not be undefined`);
+	const level = message.level;
+	
 	this.lightService.getCharacteristic(Characteristic.On)
-		.setValue(level > 0 ? true : false, undefined, 'remoteData');
+		.setValue(level > 0, undefined, `event`);
 };
-
