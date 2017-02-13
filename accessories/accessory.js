@@ -48,7 +48,6 @@ function CBusAccessory(platform, accessoryData) {
 	}
 	
     // build netId
-
 	this.netId = new CBusNetId(
 		platform.project,
 		accessoryData.network || platform.client.network,
