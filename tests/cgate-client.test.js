@@ -10,6 +10,7 @@ const rewire = require("rewire");
 const Console = require('console').Console;
 
 const CGateClient = rewire('../cgate-client.js');
+const CGateDatabase = require(`../cgate-database.js`);
 const CBusNetId = require('../cbus-netid.js');
 
 const _parseLine = CGateClient.__get__('_parseLine');
@@ -26,14 +27,20 @@ log.info = log;
 //  Events
 //==========================================================================================
 
-//forward declaration
-let gClient;
+// globals required for patching into TEST_DESCRIPTORS
+let gClient, gDatabase;
 
-//
+const SERVER_PORT = 4001;
+
+// three possible paths described by a descriptor
+// - clientAction -> fromClient -> fromServer -> expected
+// - fromClient -> fromServer -> expected
+// - fromServer -> expected
+
 const TEST_DESCRIPTORS = [
 	{
 		name: `event that had asserted`,
-		fromServer: `#e# 20170213-083355.401 730 //SHAC/254/56/72 3df847c0-c4aa-1034-9edf-fbb6c098d608 new level=255 sourceunit=12 ramptime=0 sessionId=cmd987 commandId=106`,
+		fromServer: `#e# 20170213-083355.401 730 //EXAMPLE/254/56/72 3df847c0-c4aa-1034-9edf-fbb6c098d608 new level=255 sourceunit=12 ramptime=0 sessionId=cmd987 commandId=106`,
 		expected: {
 			type: `event`,
 			code: 730,
@@ -48,10 +55,10 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[100] turnOnLight`,
 		clientAction: function () {
-			gClient.turnOnLight(CBusNetId.parse(`//SHAC/254/56/3`));
+			gClient.turnOnLight(CBusNetId.parse(`//EXAMPLE/254/56/3`));
 		},
-		fromClient: `[100] on //SHAC/254/56/3`,
-		fromServer: `[100] 200 OK: //SHAC/254/56/3`,
+		fromClient: `[100] on //EXAMPLE/254/56/3`,
+		fromServer: `[100] 200 OK: //EXAMPLE/254/56/3`,
 		expected: {
 			type: `response`,
 			commandId: 100,
@@ -63,10 +70,10 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[101] turnOffLight`,
 		clientAction: function () {
-			gClient.turnOffLight(CBusNetId.parse(`//SHAC/254/56/3`));
+			gClient.turnOffLight(CBusNetId.parse(`//EXAMPLE/254/56/3`));
 		},
-		fromClient: `[101] off //SHAC/254/56/3`,
-		fromServer: `[101] 200 OK: //SHAC/254/56/3`,
+		fromClient: `[101] off //EXAMPLE/254/56/3`,
+		fromServer: `[101] 200 OK: //EXAMPLE/254/56/3`,
 		expected: {
 			type: `response`,
 			commandId: 101,
@@ -78,10 +85,10 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[102] setLightBrightness`,
 		clientAction: function () {
-			gClient.setLightBrightness(CBusNetId.parse(`//SHAC/254/56/3`), 50, () => {}, 10);
+			gClient.setLightBrightness(CBusNetId.parse(`//EXAMPLE/254/56/3`), 50, () => {}, 10);
 		},
-		fromClient: `[102] ramp //SHAC/254/56/3 50% 10`,
-		fromServer: `[102] 200 OK: //SHAC/254/56/3`,
+		fromClient: `[102] ramp //EXAMPLE/254/56/3 50% 10`,
+		fromServer: `[102] 200 OK: //EXAMPLE/254/56/3`,
 		expected: {
 			type: `response`,
 			commandId: 102,
@@ -93,17 +100,17 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[103] receiveLightStatus`,
 		clientAction: function () {
-			gClient.receiveLightStatus(CBusNetId.parse(`//SHAC/254/56/3`));
+			gClient.receiveLightStatus(CBusNetId.parse(`//EXAMPLE/254/56/3`));
 		},
-		fromClient: `[103] get //SHAC/254/56/3 level`,
-		fromServer: `[103] 300 //SHAC/254/56/3: level=128`,
+		fromClient: `[103] get //EXAMPLE/254/56/3 level`,
+		fromServer: `[103] 300 //EXAMPLE/254/56/3: level=128`,
 		expected: {
 			type: `response`,
 			commandId: 103,
 			code: 300,
 			matched: true,
 			processed: true,
-			netId: CBusNetId.parse(`//SHAC/254/56/3`),
+			netId: CBusNetId.parse(`//EXAMPLE/254/56/3`),
 			level: 50
 		}
 	},
@@ -121,34 +128,34 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[104] receiveLightStatus`,
 		clientAction: function () {
-			gClient.receiveLightStatus(CBusNetId.parse(`//SHAC/254/56/3`));
+			gClient.receiveLightStatus(CBusNetId.parse(`//EXAMPLE/254/56/3`));
 		},
-		fromClient: `[104] get //SHAC/254/56/3 level`,
-		fromServer: `[104] 300 //SHAC/254/56/3: level=255`,
+		fromClient: `[104] get //EXAMPLE/254/56/3 level`,
+		fromServer: `[104] 300 //EXAMPLE/254/56/3: level=255`,
 		expected: {
 			type: `response`,
 			commandId: 104,
 			code: 300,
 			matched: true,
 			processed: true,
-			netId: CBusNetId.parse(`//SHAC/254/56/3`),
+			netId: CBusNetId.parse(`//EXAMPLE/254/56/3`),
 			level: 100
 		}
 	},
 	{
 		name: `[105] receiveSecurityStatus`,
 		clientAction: function () {
-			gClient.receiveSecurityStatus(CBusNetId.parse(`//SHAC/254/208/15`), () => { log.info(`received zone status`); } );
+			gClient.receiveSecurityStatus(CBusNetId.parse(`//EXAMPLE/254/208/15`), () => { log.info(`received zone status`); } );
 		},
-		fromClient: `[105] get //SHAC/254/208/15 zonestate`,
-		fromServer: `[105] 300 //SHAC/254/208/15: zonestate=1`,
+		fromClient: `[105] get //EXAMPLE/254/208/15 zonestate`,
+		fromServer: `[105] 300 //EXAMPLE/254/208/15: zonestate=1`,
 		expected: {
 			type: `response`,
 			commandId: 105,
 			code: 300,
 			matched: true,
 			processed: true,
-			netId: CBusNetId.parse(`//SHAC/254/208/15`),
+			netId: CBusNetId.parse(`//EXAMPLE/254/208/15`),
 			zonestate: `unsealed`
 		}
 	},
@@ -199,7 +206,8 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[109] parse big xml`,
 		clientAction: function () {
-			gClient.getDB(CBusNetId.parse(`//EXAMPLE/254`));
+			gDatabase.fetch(gClient, () => { console.log(`fetched`) } )
+			//gClient.getDB(CBusNetId.parse(`//EXAMPLE/254`));
 		},
 		fromClient: `[109] dbgetxml //EXAMPLE/254`,
 		fromServer:
@@ -210,7 +218,7 @@ const TEST_DESCRIPTORS = [
 			type: `response`,
 			commandId: 109,
 		},
-		snippetLength: 229816
+		snippetLength: 24884
 	},
 	{
 		name: `nonsensical message`,
@@ -220,12 +228,12 @@ const TEST_DESCRIPTORS = [
 	},
 	{
 		name: `event 702 system_arm`,
-		fromServer: `#e# 20170204-130934.821 702 //SHAC/254/208 3dfc8d80-c4aa-1034-9fa5-fbb6c098d608 [security] system_arm 1 sourceUnit=213`,
+		fromServer: `#e# 20170204-130934.821 702 //EXAMPLE/254/208 3dfc8d80-c4aa-1034-9fa5-fbb6c098d608 [security] system_arm 1 sourceUnit=213`,
 		expected: {
 			type: `event`,
 			time: `20170204-130934.821`,
 			code: 702,
-			netId: CBusNetId.parse(`//SHAC/254/208`),
+			netId: CBusNetId.parse(`//EXAMPLE/254/208`),
 			application: `security`,
 			remainder: [`system_arm`, '1'],
 			sourceUnit: 213,
@@ -246,13 +254,13 @@ const TEST_DESCRIPTORS = [
 	},
 	{
 		name: `unexpected status message 2`,
-		fromServer: `lighting on //SHAC/254/56/190  #sourceunit=81 OID=3dfd77e0-c4aa-1034-9f54-fbb6c098d608`,
+		fromServer: `lighting on //EXAMPLE/254/56/190  #sourceunit=81 OID=3dfd77e0-c4aa-1034-9f54-fbb6c098d608`,
 		expected: `exception`,
 		exception: /unrecognised structure/
 	},
 	{
 		name: `event 756`,
-		fromServer: `#e# 20170204-160655.767 756 //SHAC/254 3dfc3f60-c4aa-1034-9e98-fbb6c098d608 SyncState=syncing`,
+		fromServer: `#e# 20170204-160655.767 756 //EXAMPLE/254 3dfc3f60-c4aa-1034-9e98-fbb6c098d608 SyncState=syncing`,
 		expected: {
 			type: `event`,
 			code: 756,
@@ -261,11 +269,11 @@ const TEST_DESCRIPTORS = [
 	},
 	{
 	 	name: `event 730 new level`,
-		fromServer: `#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new level=43 sourceunit=74 ramptime=10`,
+		fromServer: `#e# 20170204-160545.608 730 //EXAMPLE/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new level=43 sourceunit=74 ramptime=10`,
 		expected: {
 			type: `event`,
 			code: 730,
-			netId: CBusNetId.parse(`//SHAC/254/56/116`),
+			netId: CBusNetId.parse(`//EXAMPLE/254/56/116`),
 			level: 17,
 			sourceunit: 74,
 			ramptime: 10,
@@ -274,12 +282,12 @@ const TEST_DESCRIPTORS = [
 	},
 	{
 	name: `event 702 arm_not_ready`,
-		fromServer: `#e# 20170204-130934.821 702 //SHAC/254/208/24 - [security] arm_not_ready sourceUnit=213`,
+		fromServer: `#e# 20170204-130934.821 702 //EXAMPLE/254/208/24 - [security] arm_not_ready sourceUnit=213`,
 		expected: {
 			type: `event`,
 			time: `20170204-130934.821`,
 			code: 702,
-			netId: CBusNetId.parse(`//SHAC/254/208/24`),
+			netId: CBusNetId.parse(`//EXAMPLE/254/208/24`),
 			application: `security`,
 			remainder: [`arm_not_ready`],
 			sourceUnit: 213,
@@ -312,12 +320,12 @@ const TEST_DESCRIPTORS = [
 	},
 	{
 		name: `event 702 system_arm`,
-		fromServer: `#e# 20170204-130934.821 702 //SHAC/254/208 3dfc8d80-c4aa-1034-9fa5-fbb6c098d608 [security] system_arm 1 sourceUnit=213`,
+		fromServer: `#e# 20170204-130934.821 702 //EXAMPLE/254/208 3dfc8d80-c4aa-1034-9fa5-fbb6c098d608 [security] system_arm 1 sourceUnit=213`,
 		expected: {
 			type: `event`,
 			time: `20170204-130934.821`,
 			code: 702,
-			netId: CBusNetId.parse(`//SHAC/254/208`),
+			netId: CBusNetId.parse(`//EXAMPLE/254/208`),
 			application: `security`,
 			remainder: [`system_arm`, '1'],
 			sourceUnit: 213,
@@ -348,7 +356,7 @@ const TEST_DESCRIPTORS = [
 	},
 	{
 		name: `event 730 float`,
-		fromServer: `#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new foo=6.5020`,
+		fromServer: `#e# 20170204-160545.608 730 //EXAMPLE/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new foo=6.5020`,
 		expected: {
 			type: `event`,
 			foo: 6.502,
@@ -357,31 +365,31 @@ const TEST_DESCRIPTORS = [
 	},
 	{
 		name: `event 702 missing remainder`,
-		fromServer: `#e# 20170204-130934.821 702 //SHAC/254/208/24 - [security]`,
+		fromServer: `#e# 20170204-130934.821 702 //EXAMPLE/254/208/24 - [security]`,
 		expected: `exception`,
 		exception: /not in 'netid objectId \[applicationName\] remainder' format/
 	},
 	{
 		name: `event 730 bad level`,
-		fromServer: `#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new level=abc sourceunit=74 ramptime=10`,
+		fromServer: `#e# 20170204-160545.608 730 //EXAMPLE/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new level=abc sourceunit=74 ramptime=10`,
 		expected: `exception`,
 		exception: /illegal raw type: string/
 	},
 	{
 		name: `event 730 missing new`,
-		fromServer: `#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 level=43 sourceunit=74 ramptime=10`,
+		fromServer: `#e# 20170204-160545.608 730 //EXAMPLE/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 level=43 sourceunit=74 ramptime=10`,
 		expected: `exception`,
 		exception: /not in 'new remainder' format/
 	},
 	{
 		name: `event 730 missing sourceunit`,
-		fromServer: `#e# 20170204-160545.608 730 //SHAC/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new level=43 sourceunit= ramptime=10`,
+		fromServer: `#e# 20170204-160545.608 730 //EXAMPLE/254/56/116 3df8bcf0-c4aa-1034-9f0a-fbb6c098d608 new level=43 sourceunit= ramptime=10`,
 		expected: `exception`,
 		exception: /bad key=value: 'sourceunit'/
 	},
 	{
 		name: `response 200`,
-		fromServer: `[123] 200 OK: //SHAC/254/56/3`,
+		fromServer: `[123] 200 OK: //EXAMPLE/254/56/3`,
 		expected: {
 			type: `response`,
 			commandId: 123,
@@ -392,12 +400,12 @@ const TEST_DESCRIPTORS = [
 	},
 	{
 	name: `response 300`,
-	fromServer: `[456] 300 //SHAC/254/56/3: level=129`,
+	fromServer: `[456] 300 //EXAMPLE/254/56/3: level=129`,
 		expected: {
 			type: `response`,
 			commandId: 456,
 			code: 300,
-			netId: CBusNetId.parse(`//SHAC/254/56/3`),
+			netId: CBusNetId.parse(`//EXAMPLE/254/56/3`),
 			level: 51,	// 129 raw = 51%
 			matched: false,
 			processed: true
@@ -405,25 +413,25 @@ const TEST_DESCRIPTORS = [
 	},
 	{
 		name: `bad response level 1`,
-		fromServer: `[456] 300 //SHAC/254/56/3: level=abc`,
+		fromServer: `[456] 300 //EXAMPLE/254/56/3: level=abc`,
 		expected: `exception`,
 		exception: /not in '\(level|zonestate\)=xxx' format/
 	},
 	{
 		name: `bad response level 2`,
-		fromServer: `[456] 300 //SHAC/254/56/3: level=-1`,
+		fromServer: `[456] 300 //EXAMPLE/254/56/3: level=-1`,
 		expected: `exception`,
 		exception: /not in '\(level|zonestate\)=xxx' format/
 	},
 	{
 		name: `bad response level 3`,
-		fromServer: `[456] 300 //SHAC/254/56/3: level=1000`,
+		fromServer: `[456] 300 //EXAMPLE/254/56/3: level=1000`,
 		expected: `exception`,
 		exception: /not in '\(level|zonestate\)=xxx' format/
 	},
 	{
 		name: `bad response level 4`,
-		fromServer: `[456] 300 //SHAC/254/56/3: level=300`,
+		fromServer: `[456] 300 //EXAMPLE/254/56/3: level=300`,
 		expected: `exception`,
 		exception: /illegal raw level: 300/
 	},
@@ -440,12 +448,17 @@ const TEST_DESCRIPTORS = [
 	}
 ];
 
-// read in the mocked server response from EXAMPLE.xml and patch into command 109
-test('patch dbgetxml file contents', function (assert) {
+// read in the mocked server response from EXAMPLE.xml.txt.txt and patch into command 109
+test(`setup tests`, function (assert) {
 	assert.plan(1);
 	
-	fs.readFile(`tests/resources/EXAMPLE.xml`, 'utf8', function (err, fileData) {
-		console.assert(!err, `error loading EXAMPLE.xml`, err);
+	// setup globals
+	gClient = new CGateClient(`127.0.0.1`, SERVER_PORT, `EXAMPLE`, 254, 56, log, true);
+	gDatabase = new CGateDatabase(new CBusNetId(`EXAMPLE`, 254), log);
+	
+	// patch in the EXAMPLE project database dump
+	fs.readFile(`tests/resources/EXAMPLE.xml.txt`, 'utf8', function (err, fileData) {
+		console.assert(!err, `error loading EXAMPLE.xml.txt`, err);
 		
 		// fill in the fromServer field for the test named `[106] dbgetxml`
 		let foundCount = 0;
@@ -493,11 +506,10 @@ test('server premature disconnect', function (assert) {
 	assert.plan(1);
 	
 	// create a server object
-	const port = 4001;
-	const NETID = CBusNetId.parse(`//SHAC/254/56/3`);
+	const NETID = CBusNetId.parse(`//EXAMPLE/254/56/3`);
 
 	// let's not use the global gClient here
-	const client = new CGateClient(`127.0.0.1`, port, `SHAC`, NETID.network, NETID.application, log, true);
+	const client = new CGateClient(`127.0.0.1`, SERVER_PORT, `EXAMPLE`, NETID.network, NETID.application, log, true);
 	
 	// try to close it before it's even been opened
 	assert.throws(function () {
@@ -509,16 +521,7 @@ test('server premature disconnect', function (assert) {
 
 function _serverTests() {
 	test(`server responses`, assert => {
-		// three possible paths described by a descriptor
-		// - clientAction -> fromClient -> fromServer -> expected
-		// - fromClient -> fromServer -> expected
-		// - fromServer -> expected
-		const port = 4001;
 		let descriptorIndex = 0;
-		
-		const NETID = CBusNetId.parse(`//SHAC/254/56/3`);
-		
-		gClient = new CGateClient(`127.0.0.1`, port, `SHAC`, 254, 56, log, true);
 		
 		const EVENTS_REQUEST = `[99] events e7s0c0`;
 		const EVENTS_RESPONSE = `[99] 200 OK.`;
@@ -577,7 +580,13 @@ function _serverTests() {
 			});
 		});
 		
-		server.listen(port);
+		server.on('error', (e) => {
+			if (e.code == 'EADDRINUSE') {
+				assert.end(`there is already a server on port ${SERVER_PORT}`);
+			}
+		});
+		
+		server.listen(SERVER_PORT);
 		
 		const next = function () {
 			if (descriptorIndex < TEST_DESCRIPTORS.length) {
@@ -602,8 +611,7 @@ function _serverTests() {
 			}
 		};
 		
-		function validate(message) {
-			const descriptor = TEST_DESCRIPTORS[descriptorIndex];
+		function _validate(message, descriptor) {
 			const testName = `parsed message from '${descriptor.name}'`;
 			_validateMessageAgainstExpected(message, descriptor.expected, testName);
 			if (typeof descriptor.snippetLength != `undefined`) {
@@ -615,15 +623,17 @@ function _serverTests() {
 		
 		// listen for data from the client -- not yet used
 		gClient.on('event', message => {
-			log.info(`received 'event' (index ${descriptorIndex})`);
-			validate(message);
+			const descriptor = TEST_DESCRIPTORS[descriptorIndex];
+			// log.info(`received 'event' (index ${descriptorIndex})`);
+			_validate(message, descriptor);
 			descriptorIndex++;
 			next();
 		});
 		
 		gClient.on(`response`, message => {
-			log.info(`received 'response' (index ${descriptorIndex})`);
-			validate(message);
+			const descriptor = TEST_DESCRIPTORS[descriptorIndex];
+			// log.info(`received 'response' (index ${descriptorIndex})`);
+			_validate(message, descriptor);
 			descriptorIndex++;
 			next();
 		});
@@ -632,13 +642,16 @@ function _serverTests() {
 			log.info(`junk received '${line}', ex '${ex}' (index ${descriptorIndex})`);
 			const descriptor = TEST_DESCRIPTORS[descriptorIndex];
 			const exceptionRegex = descriptor.exception;
-			console.assert(typeof exceptionRegex != `undefined`, `${descriptor.name}: failing test must be accompanied by a descriptor.exception`);
-			console.assert(exceptionRegex instanceof RegExp, `${descriptor.name}: descriptor.exception must be a regex`);
-			assert.throws(function () {
-					throw ex;
-				},
-				exceptionRegex,
-				`${descriptor.name}: checking exception matches regex '${descriptor.exception}'`);
+			if (typeof exceptionRegex == `undefined`) {
+				assert.fail(`${descriptor.name}: failed, was expecting a descriptor.exception, unexpected: ${ex}`);
+			} else {
+				console.assert(exceptionRegex instanceof RegExp, `${descriptor.name}: descriptor.exception must be a regex`);
+				assert.throws(function () {
+						throw ex;
+					},
+					exceptionRegex,
+					`${descriptor.name}: checking exception matches regex '${descriptor.exception}'`);
+			}
 			descriptorIndex++;
 			next();
 		});

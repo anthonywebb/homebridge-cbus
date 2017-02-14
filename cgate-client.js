@@ -622,6 +622,7 @@ CBusClient.prototype._socketReceivedLine = function(line) {
 				break;
 		}
 	} catch (ex) {
+		// would be good to extract stacktrace
 		this.log.info(chalk.red(`rx unparsable line: '${line}', exception: ${ex}`));
 		this.emit(`junk`, ex, line);
 	}

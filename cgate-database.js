@@ -36,13 +36,15 @@ CGateDatabase.prototype.fetch = function(client, callback) {
 		this.log.info(`dbgetxml ${util.inspect(result.snippet)} (${dbxml.length} bytes)`);
 		
 		xml2js.parseString(dbxml, {
-			normalizeTags: true
+			normalizeTags: true,
+			
 		}, (err, database) => {
 			console.assert(!err, `dbgetxml parse failure`, err);
 			const result = _parseXML(database);
 			this.applications = result.applications;
 			this.units = result.units;
-			console.log(`parsed.`);
+			this.groupCount = result.groupCount;
+			// console.log(`*** parsed ${this.groupCount} groups.`);
 			
 			if (callback) {
 				callback();
@@ -58,8 +60,8 @@ function _parseXML(database) {
 	const applications = new Map();
 	database.network.application.forEach(srcApplication => {
 		const application = {
-			address: cbusUtils.integerise(srcApplication.address[0]),
-			name: srcApplication.tagname[0],
+			address: cbusUtils.integerise(_getFirstAndOnlyChild(srcApplication.address)),
+			name: _getFirstAndOnlyChild(srcApplication.tagname),
 			groups: new Map()
 		};
 		applications.set(application.address, application);
@@ -67,8 +69,8 @@ function _parseXML(database) {
 		// now descend into groups
 		srcApplication.group.forEach(srcGroup => {
 			const group = {
-				address: cbusUtils.integerise(srcGroup.address[0]),
-				name: srcGroup.tagname[0]
+				address: cbusUtils.integerise(_getFirstAndOnlyChild(srcGroup.address)),
+				name: _getFirstAndOnlyChild(srcGroup.tagname)
 			};
 			application.groups.set(group.address, group);
 			groupCount++;
@@ -79,21 +81,32 @@ function _parseXML(database) {
 	const units = new Map;
 	database.network.unit.forEach(srcUnit => {
 		const unit = {
-			tag: srcUnit.tagname[0],
-			partName: srcUnit.unitname[0],
-			address: cbusUtils.integerise(srcUnit.address[0]),
-			firmwareVersion: srcUnit.firmwareversion[0],
-			serialNumber: srcUnit.serialnumber[0],
-			catalogNumber: srcUnit.catalognumber[0],
-			unitType: srcUnit.unittype[0]
+			tag: _getFirstAndOnlyChild(srcUnit.tagname),
+			partName: _getFirstAndOnlyChild(srcUnit.unitname),
+			address: cbusUtils.integerise(_getFirstAndOnlyChild(srcUnit.address)),
+			firmwareVersion: _getFirstAndOnlyChild(srcUnit.firmwareversion),
+			serialNumber: _getFirstAndOnlyChild(srcUnit.serialnumber),
+			catalogNumber: _getFirstAndOnlyChild(srcUnit.catalognumber),
+			unitType: _getFirstAndOnlyChild(srcUnit.unittype)
 		};
 		units.set(unit.address, unit);
 	});
 	
 	return {
 		applications: applications,
+		groupCount: groupCount,
 		units: units
+		
 	};
+}
+
+function _getFirstAndOnlyChild(element) {
+	let value = undefined;
+	if (typeof element == `array`) {
+		console.assert(array.length == 1);
+		value = element[0];
+	}
+	return value;
 }
 
 CGateDatabase.prototype.getNetLabel = function(netId) {
