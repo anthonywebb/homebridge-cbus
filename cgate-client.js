@@ -1,5 +1,18 @@
 'use strict';
 
+const net = require('net');
+const util = require('util');
+const log = require('util').log;
+
+const EventEmitter = require('events').EventEmitter;
+
+const carrier = require('carrier');
+const chalk = require('chalk');
+
+const cbusUtils = require('./cbus-utils.js');
+const CBusNetId = require('./cbus-netid.js');
+
+
 //==========================================================================================
 //  Definitions
 //==========================================================================================
@@ -10,17 +23,6 @@ const DEFAULT_CLIENT_NETWORK = 254;
 const DEFAULT_CLIENT_APPLICATION = 56;
 
 const DEFAULT_CLIENT_DEBUG = false;
-
-const net = require('net');
-const util = require('util');
-const log = require('util').log;
-let EventEmitter = require('events').EventEmitter;
-
-const carrier = require('carrier');
-const chalk = require('chalk');
-
-const cbusUtils = require('./cbus-utils.js');
-const CBusNetId = require('./cbus-netid.js');
 
 const EVENT_TYPE = `event`;
 const RESPONSE_TYPE = `response`;
