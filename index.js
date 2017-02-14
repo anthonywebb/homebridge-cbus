@@ -123,7 +123,8 @@ CBusPlatform.prototype.accessories = function(callback) {
     }.bind(this));
 
     this.client.connect(function() {
-		this.client.getDB(result => {
+		const netId = new CBusNetId(this.project, this.network);
+		this.client.getDB(netId, result => {
 			// const portion = result.snippet.content.slice(0, 200);
 			this.log.info(`snippet ${util.inspect(result.snippet)} (${result.snippet.content.length} bytes)`);
 			

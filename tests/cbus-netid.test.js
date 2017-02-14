@@ -1,7 +1,8 @@
 'use strict';
 
-const test = require('tape').test;
 const util = require('util');
+
+const test = require('tape').test;
 
 const CBusNetId = require('../cbus-netid.js');
 

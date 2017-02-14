@@ -40,7 +40,7 @@
     "rewire": "^2.5.2"
   },
   "scripts": {
-    "test": "node $NODE_DEBUG_OPTION ./node_modules/tape/bin/tape tests/*.js",
-    "test-coverage": "tap tests/*.js --cov --coverage-report=html"
+    "test": "node $NODE_DEBUG_OPTION ./node_modules/tape/bin/tape tests/*.test.js",
+    "test-coverage": "tap tests/*.test.js --cov --coverage-report=html"
   }
 }

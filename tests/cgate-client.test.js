@@ -2,6 +2,7 @@
 
 const util = require('util');
 const net = require('net');
+const fs = require('fs');
 
 const carrier = require('carrier');
 const test = require('tape').test;
@@ -150,6 +151,66 @@ const TEST_DESCRIPTORS = [
 			netId: CBusNetId.parse(`//SHAC/254/208/15`),
 			zonestate: `unsealed`
 		}
+	},
+	{
+		name: `[106] parse simple XML snippet`,
+		clientAction: function () {
+			gClient.getDB(CBusNetId.parse(`//EXAMPLE/254`));
+		},
+		fromClient: `[106] dbgetxml //EXAMPLE/254`,
+		fromServer:
+			'[106] 343-Begin XML snippet\n' +
+			'[106] 347-<?xml version="1.0" encoding="utf-8"?>\n' +
+			'[106] 347-<Thingys><Thingy>thing 1</Thingy><Thingy>thing 2</Thingy><Thingy>thing 3</Thingy><Thingy>thing 4</Thingy></Thingys>\n' +
+			'[106] 344 End XML snippet',
+		expected: {
+			type: `response`,
+			commandId: 106,
+			code: 344,
+			snippet: {
+				commandId: 106,
+				content: '<?xml version="1.0" encoding="utf-8"?><Thingys><Thingy>thing 1</Thingy><Thingy>thing 2</Thingy><Thingy>thing 3</Thingy><Thingy>thing 4</Thingy></Thingys>'
+			},
+			matched: true,
+			processed: true,
+		},
+		snippetLength: 153
+	},
+	{
+		name: `[107] parse xml 344 before 343`,
+		clientAction: function () {
+			gClient.getDB(CBusNetId.parse(`//EXAMPLE/254`));
+		},
+		fromClient: `[107] dbgetxml //EXAMPLE/254`,
+		fromServer: '[107] 344 End XML snippet',
+		expected: `exception`,
+		exception: /unexpected snippet end response/
+	},
+	{
+		name: `[108] parse xml 347 before 343`,
+		clientAction: function () {
+			gClient.getDB(CBusNetId.parse(`//EXAMPLE/254`));
+		},
+		fromClient: `[108] dbgetxml //EXAMPLE/254`,
+		fromServer:	'[108] 347-<?xml version="1.0" encoding="utf-8"?>',
+		expected: `exception`,
+		exception: /can't add content without a snippet begin/
+	},
+	{
+		name: `[109] parse big xml`,
+		clientAction: function () {
+			gClient.getDB(CBusNetId.parse(`//EXAMPLE/254`));
+		},
+		fromClient: `[109] dbgetxml //EXAMPLE/254`,
+		fromServer:
+			'[109] 343-Begin XML snippet\n' +
+			'[109] 347-this is just a placeholder -- will be filled in later\n' +
+			'[109] 344 End XML snippet',
+		expected: {
+			type: `response`,
+			commandId: 109,
+		},
+		snippetLength: 229816
 	},
 	{
 		name: `nonsensical message`,
@@ -379,6 +440,30 @@ const TEST_DESCRIPTORS = [
 	}
 ];
 
+// read in the mocked server response from EXAMPLE.xml and patch into command 109
+test('patch dbgetxml file contents', function (assert) {
+	assert.plan(1);
+	
+	fs.readFile(`tests/resources/EXAMPLE.xml`, 'utf8', function (err, fileData) {
+		console.assert(!err, `error loading EXAMPLE.xml`, err);
+		
+		// fill in the fromServer field for the test named `[106] dbgetxml`
+		let foundCount = 0;
+		TEST_DESCRIPTORS.forEach((descriptor, index) => {
+			if (typeof descriptor.expected != `undefined`) {
+				if (descriptor.name == `[109] parse big xml`) {
+					descriptor.fromServer = fileData;
+					foundCount++;
+				}
+			}
+		});
+		
+		assert.equals(foundCount, 1, `fromServer patched`);
+		
+		assert.end();
+	});
+});
+
 function _validateMessageAgainstExpected(message, expected, name) {
 	console.assert(typeof expected == `object`, `_validateMessageAgainstExpected: expected must be an object`);
 	
@@ -386,9 +471,15 @@ function _validateMessageAgainstExpected(message, expected, name) {
 	test(name, assert => {
 		assert.plan(expected.length);
 		Object.keys(expected).forEach(key => {
-			const actualProperty = message[key];
-			const expectedProperty = expected[key];
-			assert.deepEquals(actualProperty, expectedProperty, `validate message key '${key}'`);
+			const actualValue = message[key];
+			const expectedValue = expected[key];
+			
+			// don't fail just because there's a difference in inspect functions
+			if ((typeof actualValue.inspect != `undefined`) && (typeof expectedValue.inspect == `undefined`)) {
+				expectedValue.inspect = actualValue.inspect;
+			}
+			
+			assert.deepEquals(actualValue, expectedValue, `validate message key '${key}'`);
 		});
 		assert.end();
 	});
@@ -415,144 +506,155 @@ test('server premature disconnect', function (assert) {
 	
 	assert.end();
 });
-	
-test('server responses', function (assert) {
-	// three possible paths described by a descriptor
-	// - clientAction -> fromClient -> fromServer -> expected
-	// - fromClient -> fromServer -> expected
-	// - fromServer -> expected
-	
-	const port = 4001;
-	let descriptorIndex = 0;
-	
-	const NETID = CBusNetId.parse(`//SHAC/254/56/3`);
-	
-	gClient = new CGateClient(`127.0.0.1`, port, `SHAC`, 254, 56, log, true);
-	
-	const EVENTS_REQUEST = `[99] events e7s0c0`;
-	const EVENTS_RESPONSE = `[99] 200 OK.`;
-	
-	// const TEST_DESCRIPTORS = [
-	//
-	// ];
-	
-	// this harness will directly run a test for every instance of the following test properties:
-	// - forClient (ensuring that forClient matched expected)
-	// - exception (ensuring that junk recevied by client was caught and matches the regex)
-	let testCount = 0;
-	TEST_DESCRIPTORS.forEach(descriptor => {
-		if (descriptor.fromClient) {
-			testCount++;
-		}
+
+function _serverTests() {
+	test(`server responses`, assert => {
+		// three possible paths described by a descriptor
+		// - clientAction -> fromClient -> fromServer -> expected
+		// - fromClient -> fromServer -> expected
+		// - fromServer -> expected
+		const port = 4001;
+		let descriptorIndex = 0;
 		
-		if (descriptor.exception) {
-			testCount++;
-		}
-	});
-	assert.plan(testCount);
-	
-	var serverConnection;
-	
-	// spin up a fake g-gate server
-	const server = net.createServer(function(connection) {
-		serverConnection = connection;
-		log.info('server connect');
-		connection.write(`201 Service ready: Clipsal C-Gate Version: v4.5.6 (build 789) #cmd-syntax=2.2\r\n`);
+		const NETID = CBusNetId.parse(`//SHAC/254/56/3`);
 		
-		carrier.carry(connection, (req) => {
-			if (req == EVENTS_REQUEST) {
-				log.info(`settings up CGate events`);
-				connection.write(`${EVENTS_RESPONSE}\n`);
-			} else {
-				const testDescriptor = TEST_DESCRIPTORS[descriptorIndex];
-				const exp = testDescriptor.fromClient;
-				const res = testDescriptor.fromServer;
-				console.assert(res, `every fromClient must be matched with a fromServer`);
-				
-				if (testDescriptor.fromClient == testDescriptor.fromClient) {
-					log.info(`server rx: '${req}', tx: '${res}'`);
-				} else {
-					log.info(`req: '${req}'`);
-					log.info(`exp: '${exp}'`);
-				}
-				
-				// check request is what we expected
-				assert.equal(req, exp, `${testDescriptor.name}: ensuring fromClient meets expectation`);
-				
-				// send response
-				connection.write(`${res}\n`);
+		gClient = new CGateClient(`127.0.0.1`, port, `SHAC`, 254, 56, log, true);
+		
+		const EVENTS_REQUEST = `[99] events e7s0c0`;
+		const EVENTS_RESPONSE = `[99] 200 OK.`;
+		
+		// this harness will directly run a test for every instance of the following test properties:
+		// - forClient (ensuring that forClient matched expected)
+		// - exception (ensuring that junk recevied by client was caught and matches the regex)
+		let testCount = 0;
+		TEST_DESCRIPTORS.forEach(descriptor => {
+			if (descriptor.fromClient) {
+				testCount++;
+			}
+			
+			if (descriptor.exception) {
+				testCount++;
+			}
+			
+			if (typeof descriptor.snippetLength != `undefined`) {
+				testCount++;
 			}
 		});
-	});
-	server.listen(port);
-	
-	const next = function() {
-		if (descriptorIndex < TEST_DESCRIPTORS.length) {
-			const descriptor = TEST_DESCRIPTORS[descriptorIndex];
-			const action = descriptor.clientAction;
-			log.info(`\n\n`);
-			log.info(`step ${descriptorIndex}: testing '${descriptor.name}'`);
+		assert.plan(testCount);
+		
+		var serverConnection;
+		
+		// spin up a fake g-gate server
+		const server = net.createServer(function (connection) {
+			serverConnection = connection;
+			log.info('server listening');
+			connection.write(`201 Service ready: Clipsal C-Gate Version: v4.5.6 (build 789) #cmd-syntax=2.2\r\n`);
 			
-			// execute an action if there is one
-			if (action) {
-				log.info(`client sending action`);
-				action();
+			carrier.carry(connection, (req) => {
+				if (req == EVENTS_REQUEST) {
+					log.info(`settings up CGate events`);
+					connection.write(`${EVENTS_RESPONSE}\n`);
+				} else {
+					const testDescriptor = TEST_DESCRIPTORS[descriptorIndex];
+					const exp = testDescriptor.fromClient;
+					const res = testDescriptor.fromServer;
+					console.assert(res, `${testDescriptor.name}: every fromClient must be matched with a fromServer`);
+					console.assert(!res.endsWith(`\n`), `${testDescriptor.name}: fromServer must not end with a \\n`);
+					
+					if (testDescriptor.fromClient == testDescriptor.fromClient) {
+						log.info(`server rx: '${req}', tx: '${res}'`);
+					} else {
+						log.info(`req: '${req}'`);
+						log.info(`exp: '${exp}'`);
+					}
+					
+					// check request is what we expected
+					assert.equal(req, exp, `${testDescriptor.name}: checking fromClient`);
+					
+					// send response
+					connection.write(`${res}\n`);
+				}
+			});
+		});
+		
+		server.listen(port);
+		
+		const next = function () {
+			if (descriptorIndex < TEST_DESCRIPTORS.length) {
+				const descriptor = TEST_DESCRIPTORS[descriptorIndex];
+				const action = descriptor.clientAction;
+				log.info(`\n\n`);
+				log.info(`step ${descriptorIndex}: testing '${descriptor.name}'`);
+				
+				// execute an action if there is one
+				if (action) {
+					log.info(`client sending action`);
+					action();
+				} else {
+					// if no action, then must be unsolicited
+					log.info(`server sending unsolicited '${descriptor.fromServer}'`);
+					serverConnection.write(`${descriptor.fromServer}\n`);
+				}
 			} else {
-				// if no action, then must be unsolicited
-				log.info(`server sending unsolicited '${descriptor.fromServer}'`);
-				serverConnection.write(`${descriptor.fromServer}\n`);
+				log.info(`end; disconnecting client`);
+				gClient.disconnect();
+				assert.end();
 			}
-		} else {
-			log.info(`end; disconnecting client`);
-			gClient.disconnect();
-			assert.end();
+		};
+		
+		function validate(message) {
+			const descriptor = TEST_DESCRIPTORS[descriptorIndex];
+			const testName = `parsed message from '${descriptor.name}'`;
+			_validateMessageAgainstExpected(message, descriptor.expected, testName);
+			if (typeof descriptor.snippetLength != `undefined`) {
+				const actual = message.snippet.content.length;
+				const expected = descriptor.snippetLength;
+				assert.equal(actual, expected, `${descriptor.name}: checking snippet length`);
+			}
 		}
-	};
-	
-	function validate(message) {
-		const descriptor = TEST_DESCRIPTORS[descriptorIndex];
-		const testName = `response for '${descriptor.name}'`;
-		_validateMessageAgainstExpected(message, descriptor.expected, testName);
-	}
-	
-	// listen for data from the client -- not yet used
-	gClient.on('event', message => {
-		log.info(`received 'event' (index ${descriptorIndex})`);
-		validate(message);
-		descriptorIndex++;
-		next();
+		
+		// listen for data from the client -- not yet used
+		gClient.on('event', message => {
+			log.info(`received 'event' (index ${descriptorIndex})`);
+			validate(message);
+			descriptorIndex++;
+			next();
+		});
+		
+		gClient.on(`response`, message => {
+			log.info(`received 'response' (index ${descriptorIndex})`);
+			validate(message);
+			descriptorIndex++;
+			next();
+		});
+		
+		gClient.on('junk', (ex, line) => {
+			log.info(`junk received '${line}', ex '${ex}' (index ${descriptorIndex})`);
+			const descriptor = TEST_DESCRIPTORS[descriptorIndex];
+			const exceptionRegex = descriptor.exception;
+			console.assert(typeof exceptionRegex != `undefined`, `${descriptor.name}: failing test must be accompanied by a descriptor.exception`);
+			console.assert(exceptionRegex instanceof RegExp, `${descriptor.name}: descriptor.exception must be a regex`);
+			assert.throws(function () {
+					throw ex;
+				},
+				exceptionRegex,
+				`${descriptor.name}: checking exception matches regex '${descriptor.exception}'`);
+			descriptorIndex++;
+			next();
+		});
+		
+		gClient.connect(function () {
+			next();
+		});
+		
+		assert.on("end", function () {
+			log.info(`end; closing server`);
+			server.close();
+		});
 	});
-	
-	gClient.on(`response`, message => {
-		log.info(`received 'response' (index ${descriptorIndex})`);
-		validate(message);
-		descriptorIndex++;
-		next();
-	});
-	
-	gClient.on('junk', (ex, line) => {
-		log.info(`junk received '${line}', ex '${ex}' (index ${descriptorIndex})`);
-		const descriptor = TEST_DESCRIPTORS[descriptorIndex];
-		const exceptionRegex = descriptor.exception;
-		console.assert(exceptionRegex instanceof RegExp, `descriptor.exception must be a regex`);
-		assert.throws(function () {
-				throw ex;
-			},
-			exceptionRegex,
-			`${descriptor.name}: exception matches regex '${descriptor.exception}'`);
-		descriptorIndex++;
-		next();
-	});
-	
-	gClient.connect(function() {
-		next();
-	});
+}
 
-	assert.on("end", function() {
-		log.info(`end; closing server`);
-		server.close();
-	});
-});
+ _serverTests();
 
 
 //==========================================================================================

@@ -190,9 +190,8 @@ CBusClient.prototype.receiveSecurityStatus = function(netId, callback) {
     this._sendMessage(cmd, callback);
 };
 
-CBusClient.prototype.getDB = function(callback) {
-	const netId = new CBusNetId(this.project, this.network);
-	const cmd = `DBGETXML ${netId.toString()}`;
+CBusClient.prototype.getDB = function(netId, callback) {
+	const cmd = `dbgetxml ${netId.toString()}`;
 	this._sendMessage(cmd, callback);
 };
 
@@ -551,7 +550,7 @@ CBusClient.prototype._resolveResponse = function(response) {
 			console.assert(response.commandId == this.snippet.commandId, `snippet extend commandId mismatch ${this.snippet.commandId} vs ${response.commandId}`);
 			response.snippet = this.snippet;
 			response.snippet.inspect = function(depth, opts) {
-				const abbreviated = cbusUtils.truncateString(this.content.replace(`\n`, ``), 100);
+				const abbreviated = cbusUtils.truncateString(this.content, 100);
 				return `'${abbreviated}'`;
 			};
 			response.processed = true;
@@ -575,6 +574,8 @@ CBusClient.prototype._resolveResponse = function(response) {
 };
 
 CBusClient.prototype._resolveSnippetFragment = function(fragment) {
+	console.assert([343, 347].includes(fragment.code));
+	
 	if (fragment.code == 343) {
 		// 343: start the snippet
 		console.assert(typeof this.snippet == `undefined`, `can't begin when we already have a snippet forming`);
@@ -590,19 +591,15 @@ CBusClient.prototype._resolveSnippetFragment = function(fragment) {
 		if (typeof this.snippet.content == `undefined`) {
 			this.snippet.content = fragment.remainder;
 		} else {
-			this.snippet.content = `${this.snippet.content}\n${fragment.remainder}`;
+			this.snippet.content = this.snippet.content.concat(fragment.remainder);
 		}
-	} else {
-		throw `unexpected code ${fragment.code} when parsing snippet`;
 	}
 };
 
 CBusClient.prototype._socketReceivedLine = function(line) {
 	try {
 		const message = _parseLine(line);
-		console.assert((message.type == RESPONSE_TYPE) ||
-			(message.type == EVENT_TYPE) ||
-			(message.type == SNIPPET_TYPE), `illegal parsedLine type ${message.type}`);
+		console.assert([RESPONSE_TYPE, EVENT_TYPE, SNIPPET_TYPE].includes(message.type), `illegal parsedLine type ${message.type}`);
 		
 		switch (message.type) {
 			case RESPONSE_TYPE:
