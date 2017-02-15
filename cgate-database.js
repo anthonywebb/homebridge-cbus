@@ -14,6 +14,16 @@ const CBusNetId = require('./cbus-netid.js');
 
 module.exports = CGateDatabase;
 
+/*
+ 
+ CGateDatabase loads the objeect database from C-Gate, parsing it into three lists:
+ 	* applications
+ 	* groups
+ 	* units
+
+
+ */
+
 function CGateDatabase(netId, log) {
 	// the netId must be in the format //${project}//${network}
 	console.assert((typeof netId.application == `undefined`) && (typeof netId.group == `undefined`));
@@ -122,12 +132,17 @@ function _parseXML(databaseXML, log) {
 }
 
 function _getFirstAndOnlyChild(element) {
-	let value = undefined;
-	if (Array.isArray(element)) {
-		console.assert(element.length == 1);
-		value = element[0];
+	if (typeof element === `undefined`) {
+		return undefined;
 	}
-	return value;
+	
+	if (!Array.isArray(element)) {
+		throw `_getFirstAndOnlyChild must only be used on arrays`;
+	} else if (element.length != 1) {
+		throw `_getFirstAndOnlyChild element must be a single element array`;
+	}
+	
+	return element[0];
 }
 
 CGateDatabase.prototype.getNetLabel = function(netId) {

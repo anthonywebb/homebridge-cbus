@@ -294,19 +294,19 @@ test('constructor undefineds', function (assert) {
 	
 	assert.throws(function () {
 		new CBusNetId(undefined, 254, 57, 22);
-	}, `expected exception`, `no project`);
+	}, /netIds must have a project/, `no project`);
 
 	assert.throws(function () {
 		new CBusNetId(`EXAMPLE`, undefined, 57, 22);
-	}, `expected exception`, `no network`);
+	}, /netIds must have a network/, `no network`);
 	
 	assert.throws(function () {
 		new CBusNetId(`EXAMPLE`, 254, undefined, 22);
-	}, `expected exception`, `no app/p`);
+	}, /group netIds must have an application/, `no app/p`);
 	
 	assert.throws(function () {
 		new CBusNetId(`EXAMPLE`, 254, `p`, undefined);
-	}, `expected exception`, `no unit`);
+	}, /unit netIds must have a unitAddress/, `no unit`);
 	
 	assert.end();
 });

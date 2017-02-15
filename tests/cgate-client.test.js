@@ -10,12 +10,13 @@ const rewire = require("rewire");
 const Console = require('console').Console;
 
 const CGateClient = rewire('../cgate-client.js');
-const CGateDatabase = require(`../cgate-database.js`);
+const CGateDatabase = rewire(`../cgate-database.js`);
 const CBusNetId = require('../cbus-netid.js');
 
 const _parseLine = CGateClient.__get__('_parseLine');
 const _rawToPercent = CGateClient.__get__('_rawToPercent');
 const _rawToZoneState = CGateClient.__get__('_rawToZoneState');
+const _getFirstAndOnlyChild = CGateDatabase.__get__('_getFirstAndOnlyChild');
 
 const CONSOLE_ENABLED = false;
 
@@ -221,7 +222,7 @@ const TEST_DESCRIPTORS = [
 			type: `response`,
 			commandId: 109,
 		},
-		numTestsInValidation: 10,
+		numTestsInValidation: 12,
 		validate: function(message, assert, testName) {
 			console.assert(message);
 			assert.equal(message.snippet.content.length, 24884, `${testName}: checking snippet length`);
@@ -255,6 +256,9 @@ const TEST_DESCRIPTORS = [
 			
 			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/56/40`)), `Wine Cellar`, `${testName}: check known group label`);
 			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/222/222`)), `group222`, `${testName}: check unknown group label`);
+			
+			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/p/5`)), `Lounge DLT`, `${testName}: check known unit label`);
+			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/p/22`)), `unit22`, `${testName}: check unknown unit label`);
 		}
 	},
 	{
@@ -791,3 +795,29 @@ test('_rawToZoneState', function (assert) {
 	
 	assert.end();
 });
+
+test('_getFirstAndOnlyChild', function (assert) {
+	// values from help document 'C-Bus to percent level lookup table'
+	assert.plan(6);
+	
+	assert.equal(_getFirstAndOnlyChild(undefined), undefined);
+	assert.equal(_getFirstAndOnlyChild([222]), 222);
+	assert.equal(_getFirstAndOnlyChild([`abc`]), `abc`);
+	
+	assert.throws(function () {
+		_getFirstAndOnlyChild([22, 23, 24]);
+	}, /_getFirstAndOnlyChild element must be a single element array/, `multiple elements`);
+	
+	assert.throws(function () {
+		_getFirstAndOnlyChild([]);
+	}, /_getFirstAndOnlyChild element must be a single element array/, `no elements`);
+	
+	assert.throws(function () {
+		_getFirstAndOnlyChild(`not an array`);
+	}, /_getFirstAndOnlyChild must only be used on arrays/, `not an array`);
+	
+	assert.end();
+});
+
+// `_getFirstAndOnlyChild must only be used on arrays`
+// `_getFirstAndOnlyChild element must be a single element array`
