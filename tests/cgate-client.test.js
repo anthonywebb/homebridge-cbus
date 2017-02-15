@@ -16,7 +16,6 @@ const CBusNetId = require('../cbus-netid.js');
 const _parseLine = CGateClient.__get__('_parseLine');
 const _rawToPercent = CGateClient.__get__('_rawToPercent');
 const _rawToZoneState = CGateClient.__get__('_rawToZoneState');
-const _getFirstAndOnlyChild = CGateDatabase.__get__('_getFirstAndOnlyChild');
 
 const CONSOLE_ENABLED = false;
 
@@ -249,16 +248,16 @@ const TEST_DESCRIPTORS = [
 				"unitType": "GATEWLSN"
 			}, `${testName}: check units[4]`);
 			
-			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254`)), `net254`, `${testName}: check network label`);
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254`)), `net254`, `${testName}: check network label`);
 			
-			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/224`)), `Telephony`, `${testName}: check known application label`);
-			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/250`)), `app250`, `${testName}: check unknown application label`);
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/224`)), `Telephony`, `${testName}: check known application label`);
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/250`)), `app250`, `${testName}: check unknown application label`);
 			
-			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/56/40`)), `Wine Cellar`, `${testName}: check known group label`);
-			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/222/222`)), `group222`, `${testName}: check unknown group label`);
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/56/40`)), `Wine Cellar`, `${testName}: check known group label`);
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/222/222`)), `group222`, `${testName}: check unknown group label`);
 			
-			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/p/5`)), `Lounge DLT`, `${testName}: check known unit label`);
-			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/p/22`)), `unit22`, `${testName}: check unknown unit label`);
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/p/5`)), `Lounge DLT`, `${testName}: check known unit label`);
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/p/22`)), `unit22`, `${testName}: check unknown unit label`);
 		}
 	},
 	{
@@ -497,7 +496,7 @@ test(`setup tests`, function (assert) {
 	gClient = new CGateClient(`127.0.0.1`, SERVER_PORT, `EXAMPLE`, 254, 56, log, true);
 	gDatabase = new CGateDatabase(new CBusNetId(`EXAMPLE`, 254), log);
 	
-	assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254`)), undefined, `check CGateDatabase.getNetLabel() handling before first parse`);
+	assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254`)), undefined, `check CGateDatabase.getNetLabel() handling before first parse`);
 	
 	
 	// patch in the EXAMPLE project database dump
@@ -795,29 +794,3 @@ test('_rawToZoneState', function (assert) {
 	
 	assert.end();
 });
-
-test('_getFirstAndOnlyChild', function (assert) {
-	// values from help document 'C-Bus to percent level lookup table'
-	assert.plan(6);
-	
-	assert.equal(_getFirstAndOnlyChild(undefined), undefined);
-	assert.equal(_getFirstAndOnlyChild([222]), 222);
-	assert.equal(_getFirstAndOnlyChild([`abc`]), `abc`);
-	
-	assert.throws(function () {
-		_getFirstAndOnlyChild([22, 23, 24]);
-	}, /_getFirstAndOnlyChild element must be a single element array/, `multiple elements`);
-	
-	assert.throws(function () {
-		_getFirstAndOnlyChild([]);
-	}, /_getFirstAndOnlyChild element must be a single element array/, `no elements`);
-	
-	assert.throws(function () {
-		_getFirstAndOnlyChild(`not an array`);
-	}, /_getFirstAndOnlyChild must only be used on arrays/, `not an array`);
-	
-	assert.end();
-});
-
-// `_getFirstAndOnlyChild must only be used on arrays`
-// `_getFirstAndOnlyChild element must be a single element array`

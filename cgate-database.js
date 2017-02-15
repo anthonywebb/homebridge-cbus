@@ -21,7 +21,6 @@ module.exports = CGateDatabase;
  	* groups
  	* units
 
-
  */
 
 function CGateDatabase(netId, log) {
@@ -52,7 +51,8 @@ CGateDatabase.prototype.fetch = function(client, callback) {
 		// this.log.info(`dbgetxml ${util.inspect(result.snippet)} (${dbxml.length} bytes)`);
 		
 		xml2js.parseString(dbxml, {
-			normalizeTags: true
+			normalizeTags: true,
+			explicitArray: false
 		}, (err, databaseXML) => {
 			console.assert(!err, `dbgetxml parse failure`, err);
 			const result = _parseXML(databaseXML, this.log);
@@ -64,7 +64,7 @@ CGateDatabase.prototype.fetch = function(client, callback) {
 			const groupMap = new Map();
 			result.groups.forEach(group => {
 				const netId = new CBusNetId(this.netId.project, this.netId.network, group.application, group.address);
-				groupMap.set(netId.getModuleId(), group);
+				groupMap.set(netId.getHash(), group);
 			});
 			this.groupMap = groupMap;
 			
@@ -72,7 +72,7 @@ CGateDatabase.prototype.fetch = function(client, callback) {
 			const unitMap = new Map();
 			result.units.forEach(unit => {
 				const netId = new CBusNetId(this.netId.project, this.netId.network, `p`, unit.address);
-				unitMap.set(netId.getModuleId(), unit);
+				unitMap.set(netId.getHash(), unit);
 			});
 			this.unitMap = unitMap;
 			
@@ -92,34 +92,34 @@ function _parseXML(databaseXML, log) {
 		units = [];
 	
 	// create map of maps containing groups (by application, by group address)
-	databaseXML.network.application.forEach(srcApplication => {
+	_arrayize(databaseXML.network.application).forEach(srcApplication => {
 		const application = {
-			address: cbusUtils.integerise(_getFirstAndOnlyChild(srcApplication.address)),
-			name: _getFirstAndOnlyChild(srcApplication.tagname),
+			address: cbusUtils.integerise(srcApplication.address),
+			name: srcApplication.tagname,
 		};
 		applications.push(application);
 		
 		// now descend into groups
-		srcApplication.group.forEach(srcGroup => {
+		_arrayize(srcApplication.group).forEach(srcGroup => {
 			const group = {
 				application: application.address,
-				address: cbusUtils.integerise(_getFirstAndOnlyChild(srcGroup.address)),
-				name: _getFirstAndOnlyChild(srcGroup.tagname)
+				address: cbusUtils.integerise(srcGroup.address),
+				name: srcGroup.tagname
 			};
 			groups.push(group);
 		});
 	});
 	
 	// create map of physical devices
-	databaseXML.network.unit.forEach(srcUnit => {
+	_arrayize(databaseXML.network.unit).forEach(srcUnit => {
 		const unit = {
-			tag: _getFirstAndOnlyChild(srcUnit.tagname),
-			partName: _getFirstAndOnlyChild(srcUnit.unitname),
-			address: cbusUtils.integerise(_getFirstAndOnlyChild(srcUnit.address)),
-			firmwareVersion: _getFirstAndOnlyChild(srcUnit.firmwareversion),
-			serialNumber: _getFirstAndOnlyChild(srcUnit.serialnumber),
-			catalogNumber: _getFirstAndOnlyChild(srcUnit.catalognumber),
-			unitType: _getFirstAndOnlyChild(srcUnit.unittype)
+			tag: srcUnit.tagname,
+			partName: srcUnit.unitname,
+			address: cbusUtils.integerise(srcUnit.address),
+			firmwareVersion: srcUnit.firmwareversion,
+			serialNumber: srcUnit.serialnumber,
+			catalogNumber: srcUnit.catalognumber,
+			unitType: srcUnit.unittype
 		};
 		units.push(unit);
 	});
@@ -131,21 +131,11 @@ function _parseXML(databaseXML, log) {
 	};
 }
 
-function _getFirstAndOnlyChild(element) {
-	if (typeof element === `undefined`) {
-		return undefined;
-	}
-	
-	if (!Array.isArray(element)) {
-		throw `_getFirstAndOnlyChild must only be used on arrays`;
-	} else if (element.length != 1) {
-		throw `_getFirstAndOnlyChild element must be a single element array`;
-	}
-	
-	return element[0];
+function _arrayize(element) {
+	return Array.isArray(element) ? element : [element];
 }
 
-CGateDatabase.prototype.getNetLabel = function(netId) {
+CGateDatabase.prototype.getTag = function(netId) {
 	if (typeof this.applications == `undefined`) {
 		return undefined;
 	}
@@ -165,11 +155,11 @@ CGateDatabase.prototype.getNetLabel = function(netId) {
 		});
 		name = application ? application.name : `app${netId.application}`;
 	} else if (netId.isGroupId()) {
-		let group = this.groupMap.get(netId.getModuleId());
+		let group = this.groupMap.get(netId.getHash());
 		name = group ? group.name : `group${netId.group}`;
 	} else {
 		console.assert(netId.isUnitId());
-		const hash = netId.getModuleId();
+		const hash = netId.getHash();
 		let unit = this.unitMap.get(hash);
 		name = unit ? unit.tag : `unit${netId.unitAddress}`;
 	}

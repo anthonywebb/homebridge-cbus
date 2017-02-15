@@ -43,7 +43,7 @@ CBusDimmerAccessory.prototype.getBrightness = function(callback, context) {
 };
 
 CBusDimmerAccessory.prototype.setBrightness = function(newLevel, callback, context) {
-	// "context" is helping us avoid a never ending loop
+	// context helps us avoid a never-ending loop
 	if (context != `event`) {
 		if (this.currentLevel != newLevel) {
 			const oldLevel = this.currentLevel;

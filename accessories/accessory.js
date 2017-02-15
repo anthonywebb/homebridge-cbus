@@ -31,20 +31,20 @@ function CBusAccessory(platform, accessoryData) {
 	
 	// ensure we have a name
 	if (typeof accessoryData.name != "string") {
-		throw `missing required 'name' field`;
+		throw new Error(`missing required 'name' field`);
 	}
 	this.name = accessoryData.name;
 	
 	// ensure we have a valid group address
 	if (typeof accessoryData.id === `undefined`) {
-		throw `accessory '${this.name} missing required 'id' (group address) field`;
+		throw new Error(`accessory '${this.name} missing required 'id' (group address) field`);
 	}
 	
 	let groupAddress;
 	try {
 		groupAddress = cbusUtils.integerise(accessoryData.id);
 	} catch (ex) {
-		throw `id '${accessoryData.id}' for accessory '${this.name} is not an integer`;
+		throw new Error(`id '${accessoryData.id}' for accessory '${this.name} is not an integer`);
 	}
 	
     // build netId
@@ -55,7 +55,7 @@ function CBusAccessory(platform, accessoryData) {
 		groupAddress
 	);
 	
-	this.id = this.netId.getModuleId();
+	this.id = this.netId.getHash();
 	
     // fire our parent
 	const ourUUID = uuid.generate(this.id);

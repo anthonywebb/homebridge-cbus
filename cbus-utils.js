@@ -23,7 +23,7 @@ module.exports.integerise = function (x) {
 	
 	const parsed = parseInt(x);
 	if ((typeof parsed != 'undefined') && (parsed.toString() !== x.toString())) {
-		throw `not an integer: '${x}'`;
+		throw new Error(`not an integer: '${x}'`);
 	}
 	
 	return parsed;

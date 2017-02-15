@@ -3,6 +3,7 @@
 const net = require('net');
 const util = require('util');
 const log = require('util').log;
+const debug = require('debug')('cbus-client');
 
 const EventEmitter = require('events').EventEmitter;
 
@@ -79,7 +80,7 @@ function CBusClient(cgateIpAddress, cgateControlPort,
     this.network            = network || DEFAULT_CLIENT_NETWORK;
     this.application        = application || DEFAULT_CLIENT_APPLICATION;
 
-    this.log                = log;
+    // this.log                = log;
     this.clientDebug        = clientDebug || DEFAULT_CLIENT_DEBUG;
 
     this.socket             = undefined;
@@ -107,22 +108,22 @@ CBusClient.prototype.connect = function(callback) {
     this.socket = net.createConnection(this.cgateControlPort, this.cgateIpAddress);
 
     this.socket.on('error', function(error) {
-        that.log.info('C-Gate socket error: ' + error);
+        debug('C-Gate socket error: ' + error);
     });
 
     this.socket.on('end', function() {
-        that.log.info('C-Gate socket terminated');
+        debug('C-Gate socket terminated');
     });
 
     this.socket.on('close', function() {
-        that.log.info('C-Gate socket closed');
+        debug('C-Gate socket closed');
 		// TODO i think this is where we need to reopen the socket if it is closed
     });
 	
 	// from node documentation: By default net.Socket do not have a timeout.
 	// so not sure how we would get this
 	this.socket.on('timeout', function() {
-        that.log.info('C-Gate socket timed out');
+        debug('C-Gate socket timed out');
     });
 
     carrier.carry(this.socket, function(line) {
@@ -136,17 +137,17 @@ CBusClient.prototype.connect = function(callback) {
             let parts;
 
             if (parts = line.match(SERVICE_READY_REGEX)) {
-                that.log.info(`Connected to C-Gate server ${parts[1]} (syntax ${parts[2]})`);
-                that.log.info(`Configuring C-Gate session ...`);
+                debug(`Connected to C-Gate server ${parts[1]} (syntax ${parts[2]})`);
+                debug(`Configuring C-Gate session ...`);
                 that.socket.write(EVENTS_REQUEST);
             } else if (parts = line.match(EVENTS_RESPONSE_REGEX)) {
                 // we've connected to cgate and received a response to our command to
                 // set the event level as we want it.
-                that.log.info(`C-Gate session configured and ready at ${that.cgateControlPort}:${that.cgateIpAddress}`);
+                debug(`C-Gate session configured and ready at ${that.cgateControlPort}:${that.cgateIpAddress}`);
                 that.connectionReady = true;
                 callback();
             } else {
-                that.log.info(`C-Gate session not ready -- unexpected message: ${line}`);
+                debug(`C-Gate session not ready -- unexpected message: ${line}`);
             }
         } else {
             that._socketReceivedLine(line);
@@ -273,9 +274,9 @@ CBusClient.prototype._sendMessage = function (message, callback) {
 
     this.socket.write(request.raw + `\n`, function(err) {
         if (err) {
-            this.log.info(`error '${err} when sending '${chalk.green(request.raw)}'`);
+            debug(`error '${err} when sending '${chalk.green(request.raw)}'`);
         } else {
-            this.log.info(`sent command '${chalk.green.bold(request.raw)}'`);
+            debug(`sent command '${chalk.green.bold(request.raw)}'`);
         }
     }.bind(this));
 };
@@ -313,7 +314,7 @@ function _parseResponse(line) {
 			const OBJ_INFO_REGEX = /^(.*): (level|zonestate)=(\d{0,3})$/;
 			let parsed = message.match(OBJ_INFO_REGEX);
 			if (!parsed) {
-				throw `not in '(level|zonestate)=xxx' format`;
+				throw new Error(`not in '(level|zonestate)=xxx' format`);
 			}
 
 			response.netId = CBusNetId.parse(parsed[1]);
@@ -347,11 +348,11 @@ function _parseResponse(line) {
 // the help document 'C-Bus to percent level lookup table'
 function _rawToPercent(raw) {
 	if (typeof raw !== `number`) {
-		throw `illegal raw type: ${typeof raw}`;
+		throw new Error(`illegal raw type: ${typeof raw}`);
 	}
 	
 	if ((raw < 0) || (raw > 255)) {
-		throw `illegal raw level: ${raw}`;
+		throw new Error(`illegal raw level: ${raw}`);
 	}
 	
 	return Math.floor(((raw + 2) / 255) * 100);
@@ -372,7 +373,7 @@ function _rawToZoneState(raw) {
 	} else if (raw < LABELS.length) {
 		result = LABELS[raw];
 	} else {
-		throw `illegal zonestate label: ${raw}`;
+		throw new Error(`illegal zonestate label: ${raw}`);
 	}
 	
 	return result;
@@ -392,7 +393,7 @@ function _parseProperties(message, target) {
 			let value = keyValue[1];
             
             if ((key.length == 0) || (value.length == 0)) {
-            	throw `bad key=value: '${key}'`;
+            	throw new Error(`bad key=value: '${key}'`);
 			}
 			
             // parse it if it's a number
@@ -422,7 +423,7 @@ function _parseEvent(line) {
 
     const parts = line.match(EVENT_REGEX);
     if (!parts) {
-        throw `not in 'timestamp code message' format`;
+        throw new Error(`not in 'timestamp code message' format`);
     }
 
     let event = {
@@ -446,7 +447,7 @@ function _parseEvent(line) {
 
             const infoParts = message.match(APP_INFO_REGEX);
             if (!infoParts) {
-                throw `not in 'netid objectId [applicationName] remainder' format`;
+                throw new Error(`not in 'netid objectId [applicationName] remainder' format`);
             }
 
             event.netId = CBusNetId.parse(infoParts[1]);
@@ -477,7 +478,7 @@ function _parseEvent(line) {
 
             const attributes = message.match(NEW_LEVEL_REGEX);
             if (!attributes) {
-                throw `not in 'new remainder' format`;
+                throw new Error(`not in 'new remainder' format`);
             }
 
             event.netId = CBusNetId.parse(attributes[1]);
@@ -530,7 +531,7 @@ function _parseLine(line) {
 			type: SNIPPET_TYPE
 		};
 	} else {
-		throw `unrecognised structure`;
+		throw new Error(`unrecognised structure`);
 	}
 	parsedLine.raw = line;
 	
@@ -562,7 +563,7 @@ CBusClient.prototype._resolveResponse = function(response) {
 		}
 			
 		response.request = request;
-		this.log.info(`matched response '${chalk.magenta.underline(response.raw)}' to request '${chalk.magenta.underline(request.raw)}' ` + chalk.dim(`(${this.pendingCommands.size} pending requests)`));
+		debug(`matched response '${chalk.magenta.underline(response.raw)}' to request '${chalk.magenta.underline(request.raw)}' ` + chalk.dim(`(${this.pendingCommands.size} pending requests)`));
 		
 		if (typeof request.callback != 'undefined') {
 			request.callback(response);
@@ -571,7 +572,7 @@ CBusClient.prototype._resolveResponse = function(response) {
 		// couldn't find a corresponding request in the pending command cache
 		// should be exceedingly rare
 		// TODO log as unexpected behaviour
-		this.log.info(chalk.red(`unmatched response '${response.raw}'`));
+		debug(chalk.red(`unmatched response '${response.raw}'`));
 	}
 };
 
@@ -606,24 +607,24 @@ CBusClient.prototype._socketReceivedLine = function(line) {
 		switch (message.type) {
 			case RESPONSE_TYPE:
 				this._resolveResponse(message);
-				this.log.info(chalk.blue(`rx response ${util.inspect(message, { breakLength: Infinity })}`));
+				debug(chalk.blue(`rx response ${util.inspect(message, { breakLength: Infinity })}`));
 				this.emit(`response`, message);
 				break;
 			
 			case EVENT_TYPE:
-				this.log.info(chalk.blue(`rx event ${util.inspect(message, { breakLength: Infinity })}`));
+				debug(chalk.blue(`rx event ${util.inspect(message, { breakLength: Infinity })}`));
 				this.emit(`event`, message);
 				break;
 				
 			case SNIPPET_TYPE:
 				this._resolveSnippetFragment(message);
 				const logStr = cbusUtils.truncateString(message.remainder);
-				this.log.info(chalk.blue(`rx snippet ${message.code} '${logStr}'`));
+				debug(chalk.blue(`rx snippet ${message.code} '${logStr}'`));
 				break;
 		}
 	} catch (ex) {
 		// would be good to extract stacktrace
-		this.log.info(chalk.red(`rx unparsable line: '${line}', exception: ${ex}`));
+		debug(chalk.red(`rx unparsable line: '${line}', exception: ${ex}`));
 		this.emit(`junk`, ex, line);
 	}
 };

@@ -2,6 +2,8 @@
 
 const util = require('util');
 const chalk = require('chalk');
+const debug = require('debug')('cbus');
+const debugLevel = require('debug')('cbus:level');
 
 const CGateClient = require(`./cgate-client.js`);
 const CGateDatabase = require(`./cgate-database.js`);
@@ -100,7 +102,7 @@ CBusPlatform.prototype.accessories = function(callback) {
     //--------------------------------------------------
     //  Initiate the CBus client
     //--------------------------------------------------
-    this.log.info(`Connecting to the local C-Gate server...`);
+	debug(`Connecting to the local C-Gate server...`);
 
     this.client = new CGateClient(this.cgateIpAddress, this.cgateControlPort,
         this.project, this.network, this.application,
@@ -111,30 +113,38 @@ CBusPlatform.prototype.accessories = function(callback) {
     // listen for data from the client and ensure that the homebridge UI is updated
     this.client.on(`event`, function(message) {
     	if (message.netId) {
-    		const tag = this.database ? this.database.getNetLabel(message.netId) : `NYI`;
+    		const tag = this.database ? this.database.getTag(message.netId) : `NYI`;
     		
     		let sourceTag;
     		if (typeof message.sourceunit !== `undefined`) {
     			const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceunit);
-				sourceTag = this.database.getNetLabel(sourceId);
+				sourceTag = this.database.getTag(sourceId);
 			} else {
 				sourceTag = `unknown`;
 			}
 			
 			// lookup accessory
-			const accessory = this.registeredAccessories.get(message.netId.getModuleId());
+			let output;
+			const accessory = this.registeredAccessories.get(message.netId.getHash());
 			if (accessory) {
 				// process if found
-				this.log.info(`[remote] ${message.netId} ${accessory.name}/${tag} (${accessory.type}), level: ${message.level}%, by: ` + chalk.red(`'${sourceTag}'`));
+				output = `registered accessory ${chalk.red.bold(accessory.name)} (${accessory.type}: '${tag}') set to level ${message.level}%`;
 				accessory.processClientData(message);
-			} else {this.log.info(`[remote] ${message.netId} not registered ('${tag}' by ` + chalk.red(`'${sourceTag}'`));
+			} else {
+				output = `unregistered accessory ('${chalk.red.bold(tag)}') set to level ${message.level}%`;
 			}
+			
+			if (sourceTag) {
+				output = `${output}, by '${chalk.red.bold(sourceTag)}'`;
+			}
+			
+			debugLevel(output);
 		}
     }.bind(this));
 
     this.client.connect(function() {
 		this.database.fetch(this.client, () => {
-			this.log.info(`Successfully fetched ${this.database.applications.length} applications, ${this.database.groupMap.size} groups and ${this.database.unitMap.size} units from C-Gate.`);
+			debug(`Successfully fetched ${this.database.applications.length} applications, ${this.database.groupMap.size} groups and ${this.database.unitMap.size} units from C-Gate.`);
 		});
     	
 		const accessories = this._createAccessories();
@@ -142,18 +152,18 @@ CBusPlatform.prototype.accessories = function(callback) {
 		// build the lookup map
 		this.registeredAccessories = new Map();
 		for (const accessory of accessories) {
-			this.registeredAccessories.set(accessory.netId.getModuleId(), accessory);
+			this.registeredAccessories.set(accessory.netId.getHash(), accessory);
 		}
 		
 		// hand them back to the callback to fire them up
-		this.log.info("Registering the accessories list...");
+		debug("Registering the accessories list...");
 		callback(accessories);
     }.bind(this));
 };
 
 // return a map of newly minted accessories
 CBusPlatform.prototype._createAccessories = function () {
-	this.log.info("Loading the accessories list...");
+	debug("Loading the accessories list...");
 	
 	const accessories = [];
 	
@@ -176,13 +186,11 @@ CBusPlatform.prototype._createAccessories = function () {
 };
 
 CBusPlatform.prototype.createAccessory = function(entry) {
-	if (!entry.type) {
-		throw `every accessory must have a type`;
-	}
+	console.assert(typeof entry.type === `string`, `accessory missing type property`);
 	
 	const constructor = this.accessoryDefinitions.get(entry.type);
 	if (!constructor) {
-		throw `unknown accessory type '${entry.type}`;
+		throw new (`unknown accessory type '${entry.type}'`);
 	}
 	
 	return new constructor(this, entry);

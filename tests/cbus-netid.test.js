@@ -196,10 +196,10 @@ test('construct illegal project name', function (assert) {
 test('getModuleId', function (assert) {
 	assert.plan(4);
 	
-	assert.equal(CBusNetId.parse(`//S31415/254`).getModuleId(), `fe0000`);
-	assert.equal(CBusNetId.parse(`//S31415/254/208`).getModuleId(), `fed000`);
-	assert.equal(CBusNetId.parse(`//S31415/254/208/128`).getModuleId(), `fed080`);
-	assert.equal(CBusNetId.parse(`//S31415/254/p/128`).getModuleId(), `1fe0080`);
+	assert.equal(CBusNetId.parse(`//S31415/254`).getHash(), `fe0000`);
+	assert.equal(CBusNetId.parse(`//S31415/254/208`).getHash(), `fed000`);
+	assert.equal(CBusNetId.parse(`//S31415/254/208/128`).getHash(), `fed080`);
+	assert.equal(CBusNetId.parse(`//S31415/254/p/128`).getHash(), `1fe0080`);
 	
 	assert.end();
 });

@@ -32,7 +32,6 @@ function CBusShutterAccessory(platform, accessoryData) {
     //--------------------------------------------------
     //  Initialize state variables
     //--------------------------------------------------
-    
     // handle inversion
     this.invert = accessoryData.invert || 'false';
     
@@ -193,7 +192,7 @@ CBusShutterAccessory.prototype.getTargetPosition = function(callback, context) {
 };
 
 CBusShutterAccessory.prototype.setTargetPosition = function(newPosition, callback, context) {
-    // "context" is helping us avoid a never ending loop
+	// context helps us avoid a never-ending loop
     if (context != `event`) {
         this._log(FILE_ID, `setTargetPosition = ${newPosition} (was ${this.cachedTargetPosition})`);
 

@@ -45,7 +45,7 @@ CBusLightAccessory.prototype.getOn = function(callback, context) {
 };
 
 CBusLightAccessory.prototype.setOn = function(turnOn, callback, context) {
-	// "context" is helping us avoid a never ending loop
+	// context helps us avoid a never-ending loop
 	if (context != `event`) {
 		const isOn = this.currentLevel > 0;
 		

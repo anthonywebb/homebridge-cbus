@@ -16,13 +16,13 @@ const cbusUtils = require('./cbus-utils.js');
 function CBusNetId(project, network, param3, param4) {
 	// project
 	if (typeof project === `undefined`) {
-		throw `netIds must have a project`;
+		throw new Error(`netIds must have a project`);
 	}
 	this.project = CBusNetId.validatedProjectName(project);
 	
 	// network
 	if (typeof network === `undefined`) {
-		throw `netIds must have a network`;
+		throw new Error(`netIds must have a network`);
 	}
 	this.network = cbusUtils.integerise(network);
 	
@@ -30,7 +30,7 @@ function CBusNetId(project, network, param3, param4) {
 		// unit address
 		this.unitAddress = cbusUtils.integerise(param4);
 		if (typeof this.unitAddress === `undefined`) {
-			throw `unit netIds must have a unitAddress`;
+			throw new Error(`unit netIds must have a unitAddress`);
 		}
 	} else {
 		// application and group
@@ -38,7 +38,7 @@ function CBusNetId(project, network, param3, param4) {
 		this.group = cbusUtils.integerise(param4);
 		
 		if ((typeof this.group !== `undefined`) && (typeof this.application === `undefined`)) {
-			throw `group netIds must have an application`;
+			throw new Error(`group netIds must have an application`);
 		}
 	}
 }
@@ -61,16 +61,16 @@ CBusNetId.prototype.inspect = function (depth, options) {
 	return this.toString();
 };
 
-CBusNetId.prototype.getModuleId = function () {
-	let moduleId;
+CBusNetId.prototype.getHash = function () {
+	let hash;
 	
 	if (this.isUnitId()) {
-		moduleId = (0x1 << 24) | ((this.network & 0xFF) << 16) | (this.unitAddress & 0xFF);
+		hash = (0x1 << 24) | ((this.network & 0xFF) << 16) | (this.unitAddress & 0xFF);
 	} else {
-		moduleId = ((this.network & 0xFF) << 16) | ((this.application & 0xFF) << 8) | (this.group & 0xFF);
+		hash = ((this.network & 0xFF) << 16) | ((this.application & 0xFF) << 8) | (this.group & 0xFF);
 	}
 	
-	return moduleId.toString(16);
+	return hash.toString(16);
 };
 
 CBusNetId.prototype.isNetworkId = function () {
@@ -95,7 +95,7 @@ CBusNetId.parse = function (netIdString) {
     const components = netIdString.match(NETID_REGEX);
     
     if (!components) {
-    	throw `badly formed netid: '${netIdString}'`;
+    	throw new Error(`badly formed netid: '${netIdString}'`);
 	}
 	
     return new CBusNetId(components[1], components[2], components[3], components[4]);
@@ -104,7 +104,7 @@ CBusNetId.parse = function (netIdString) {
 // static factory method
 CBusNetId.validatedProjectName = function (name) {
 	if (name.match(/^([A-Z][A-Z0-9]{0,7})$/) == null) {
-		throw `illegal project name (format /[A-Z][A-Z0-9]{0,7}/) '${name}`;
+		throw new Error(`illegal project name (format /[A-Z][A-Z0-9]{0,7}/) '${name}`);
 	}
 	
 	return name;
