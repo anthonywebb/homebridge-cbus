@@ -19,8 +19,14 @@ function CGateDatabase(netId, log) {
 	console.assert((typeof netId.application == `undefined`) && (typeof netId.group == `undefined`));
 	this.netId = netId;
 	
-	// map of maps containing groups (by application, by group address)
+	// array containing applications
 	this.applications = undefined;
+
+	// array containing groups
+	this.groups = undefined;
+	
+	// lookup map for groups
+	this.groupMap = undefined;
 	
 	// map of physical devices
 	this.units = undefined;
@@ -36,15 +42,24 @@ CGateDatabase.prototype.fetch = function(client, callback) {
 		this.log.info(`dbgetxml ${util.inspect(result.snippet)} (${dbxml.length} bytes)`);
 		
 		xml2js.parseString(dbxml, {
-			normalizeTags: true,
-			
-		}, (err, database) => {
+			normalizeTags: true
+		}, (err, databaseXML) => {
 			console.assert(!err, `dbgetxml parse failure`, err);
-			const result = _parseXML(database);
+			const result = _parseXML(databaseXML, this.log);
 			this.applications = result.applications;
+			this.groups = result.groups;
 			this.units = result.units;
-			this.groupCount = result.groupCount;
-			// console.log(`*** parsed ${this.groupCount} groups.`);
+			
+			// build group map
+			const groupMap = new Map();
+			result.groups.forEach(group => {
+				const netId = new CBusNetId(this.netId.project, this.netId.network, group.application, group.address);
+				groupMap.set(netId.getModuleId(), group);
+			});
+			this.groupMap = groupMap;
+			
+			// build unit map
+			
 			
 			if (callback) {
 				callback();
@@ -53,33 +68,35 @@ CGateDatabase.prototype.fetch = function(client, callback) {
 	});
 };
 
-function _parseXML(database) {
+function _parseXML(databaseXML, log) {
 	let groupCount = 0;
 	
+	// create 3 arrays: applications, groups, units
+	const applications = [],
+		groups = [],
+		units = [];
+	
 	// create map of maps containing groups (by application, by group address)
-	const applications = new Map();
-	database.network.application.forEach(srcApplication => {
+	databaseXML.network.application.forEach(srcApplication => {
 		const application = {
 			address: cbusUtils.integerise(_getFirstAndOnlyChild(srcApplication.address)),
 			name: _getFirstAndOnlyChild(srcApplication.tagname),
-			groups: new Map()
 		};
-		applications.set(application.address, application);
+		applications.push(application);
 		
 		// now descend into groups
 		srcApplication.group.forEach(srcGroup => {
 			const group = {
+				application: application.address,
 				address: cbusUtils.integerise(_getFirstAndOnlyChild(srcGroup.address)),
 				name: _getFirstAndOnlyChild(srcGroup.tagname)
 			};
-			application.groups.set(group.address, group);
-			groupCount++;
+			groups.push(group);
 		});
 	});
 	
 	// create map of physical devices
-	const units = new Map;
-	database.network.unit.forEach(srcUnit => {
+	databaseXML.network.unit.forEach(srcUnit => {
 		const unit = {
 			tag: _getFirstAndOnlyChild(srcUnit.tagname),
 			partName: _getFirstAndOnlyChild(srcUnit.unitname),
@@ -89,21 +106,20 @@ function _parseXML(database) {
 			catalogNumber: _getFirstAndOnlyChild(srcUnit.catalognumber),
 			unitType: _getFirstAndOnlyChild(srcUnit.unittype)
 		};
-		units.set(unit.address, unit);
+		units.push(unit);
 	});
 	
 	return {
 		applications: applications,
-		groupCount: groupCount,
+		groups: groups,
 		units: units
-		
 	};
 }
 
 function _getFirstAndOnlyChild(element) {
 	let value = undefined;
-	if (typeof element == `array`) {
-		console.assert(array.length == 1);
+	if (Array.isArray(element)) {
+		console.assert(element.length == 1);
 		value = element[0];
 	}
 	return value;
@@ -113,35 +129,27 @@ CGateDatabase.prototype.getNetLabel = function(netId) {
 	if (typeof this.applications == `undefined`) {
 		return undefined;
 	}
+	console.assert(this.groupMap != `undefined`, `if we have this.applications, then we should have this.groupMsp`);
 	
+	// TODO perhaps change to throw?
 	console.assert(this.netId.project === netId.project, `getGroupName can only search in default project`);
 	console.assert(this.netId.network === netId.network, `getGroupName can only search in default network`);
 	
 	let name;
-	if (typeof netId.application != `undefined`) {
-		// we have an application identifier
-		const application = this.applications.get(netId.application);
-		if (application) {
-			// we found the application
-			if (typeof netId.group == `undefined`) {
-				// we don't have a group; use the application name
-				name = application.name;
-			} else {
-				// group is defined
-				const group = application.groups.get(netId.group);
-				if (group) {
-					// we found the group
-					name = group.name;
-				}
-			}
-		}
-	} else {
-		name = `network`;
-	}
 	
-	if (typeof name == `undefined`) {
-		name = `not-found`;
+	if (netId.isNetworkId(netId)) {
+		name = `net${netId.network}`;
+	} else if (netId.isApplicationId(netId)) {
+		let application = this.applications.find(element => {
+			return element.address == netId.application;
+		});
+		name = application ? application.name : `app${netId.application}`;
+	} else {
+		let group = this.groupMap.get(netId.getModuleId());
+		name = group ? group.name : `group${netId.group}`;
 	}
 	
 	return name;
 };
+
+//CGateDatabase.prototype.getUnitLabel = function(netId) {

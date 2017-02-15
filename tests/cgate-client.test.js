@@ -181,7 +181,11 @@ const TEST_DESCRIPTORS = [
 			matched: true,
 			processed: true,
 		},
-		snippetLength: 153
+		numTestsInValidation: 1,
+		validate: function(message, assert) {
+			console.assert(message);
+			assert.equal(message.snippet.content.length, 153, `[106] checking snippet length`);
+		}
 	},
 	{
 		name: `[107] parse xml 344 before 343`,
@@ -206,8 +210,7 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[109] parse big xml`,
 		clientAction: function () {
-			gDatabase.fetch(gClient, () => { console.log(`fetched`) } )
-			//gClient.getDB(CBusNetId.parse(`//EXAMPLE/254`));
+			gDatabase.fetch(gClient, () => { /* console.log(`fetched`) */ } )
 		},
 		fromClient: `[109] dbgetxml //EXAMPLE/254`,
 		fromServer:
@@ -218,7 +221,41 @@ const TEST_DESCRIPTORS = [
 			type: `response`,
 			commandId: 109,
 		},
-		snippetLength: 24884
+		numTestsInValidation: 10,
+		validate: function(message, assert, testName) {
+			console.assert(message);
+			assert.equal(message.snippet.content.length, 24884, `${testName}: checking snippet length`);
+			assert.equal(gDatabase.groups.length, 35, `${testName}: checking group count`);
+			
+			assert.deepEquals(gDatabase.applications[0], {
+					"address": 56,
+					"name": "Lighting"
+			}, `${testName}: check applications[0]`);
+			
+			assert.deepEquals(gDatabase.groups[6], {
+				"application": 56,
+				"address": 37,
+				"name": "Sprinkler1"
+			}, `${testName}: check groups[6]`);
+			
+			assert.deepEquals(gDatabase.units[4], {
+				"tag": "Gateway to Wireless Net",
+				"partName": "WG",
+				"address": 42,
+				"firmwareVersion": "4.3.00",
+				"serialNumber": "1048575.4095",
+				"catalogNumber": "5800WCGA",
+				"unitType": "GATEWLSN"
+			}, `${testName}: check units[4]`);
+			
+			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254`)), `net254`, `${testName}: check network label`);
+			
+			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/224`)), `Telephony`, `${testName}: check known application label`);
+			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/250`)), `app250`, `${testName}: check unknown application label`);
+			
+			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/56/40`)), `Wine Cellar`, `${testName}: check known group label`);
+			assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254/222/222`)), `group222`, `${testName}: check unknown group label`);
+		}
 	},
 	{
 		name: `nonsensical message`,
@@ -450,11 +487,14 @@ const TEST_DESCRIPTORS = [
 
 // read in the mocked server response from EXAMPLE.xml.txt.txt and patch into command 109
 test(`setup tests`, function (assert) {
-	assert.plan(1);
+	assert.plan(2);
 	
 	// setup globals
 	gClient = new CGateClient(`127.0.0.1`, SERVER_PORT, `EXAMPLE`, 254, 56, log, true);
 	gDatabase = new CGateDatabase(new CBusNetId(`EXAMPLE`, 254), log);
+	
+	assert.equals(gDatabase.getNetLabel(CBusNetId.parse(`//EXAMPLE/254`)), undefined, `check CGateDatabase.getNetLabel() handling before first parse`);
+	
 	
 	// patch in the EXAMPLE project database dump
 	fs.readFile(`tests/resources/EXAMPLE.xml.txt`, 'utf8', function (err, fileData) {
@@ -477,11 +517,15 @@ test(`setup tests`, function (assert) {
 	});
 });
 
-function _validateMessageAgainstExpected(message, expected, name) {
-	console.assert(typeof expected == `object`, `_validateMessageAgainstExpected: expected must be an object`);
+function _validate(message, descriptor, assert) {
+	const testName = `parsed message from '${descriptor.name}'`;
 	
-	log.info(`====> scheduling test for '${name}'`);
-	test(name, assert => {
+	const expected = descriptor.expected;
+	console.assert(typeof expected == `object`, `_validate: '${descriptor.name}'.expected must be an object`);
+	 
+	// fire up another test
+	log.info(`====> scheduling test for '${testName}'`);
+	test(testName, assert => {
 		assert.plan(expected.length);
 		Object.keys(expected).forEach(key => {
 			const actualValue = message[key];
@@ -496,6 +540,13 @@ function _validateMessageAgainstExpected(message, expected, name) {
 		});
 		assert.end();
 	});
+	
+	// run any validate tests on the response
+	const validate = descriptor.validate;
+	if (typeof validate != `undefined`) {
+		console.assert(typeof validate == `function`);
+		validate(message, assert, descriptor.name);
+	}
 }
 
 //==========================================================================================
@@ -519,7 +570,7 @@ test('server premature disconnect', function (assert) {
 	assert.end();
 });
 
-function _serverTests() {
+function _serverTests(descriptors) {
 	test(`server responses`, assert => {
 		let descriptorIndex = 0;
 		
@@ -530,7 +581,7 @@ function _serverTests() {
 		// - forClient (ensuring that forClient matched expected)
 		// - exception (ensuring that junk recevied by client was caught and matches the regex)
 		let testCount = 0;
-		TEST_DESCRIPTORS.forEach(descriptor => {
+		descriptors.forEach(descriptor => {
 			if (descriptor.fromClient) {
 				testCount++;
 			}
@@ -539,8 +590,8 @@ function _serverTests() {
 				testCount++;
 			}
 			
-			if (typeof descriptor.snippetLength != `undefined`) {
-				testCount++;
+			if (typeof descriptor.numTestsInValidation != `undefined`) {
+				testCount += descriptor.numTestsInValidation;
 			}
 		});
 		assert.plan(testCount);
@@ -558,7 +609,7 @@ function _serverTests() {
 					log.info(`settings up CGate events`);
 					connection.write(`${EVENTS_RESPONSE}\n`);
 				} else {
-					const testDescriptor = TEST_DESCRIPTORS[descriptorIndex];
+					const testDescriptor = descriptors[descriptorIndex];
 					const exp = testDescriptor.fromClient;
 					const res = testDescriptor.fromServer;
 					console.assert(res, `${testDescriptor.name}: every fromClient must be matched with a fromServer`);
@@ -589,8 +640,8 @@ function _serverTests() {
 		server.listen(SERVER_PORT);
 		
 		const next = function () {
-			if (descriptorIndex < TEST_DESCRIPTORS.length) {
-				const descriptor = TEST_DESCRIPTORS[descriptorIndex];
+			if (descriptorIndex < descriptors.length) {
+				const descriptor = descriptors[descriptorIndex];
 				const action = descriptor.clientAction;
 				log.info(`\n\n`);
 				log.info(`step ${descriptorIndex}: testing '${descriptor.name}'`);
@@ -611,36 +662,26 @@ function _serverTests() {
 			}
 		};
 		
-		function _validate(message, descriptor) {
-			const testName = `parsed message from '${descriptor.name}'`;
-			_validateMessageAgainstExpected(message, descriptor.expected, testName);
-			if (typeof descriptor.snippetLength != `undefined`) {
-				const actual = message.snippet.content.length;
-				const expected = descriptor.snippetLength;
-				assert.equal(actual, expected, `${descriptor.name}: checking snippet length`);
-			}
-		}
-		
 		// listen for data from the client -- not yet used
 		gClient.on('event', message => {
-			const descriptor = TEST_DESCRIPTORS[descriptorIndex];
+			const descriptor = descriptors[descriptorIndex];
 			// log.info(`received 'event' (index ${descriptorIndex})`);
-			_validate(message, descriptor);
+			_validate(message, descriptor, assert);
 			descriptorIndex++;
 			next();
 		});
 		
 		gClient.on(`response`, message => {
-			const descriptor = TEST_DESCRIPTORS[descriptorIndex];
+			const descriptor = descriptors[descriptorIndex];
 			// log.info(`received 'response' (index ${descriptorIndex})`);
-			_validate(message, descriptor);
+			_validate(message, descriptor, assert);
 			descriptorIndex++;
 			next();
 		});
 		
 		gClient.on('junk', (ex, line) => {
 			log.info(`junk received '${line}', ex '${ex}' (index ${descriptorIndex})`);
-			const descriptor = TEST_DESCRIPTORS[descriptorIndex];
+			const descriptor = descriptors[descriptorIndex];
 			const exceptionRegex = descriptor.exception;
 			if (typeof exceptionRegex == `undefined`) {
 				assert.fail(`${descriptor.name}: failed, was expecting a descriptor.exception, unexpected: ${ex}`);
@@ -667,7 +708,7 @@ function _serverTests() {
 	});
 }
 
- _serverTests();
+ _serverTests(TEST_DESCRIPTORS);
 
 
 //==========================================================================================
