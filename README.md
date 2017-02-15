@@ -1,5 +1,7 @@
 # C-Bus for Homebridge
 
+[![Build Status](https://travis-ci.org/simonhac/homebridge-cbus.svg?branch=master)](https://travis-ci.org/simonhac/homebridge-cbus)  [![Coverage Status](https://coveralls.io/repos/github/simonhac/homebridge-cbus/badge.svg?branch=master)](https://coveralls.io/github/simonhac/homebridge-cbus?branch=master)
+
 HomeKit enable your C-Bus installation with the `homebridge-cbus` plugin for the [Homebridge](https://github.com/nfarina/homebridge) server.
 
 This project provides a bridge between [Clipsal's C-Bus](http://www2.clipsal.com/cis/technical/product_groups/cbus) server [C-Gate](http://www2.clipsal.com/cis/technical/downloads/c-gate) server and Apple's [HomeKit](http://www.apple.com/au/ios/home/).
