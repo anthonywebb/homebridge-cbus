@@ -1,8 +1,13 @@
 'use strict';
 
-const CGateClient = require('./cgate-client.js');
-const CBusNetId = require('./cbus-netid.js');
-const cbusUtils = require('./cbus-utils.js');
+const util = require('util');
+const chalk = require('chalk');
+
+const CGateClient = require(`./cgate-client.js`);
+const CGateDatabase = require(`./cgate-database.js`);
+
+const CBusNetId = require(`./cbus-netid.js`);
+const cbusUtils = require(`./cbus-utils.js`);
 
 let Service, Characteristic, Accessory, uuid;
 let CBusAccessory, CBusLightAccessory, CBusDimmerAccessory, CBusMotionAccessory, CBusSecurityAccessory, CBusShutterAccessory;
@@ -60,11 +65,11 @@ function CBusPlatform(log, config) {
 	//--------------------------------------------------
 	//  vars definition
 	//--------------------------------------------------
-	
     this.config	             = config;
     this.log                 = log;
     this.registeredAccessories = undefined;
     this.client = undefined;
+    this.database = undefined;
 
     //--------------------------------------------------
     //  setup vars
@@ -95,29 +100,43 @@ CBusPlatform.prototype.accessories = function(callback) {
     //--------------------------------------------------
     //  Initiate the CBus client
     //--------------------------------------------------
-
     this.log.info(`Connecting to the local C-Gate server...`);
 
     this.client = new CGateClient(this.cgateIpAddress, this.cgateControlPort,
         this.project, this.network, this.application,
         this.log, this.clientDebug);
+    
+    this.database = new CGateDatabase(new CBusNetId(this.project, this.network), this.log);
 
     // listen for data from the client and ensure that the homebridge UI is updated
     this.client.on(`event`, function(message) {
     	if (message.netId) {
+    		const tag = this.database ? this.database.getNetLabel(message.netId) : `NYI`;
+    		
+    		let sourceTag;
+    		if (typeof message.sourceunit !== `undefined`) {
+    			const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceunit);
+				sourceTag = this.database.getNetLabel(sourceId);
+			} else {
+				sourceTag = `unknown`;
+			}
+			
 			// lookup accessory
 			const accessory = this.registeredAccessories.get(message.netId.getModuleId());
 			if (accessory) {
 				// process if found
-				this.log.info(`[remote] ${message.netId} ${accessory.name} (${accessory.type}), level: ${message.level}%`);
+				this.log.info(`[remote] ${message.netId} ${accessory.name}/${tag} (${accessory.type}), level: ${message.level}%, by: ` + chalk.red(`'${sourceTag}'`));
 				accessory.processClientData(message);
-			} else {
-				this.log.info(`[remote] ${message.netId} not registered`);
+			} else {this.log.info(`[remote] ${message.netId} not registered ('${tag}' by ` + chalk.red(`'${sourceTag}'`));
 			}
 		}
     }.bind(this));
 
     this.client.connect(function() {
+		this.database.fetch(this.client, () => {
+			this.log.info(`Successfully fetched ${this.database.applications.length} applications, ${this.database.groupMap.size} groups and ${this.database.unitMap.size} units from C-Gate.`);
+		});
+    	
 		const accessories = this._createAccessories();
 		
 		// build the lookup map

@@ -1,5 +1,18 @@
 'use strict';
 
+const net = require('net');
+const util = require('util');
+const log = require('util').log;
+
+const EventEmitter = require('events').EventEmitter;
+
+const carrier = require('carrier');
+const chalk = require('chalk');
+
+const cbusUtils = require('./cbus-utils.js');
+const CBusNetId = require('./cbus-netid.js');
+
+
 //==========================================================================================
 //  Definitions
 //==========================================================================================
@@ -11,19 +24,9 @@ const DEFAULT_CLIENT_APPLICATION = 56;
 
 const DEFAULT_CLIENT_DEBUG = false;
 
-const net = require('net');
-const util = require('util');
-const log = require('util').log;
-let EventEmitter = require('events').EventEmitter;
-
-const carrier = require('carrier');
-const chalk = require('chalk');
-
-const cbusUtils = require('./cbus-utils.js');
-const CBusNetId = require('./cbus-netid.js');
-
 const EVENT_TYPE = `event`;
 const RESPONSE_TYPE = `response`;
+const SNIPPET_TYPE = `snippet`;
 
 
 //==========================================================================================
@@ -189,6 +192,11 @@ CBusClient.prototype.receiveSecurityStatus = function(netId, callback) {
     this._sendMessage(cmd, callback);
 };
 
+CBusClient.prototype.getDB = function(netId, callback) {
+	const cmd = `dbgetxml ${netId.toString()}`;
+	this._sendMessage(cmd, callback);
+};
+
 
 //==========================================================================================
 //  Private API
@@ -292,7 +300,13 @@ function _parseResponse(line) {
 	
 	// if we requested the level, we'll get back a 300
 	switch (response.code) {
+		case 200:
+			// response from setting a property
+			response.processed = true;
+			break;
+			
 		case 300:
+			// response to a get property command
 			// TX: get //SHAC/254/56/3 level
 			// RX: 300 //SHAC/254/56/3: level=0
 			// parse '//SHAC/254/56/3: level=0' into netId, level
@@ -317,17 +331,12 @@ function _parseResponse(line) {
 			
 			response.processed = true;
 			break;
-
-		case 200:
-			// result from setting a level
-			response.processed = true;
-			break;
 			
 		// TODO probably should handle error `401 Bad object or device ID`
 
 		default:
 			// TODO probably should do something special if we get an unexpected result code
-			// console.log.info(chalk.red(`unexpected reponse code ${responseCode} in line '${response.raw}'`));
+			// console.log.info(chalk.red(`unexpected response code ${responseCode} in line '${response.raw}'`));
 			break;
 	}
 
@@ -497,9 +506,13 @@ function _parseLine(line) {
 	// line is either:
 	// 1. response to a command
 	// 2. an event
-	
+	// 3. an XML snippet, in which case we'll see:
+	// 		[100] 343-Begin XML snippet'
+	// 		[100] 347-blahblah (multiple)
+	// 		[100] 344 End XML snippet
 	const CHANNEL_REGEX = /^#e# (.*)/;
 	const RESPONSE_REGEX = /^(\[(\d+)\])\s(\d{3}) (.*)/;
+	const SNIPPET_REGEX = /^\[(\d+)\] (347|343)-(.+)$/;
 	
 	let parts, parsedLine;
 	if (parts = line.match(RESPONSE_REGEX)) {
@@ -509,6 +522,13 @@ function _parseLine(line) {
 	} else if (parts = line.match(CHANNEL_REGEX)) {
 		parsedLine = _parseEvent(parts[1]);
 		parsedLine.type = EVENT_TYPE;
+	} else if (parts = line.match(SNIPPET_REGEX)) {
+		parsedLine = {
+			commandId: cbusUtils.integerise(parts[1]),
+			code: cbusUtils.integerise(parts[2]),
+			remainder: parts[3],
+			type: SNIPPET_TYPE
+		};
 	} else {
 		throw `unrecognised structure`;
 	}
@@ -524,6 +544,22 @@ CBusClient.prototype._resolveResponse = function(response) {
 		// found a corresponding request in the pending command cache
 		const request = this.pendingCommands.get(response.commandId);
 		this.pendingCommands.delete(response.commandId);
+		
+		// handle end of snippet -- here because i don't want to introduce `this` context into parseResponse
+		if (response.code == 344) {
+			// response signalling end of a snippet
+			console.assert(typeof this.snippet != `undefined`, `unexpected snippet end response`);
+			console.assert(response.commandId == this.snippet.commandId, `snippet extend commandId mismatch ${this.snippet.commandId} vs ${response.commandId}`);
+			response.snippet = this.snippet;
+			response.snippet.inspect = function(depth, opts) {
+				const abbreviated = cbusUtils.truncateString(this.content, 100);
+				return `'${abbreviated}'`;
+			};
+			response.processed = true;
+			
+			// clear out the snippet so it's ready to be used again
+			this.snippet = undefined;
+		}
 			
 		response.request = request;
 		this.log.info(`matched response '${chalk.magenta.underline(response.raw)}' to request '${chalk.magenta.underline(request.raw)}' ` + chalk.dim(`(${this.pendingCommands.size} pending requests)`));
@@ -539,25 +575,55 @@ CBusClient.prototype._resolveResponse = function(response) {
 	}
 };
 
+CBusClient.prototype._resolveSnippetFragment = function(fragment) {
+	console.assert([343, 347].includes(fragment.code));
+	
+	if (fragment.code == 343) {
+		// 343: start the snippet
+		console.assert(typeof this.snippet == `undefined`, `can't begin when we already have a snippet forming`);
+		console.assert(fragment.remainder == `Begin XML snippet`, `malformed begin entry`);
+		
+		this.snippet = {
+			commandId: fragment.commandId
+		};
+	} else if (fragment.code == 347) {
+		// 347: extend the snippet
+		console.assert(typeof this.snippet != `undefined`, `can't add content without a snippet begin`);
+		console.assert(this.snippet.commandId == fragment.commandId, `snippet extend commandId mismatch ${this.snippet.commandId} vs ${fragment.commandId}`);
+		if (typeof this.snippet.content == `undefined`) {
+			this.snippet.content = fragment.remainder;
+		} else {
+			this.snippet.content = this.snippet.content.concat(fragment.remainder);
+		}
+	}
+};
+
 CBusClient.prototype._socketReceivedLine = function(line) {
 	try {
 		const message = _parseLine(line);
-		console.assert((message.type == RESPONSE_TYPE) || (message.type == EVENT_TYPE), `illegal parsedLine type ${message.type}`);
+		console.assert([RESPONSE_TYPE, EVENT_TYPE, SNIPPET_TYPE].includes(message.type), `illegal parsedLine type ${message.type}`);
 		
 		switch (message.type) {
 			case RESPONSE_TYPE:
 				this._resolveResponse(message);
-				this.log.info(chalk.blue(`response ${util.inspect(message, { breakLength: Infinity })}`));
+				this.log.info(chalk.blue(`rx response ${util.inspect(message, { breakLength: Infinity })}`));
 				this.emit(`response`, message);
 				break;
 			
 			case EVENT_TYPE:
-				this.log.info(chalk.blue(`event ${util.inspect(message, { breakLength: Infinity })}`));
+				this.log.info(chalk.blue(`rx event ${util.inspect(message, { breakLength: Infinity })}`));
 				this.emit(`event`, message);
+				break;
+				
+			case SNIPPET_TYPE:
+				this._resolveSnippetFragment(message);
+				const logStr = cbusUtils.truncateString(message.remainder);
+				this.log.info(chalk.blue(`rx snippet ${message.code} '${logStr}'`));
 				break;
 		}
 	} catch (ex) {
-		this.log.info(chalk.red(`received unparsable line: '${line}', exception: ${ex}`));
+		// would be good to extract stacktrace
+		this.log.info(chalk.red(`rx unparsable line: '${line}', exception: ${ex}`));
 		this.emit(`junk`, ex, line);
 	}
 };

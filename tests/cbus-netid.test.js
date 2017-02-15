@@ -1,15 +1,16 @@
 'use strict';
 
-const test = require('tape').test;
 const util = require('util');
+
+const test = require('tape').test;
 
 const CBusNetId = require('../cbus-netid.js');
 
 test('constructor numerical', function (assert) {
 	assert.plan(4);
 	
-	const netId = new CBusNetId(`SHAC1234`, 254, 57, 22);
-	assert.equal(netId.project, 'SHAC1234');
+	const netId = new CBusNetId(`EXAMPLE`, 254, 57, 22);
+	assert.equal(netId.project, 'EXAMPLE');
 	assert.equal(netId.network, 254);
 	assert.equal(netId.application, 57);
 	assert.equal(netId.group, 22);
@@ -42,9 +43,9 @@ test('constructor illegal decimal', function (assert) {
 test('inspect', function (assert) {
 	assert.plan(3);
 	
-	assert.equal(util.inspect(new CBusNetId(`SHAC1234`, '254', '57', '22')), '//SHAC1234/254/57/22');
-	assert.equal(util.inspect(new CBusNetId(`SHAC1234`, '254', '57')), '//SHAC1234/254/57');
-	assert.equal(util.inspect(new CBusNetId(`SHAC1234`, '254')), '//SHAC1234/254');
+	assert.equal(util.inspect(new CBusNetId(`EXAMPLE`, '254', '57', '22')), '//EXAMPLE/254/57/22');
+	assert.equal(util.inspect(new CBusNetId(`EXAMPLE`, '254', '57')), '//EXAMPLE/254/57');
+	assert.equal(util.inspect(new CBusNetId(`EXAMPLE`, '254')), '//EXAMPLE/254');
 	
 	assert.end();
 });
@@ -53,8 +54,8 @@ test('inspect', function (assert) {
 test('constructor alpha', function (assert) {
 	assert.plan(4);
 	
-	const netId = new CBusNetId(`SHAC1234`, '254', '57', '22');
-	assert.equal(netId.project, 'SHAC1234');
+	const netId = new CBusNetId(`EXAMPLE`, '254', '57', '22');
+	assert.equal(netId.project, 'EXAMPLE');
 	assert.equal(netId.network, 254);
 	assert.equal(netId.application, 57);
 	assert.equal(netId.group, 22);
@@ -193,10 +194,12 @@ test('construct illegal project name', function (assert) {
 });
 
 test('getModuleId', function (assert) {
-	assert.plan(1);
+	assert.plan(4);
 	
-	const netId = CBusNetId.parse(`//S31415/254/208/128`);
-	assert.equal(netId.getModuleId(), `fed080`);
+	assert.equal(CBusNetId.parse(`//S31415/254`).getModuleId(), `fe0000`);
+	assert.equal(CBusNetId.parse(`//S31415/254/208`).getModuleId(), `fed000`);
+	assert.equal(CBusNetId.parse(`//S31415/254/208/128`).getModuleId(), `fed080`);
+	assert.equal(CBusNetId.parse(`//S31415/254/p/128`).getModuleId(), `1fe0080`);
 	
 	assert.end();
 });
@@ -223,6 +226,87 @@ test('CBusNetId not equals', function (assert) {
 	
 	const netId3 = new CBusNetId(`BAR`, 254, 208, 126);
 	assert.notDeepEqual(netId2, netId3);
+	
+	assert.end();
+});
+
+test('CBusNetId isNetworkId', function (assert) {
+	assert.plan(4);
+	
+	assert.true(CBusNetId.parse(`//BAR/1`).isNetworkId());
+	assert.false(CBusNetId.parse(`//BAR/1/2`).isNetworkId());
+	assert.false(CBusNetId.parse(`//BAR/1/2/3`).isNetworkId());
+	assert.false(CBusNetId.parse(`//BAR/1/p/3`).isNetworkId());
+	
+	assert.end();
+});
+
+test('CBusNetId isApplicationId', function (assert) {
+	assert.plan(4);
+	
+	assert.false(CBusNetId.parse(`//BAR/1`).isApplicationId());
+	assert.true(CBusNetId.parse(`//BAR/1/2`).isApplicationId());
+	assert.false(CBusNetId.parse(`//BAR/1/2/3`).isApplicationId());
+	assert.false(CBusNetId.parse(`//BAR/1/p/3`).isApplicationId());
+	
+	assert.end();
+});
+
+test('CBusNetId isGroupId', function (assert) {
+	assert.plan(4);
+	
+	assert.false(CBusNetId.parse(`//BAR/1`).isGroupId());
+	assert.false(CBusNetId.parse(`//BAR/1/2`).isGroupId());
+	assert.true(CBusNetId.parse(`//BAR/1/2/3`).isGroupId());
+	assert.false(CBusNetId.parse(`//BAR/1/p/3`).isGroupId());
+	
+	assert.end();
+});
+
+
+test('CBusNetId isUnitId', function (assert) {
+	assert.plan(4);
+	
+	assert.false(CBusNetId.parse(`//BAR/1`).isUnitId());
+	assert.false(CBusNetId.parse(`//BAR/1/2`).isUnitId());
+	assert.false(CBusNetId.parse(`//BAR/1/2/3`).isUnitId());
+	assert.true(CBusNetId.parse(`//BAR/1/p/3`).isUnitId());
+	
+	assert.end();
+});
+
+test('unit constructor', function (assert) {
+	assert.plan(5);
+	
+	const netId = new CBusNetId(`EXAMPLE`, '254', 'p', '22');
+	assert.equal(netId.project, 'EXAMPLE');
+	assert.equal(netId.network, 254);
+	assert.equal(netId.unitAddress, 22);
+	assert.equal(netId.application, undefined);
+	assert.equal(netId.group, undefined);
+	
+	assert.end();
+});
+
+
+test('constructor undefineds', function (assert) {
+	assert.plan(4);
+	
+	assert.throws(function () {
+		new CBusNetId(undefined, 254, 57, 22);
+	}, /netIds must have a project/, `no project`);
+
+	assert.throws(function () {
+		new CBusNetId(`EXAMPLE`, undefined, 57, 22);
+	}, /netIds must have a network/, `no network`);
+	
+	assert.throws(function () {
+		new CBusNetId(`EXAMPLE`, 254, undefined, 22);
+	}, /group netIds must have an application/, `no app/p`);
+	
+	assert.throws(function () {
+		new CBusNetId(`EXAMPLE`, 254, `p`, undefined);
+	}, /unit netIds must have a unitAddress/, `no unit`);
 	
 	assert.end();
 });

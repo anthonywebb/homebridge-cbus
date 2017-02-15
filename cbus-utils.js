@@ -34,3 +34,15 @@ module.exports.extractIdentifierFromFileName = function (filename) {
 	const name = filename.slice(filename.lastIndexOf(path.sep) + 1);
 	return name.slice(0, name.length - 3);
 };
+
+// remove newlines and truncate if over a given length
+// add an elipsis if the string is truncated
+module.exports.truncateString = function (input, max = 100) {
+	console.assert(typeof input != `undefined`, `can't truncate undefined`);
+	
+	let output = input;
+	if (output.length > (max - 1)) {
+		output = output.slice(0, max - 1).concat(`…`);
+	}
+	return output;
+};
