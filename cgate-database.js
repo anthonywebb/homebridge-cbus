@@ -39,7 +39,7 @@ CGateDatabase.prototype.fetch = function(client, callback) {
 	
 	client.getDB(this.netId, result => {
 		const dbxml = result.snippet.content;
-		this.log.info(`dbgetxml ${util.inspect(result.snippet)} (${dbxml.length} bytes)`);
+		// this.log.info(`dbgetxml ${util.inspect(result.snippet)} (${dbxml.length} bytes)`);
 		
 		xml2js.parseString(dbxml, {
 			normalizeTags: true
@@ -59,7 +59,12 @@ CGateDatabase.prototype.fetch = function(client, callback) {
 			this.groupMap = groupMap;
 			
 			// build unit map
-			
+			const unitMap = new Map();
+			result.units.forEach(unit => {
+				const netId = new CBusNetId(this.netId.project, this.netId.network, `p`, unit.address);
+				unitMap.set(netId.getModuleId(), unit);
+			});
+			this.unitMap = unitMap;
 			
 			if (callback) {
 				callback();
@@ -144,12 +149,15 @@ CGateDatabase.prototype.getNetLabel = function(netId) {
 			return element.address == netId.application;
 		});
 		name = application ? application.name : `app${netId.application}`;
-	} else {
+	} else if (netId.isGroupId()) {
 		let group = this.groupMap.get(netId.getModuleId());
 		name = group ? group.name : `group${netId.group}`;
+	} else {
+		console.assert(netId.isUnitId());
+		const hash = netId.getModuleId();
+		let unit = this.unitMap.get(hash);
+		name = unit ? unit.tag : `unit${netId.unitAddress}`;
 	}
 	
 	return name;
 };
-
-//CGateDatabase.prototype.getUnitLabel = function(netId) {

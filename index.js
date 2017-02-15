@@ -1,6 +1,7 @@
 'use strict';
 
 const util = require('util');
+const chalk = require('chalk');
 
 const CGateClient = require(`./cgate-client.js`);
 const CGateDatabase = require(`./cgate-database.js`);
@@ -111,21 +112,29 @@ CBusPlatform.prototype.accessories = function(callback) {
     this.client.on(`event`, function(message) {
     	if (message.netId) {
     		const tag = this.database ? this.database.getNetLabel(message.netId) : `NYI`;
+    		
+    		let sourceTag;
+    		if (typeof message.sourceunit !== `undefined`) {
+    			const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceunit);
+				sourceTag = this.database.getNetLabel(sourceId);
+			} else {
+				sourceTag = `unknown`;
+			}
 			
 			// lookup accessory
 			const accessory = this.registeredAccessories.get(message.netId.getModuleId());
 			if (accessory) {
 				// process if found
-				this.log.info(`[remote] ${message.netId} ${accessory.name}/${tag} (${accessory.type}), level: ${message.level}%`);
+				this.log.info(`[remote] ${message.netId} ${accessory.name}/${tag} (${accessory.type}), level: ${message.level}%, by: ` + chalk.red(`'${sourceTag}'`));
 				accessory.processClientData(message);
-			} else {this.log.info(`[remote] ${message.netId} not registered ('${tag}')`);
+			} else {this.log.info(`[remote] ${message.netId} not registered ('${tag}' by ` + chalk.red(`'${sourceTag}'`));
 			}
 		}
     }.bind(this));
 
     this.client.connect(function() {
 		this.database.fetch(this.client, () => {
-			this.log.info(`fetched database.`);
+			this.log.info(`Successfully fetched ${this.database.applications.length} applications, ${this.database.groupMap.size} groups and ${this.database.unitMap.size} units from C-Gate.`);
 		});
     	
 		const accessories = this._createAccessories();

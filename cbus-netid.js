@@ -62,7 +62,15 @@ CBusNetId.prototype.inspect = function (depth, options) {
 };
 
 CBusNetId.prototype.getModuleId = function () {
-	return (((this.network & 0xFF) << 16) | ((this.application & 0xFF) << 8) | (this.group & 0xFF)).toString(16);
+	let moduleId;
+	
+	if (this.isUnitId()) {
+		moduleId = (0x1 << 24) | ((this.network & 0xFF) << 16) | (this.unitAddress & 0xFF);
+	} else {
+		moduleId = ((this.network & 0xFF) << 16) | ((this.application & 0xFF) << 8) | (this.group & 0xFF);
+	}
+	
+	return moduleId.toString(16);
 };
 
 CBusNetId.prototype.isNetworkId = function () {
