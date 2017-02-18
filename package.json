@@ -29,19 +29,21 @@
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
+    "hot-debug": "^1.1.0",
+    "debug": ">=2.4.0",
     "carrier": "^0.3.0",
     "xml2js": "^0.4.17",
     "chalk": "^1.1.3"
   },
   "devDependencies": {
     "coveralls": "^2.11.16",
-    "debug": "^2.6.1",
     "rewire": "^2.5.2",
     "tap": "10.0.2",
     "tape": "^4.6.3"
   },
   "scripts": {
-    "test": "node $NODE_DEBUG_OPTION ./node_modules/tape/bin/tape tests/*.test.js --coverage",
-    "test-coverage": "tap tests/*.test.js --cov --coverage-report=html"
+    "test-hotdebug": "node $NODE_DEBUG_OPTION ./node_modules/tape/bin/tape test/hot-debug.test.js",
+    "test": "node $NODE_DEBUG_OPTION ./node_modules/tape/bin/tape test/*.test.js --coverage",
+    "test-coverage": "tap test/*.test.js --cov --coverage-report=html"
   }
 }

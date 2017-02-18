@@ -2,7 +2,7 @@
 
 const test = require('tape').test;
 
-const cbusUtils = require('../cbus-utils.js');
+const cbusUtils = require('../lib/cbus-utils.js');
 
 
 test('extractIdentifierFromFileName', function (assert) {

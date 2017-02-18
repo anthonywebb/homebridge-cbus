@@ -1,11 +1,15 @@
 'use strict';
 
-var Service, Characteristic, Accessory, uuid;
+let Service, Characteristic, Accessory, uuid;
+
+require('hot-debug');
+const log = require('debug')('cbus:accessory');
 
 const chalk = require('chalk'); // does not alter string prototype
 
-const cbusUtils = require('../cbus-utils.js');
-const CBusNetId = require('../cbus-netid.js');
+
+const cbusUtils = require('../lib/cbus-utils.js');
+const CBusNetId = require('../lib/cbus-netid.js');
 
 module.exports = function (_service, _characteristic, _accessory, _uuid) {
   Service = _service;
@@ -20,11 +24,6 @@ function CBusAccessory(platform, accessoryData) {
 	// type is absolutely required
 	console.assert(typeof accessoryData.type !== `undefined`, `accessoryData.type must not be undefined`);
 	
-	// define log before we validate
-	this.log = platform.log;
-
-	// log, at least, must be defined before we validate
-	// TODO unused? this.platform = platform;
 	this.client = platform.client;
 	this.accessoryData = accessoryData;
 	this.type = accessoryData.type;
@@ -78,5 +77,5 @@ CBusAccessory.prototype._log = function(tag, message) {
 	const file = chalk.gray.bold(`[${tag}]`);
 	const accessory = chalk.magenta(`[${this.netId} ${this.name}]`);
 	
-	this.log.info(`${file} ${accessory} ${message}`);
+	log(`${file} ${accessory} ${message}`);
 };

@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/simonhac/homebridge-cbus.svg?branch=master)](https://travis-ci.org/simonhac/homebridge-cbus)  [![Coverage Status](https://coveralls.io/repos/github/simonhac/homebridge-cbus/badge.svg?branch=master)](https://coveralls.io/github/simonhac/homebridge-cbus?branch=master)
 
-HomeKit enable your C-Bus installation with the `homebridge-cbus` plugin for the [Homebridge](https://github.com/nfarina/homebridge) server.
+HomeKit-enable your C-Bus installation with the `homebridge-cbus` plugin for the [Homebridge](https://github.com/nfarina/homebridge) server.
 
-This project provides a bridge between [Clipsal's C-Bus](http://www2.clipsal.com/cis/technical/product_groups/cbus) server [C-Gate](http://www2.clipsal.com/cis/technical/downloads/c-gate) server and Apple's [HomeKit](http://www.apple.com/au/ios/home/).
+`homebridge-cbus` provides a bridge between [Clipsal's C-Bus](http://www2.clipsal.com/cis/technical/product_groups/cbus) server [C-Gate](http://www2.clipsal.com/cis/technical/downloads/c-gate) server and Apple's [HomeKit](http://www.apple.com/au/ios/home/).
 
-Once setup, a Homebridge server with the `homebridge-cbus` plugin will allow you to instantly monitor and control all of your supported C-Bus accessories.
+Once setup, a homebridge server with the `homebridge-cbus` plugin will allow you to instantly monitor and control all of your supported C-Bus accessories.
 
 What does that mean? You'll be able to control your home with:
 
@@ -54,8 +54,6 @@ adding it to your `config.json`.
       "name": "CBus",
       "client_ip_address": "127.0.0.1",
       "client_controlport": 20023,
-      "client_eventport": 20024,
-      "client_statusport": 20025,
       "client_cbusname": "HOME",
       "client_network": 254,
       "client_application": 56,
@@ -91,6 +89,7 @@ The platform definition in the `config.json` file contains an `accessories` arra
 * `application`: (optional, defaults to `client_application`) The C-Bus Application address of the device
 * `id`: (required) C-Bus address of the device — every accessory in C-Bus has one
 * `invert`: (optional, defaults to false) only used by the shutter relay accessory and indicates that the shutter has been wired to open when commanded closed and vice versa
+
 
 ### Fully functional example `config.json`:
 ````json
@@ -137,6 +136,29 @@ The platform definition in the `config.json` file contains an `accessories` arra
 }
 ````
 
+## Logging
+`homebridge-cbus` has four logging channels:
+
+* `cbus:platform`: highest level startup/shutdown and fatal error reporting
+* `cbus:level`: all level change events reported by C-Gate
+* `cbus:client`: all communication with C-Gate
+* `cbus:db`: significant events reported by the database syncing module
+
+On startup, the status of the channels will be determined from the environment variable DEBUG. eg.:
+
+````
+# all C-Bus logging
+> DEBUG=cbus:* homebridge
+ 
+# just level change events
+> DEBUG=cbus:level homebridge
+
+# very verbose logging from all of homebridge
+> DEBUG=* homebridge 
+````
+
+N.B. If provided, the `client_debug` setting (from `config.json`)  will override the configuration for `cbus:client` from the environment.
+
 ## Unit testing
 homebridge-cbus uses the excellent [tape unit-testing framework](https://github.com/substack/tape).
 
@@ -152,11 +174,12 @@ To run tests and generate code coverage reports:
 npm run test-coverage
 ````
 ## Changes Since 0.5.0
-* 0.5.5:  introduces unit testing and more robust configuration file checking
-* 0.5.4:  fixes issue where some required files were missing
-* 0.5.3:  adds `shutter` accessory
-* 0.5.2:  adds `security` accessory, for PIR presence detectors, typically on application 208
-* 0.5.1:  adds optional `network` and `application` parameters per accessory, allowing multiple networks and device types be monitored or controlled.
+* 0.5.6: download and cache a copy of the C-Gate database for improved logging
+* 0.5.5: introduces unit testing and more robust configuration file checking
+* 0.5.4: fixes issue where some required files were missing
+* 0.5.3: adds `shutter` accessory
+* 0.5.2: adds `security` accessory, for PIR presence detectors, typically on application 208
+* 0.5.1: adds optional `network` and `application` parameters per accessory, allowing multiple networks and device types be monitored or controlled.
 
 N.B. If you are upgrading from an ealier version of `homebridge-cbus`, you may need to remove the files in your `~/.homebridge/persist/` directory before running for the first time due to new device UUIDs.
 

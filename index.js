@@ -2,17 +2,22 @@
 
 const util = require('util');
 const chalk = require('chalk');
-const debug = require('debug')('cbus');
-const debugLevel = require('debug')('cbus:level');
 
-const CGateClient = require(`./cgate-client.js`);
-const CGateDatabase = require(`./cgate-database.js`);
+require("hot-debug");
 
-const CBusNetId = require(`./cbus-netid.js`);
-const cbusUtils = require(`./cbus-utils.js`);
+const log = require('debug')('cbus:platform');
+const logLevel = require('debug')('cbus:level');
+const logClient = require('debug')('cbus:client');
+
+const CGateClient = require(`./lib/cgate-client.js`);
+const CGateDatabase = require(`./lib/cgate-database.js`);
+
+const CBusNetId = require(`./lib/cbus-netid.js`);
+const cbusUtils = require(`./lib/cbus-utils.js`);
 
 let Service, Characteristic, Accessory, uuid;
 let CBusAccessory, CBusLightAccessory, CBusDimmerAccessory, CBusMotionAccessory, CBusSecurityAccessory, CBusShutterAccessory;
+
 
 //==========================================================================================
 //  Exports block
@@ -55,20 +60,23 @@ module.exports = function(homebridge) {
 //  CBus Platform
 //==========================================================================================
 
-function CBusPlatform(log, config) {
-	this.accessoryDefinitions = new Map([
-		[ "light", CBusLightAccessory ],
-		[ "dimmer", CBusDimmerAccessory ],
-		[ "motion", CBusMotionAccessory ],
-		[ "security", CBusSecurityAccessory ],
-		[ "shutter", CBusShutterAccessory ]
-	]);
+function CBusPlatform(ignoredLog, config) {
+	// log is now unused
+	
+	// build the accessory definition map
+	this.accessoryDefinitions = {
+		"light": CBusLightAccessory,
+		"dimmer": CBusDimmerAccessory,
+		"motion": CBusMotionAccessory,
+		"security": CBusSecurityAccessory,
+		"shutter": CBusShutterAccessory
+	};
 	
 	//--------------------------------------------------
 	//  vars definition
 	//--------------------------------------------------
-    this.config	             = config;
-    this.log                 = log;
+    this.config = config;
+
     this.registeredAccessories = undefined;
     this.client = undefined;
     this.database = undefined;
@@ -93,8 +101,15 @@ function CBusPlatform(log, config) {
 	this.network = (typeof(config.client_network) !== `undefined`) ? config.client_network : undefined;
 	this.application = (typeof(config.client_application) !== `undefined`) ? config.client_application : undefined;
 	
-    // debug
-    this.clientDebug = (typeof(config.client_debug) != `undefined`) ? config.client_debug : false;
+	//--------------------------------------------------
+	//  setup logging
+	//--------------------------------------------------
+	log.enable(true);
+	
+    // if set, client_debug overrides the setting in the environment
+	if (typeof config.client_debug != `undefined`) {
+		logClient.enable(config.client_debug);
+	}
 }
 
 // Invokes callback(accessories[])
@@ -102,13 +117,13 @@ CBusPlatform.prototype.accessories = function(callback) {
     //--------------------------------------------------
     //  Initiate the CBus client
     //--------------------------------------------------
-	debug(`Connecting to the local C-Gate server...`);
+	log(`Connecting to the local C-Gate server...`);
 
     this.client = new CGateClient(this.cgateIpAddress, this.cgateControlPort,
         this.project, this.network, this.application,
-        this.log, this.clientDebug);
+		this.clientDebug);
     
-    this.database = new CGateDatabase(new CBusNetId(this.project, this.network), this.log);
+    this.database = new CGateDatabase(new CBusNetId(this.project, this.network));
 
     // listen for data from the client and ensure that the homebridge UI is updated
     this.client.on(`event`, function(message) {
@@ -128,23 +143,27 @@ CBusPlatform.prototype.accessories = function(callback) {
 			const accessory = this.registeredAccessories.get(message.netId.getHash());
 			if (accessory) {
 				// process if found
-				output = `registered accessory ${chalk.red.bold(accessory.name)} (${accessory.type}: '${tag}') set to level ${message.level}%`;
+				output = `${chalk.red.bold(accessory.name)} (${accessory.type}) set to level ${message.level}%`;
 				accessory.processClientData(message);
 			} else {
-				output = `unregistered accessory ('${chalk.red.bold(tag)}') set to level ${message.level}%`;
+				output = `${chalk.red.bold.italic(tag)} (unregistered) set to level ${message.level}%`;
 			}
 			
 			if (sourceTag) {
 				output = `${output}, by '${chalk.red.bold(sourceTag)}'`;
 			}
 			
-			debugLevel(output);
+			logLevel(output);
+		} else {
+    		if (message.code == 700) {
+    			log(`heartbeat @ ${message.time}`);
+			}
 		}
     }.bind(this));
 
     this.client.connect(function() {
 		this.database.fetch(this.client, () => {
-			debug(`Successfully fetched ${this.database.applications.length} applications, ${this.database.groupMap.size} groups and ${this.database.unitMap.size} units from C-Gate.`);
+			log(`Successfully fetched ${this.database.applications.length} applications, ${this.database.groupMap.size} groups and ${this.database.unitMap.size} units from C-Gate.`);
 		});
     	
 		const accessories = this._createAccessories();
@@ -156,14 +175,14 @@ CBusPlatform.prototype.accessories = function(callback) {
 		}
 		
 		// hand them back to the callback to fire them up
-		debug("Registering the accessories list...");
+		log("Registering the accessories list...");
 		callback(accessories);
     }.bind(this));
 };
 
 // return a map of newly minted accessories
 CBusPlatform.prototype._createAccessories = function () {
-	debug("Loading the accessories list...");
+	log("Loading the accessories list...");
 	
 	const accessories = [];
 	
@@ -172,7 +191,7 @@ CBusPlatform.prototype._createAccessories = function () {
 			const accessory = this.createAccessory(accessoryData);
 			accessories.push(accessory);
 		} catch (ex) {
-			this.log.error(`Unable to instantiate accessory of type '${accessoryData.type}' (reason: ${ex}). ABORTING`);
+			log(`Unable to instantiate accessory of type '${accessoryData.type}' (reason: ${ex}). ABORTING`);
 			process.exit(0);
 		}
 	}
@@ -188,7 +207,7 @@ CBusPlatform.prototype._createAccessories = function () {
 CBusPlatform.prototype.createAccessory = function(entry) {
 	console.assert(typeof entry.type === `string`, `accessory missing type property`);
 	
-	const constructor = this.accessoryDefinitions.get(entry.type);
+	const constructor = this.accessoryDefinitions[entry.type];
 	if (!constructor) {
 		throw new (`unknown accessory type '${entry.type}'`);
 	}

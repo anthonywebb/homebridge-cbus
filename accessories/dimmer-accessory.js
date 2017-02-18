@@ -2,7 +2,7 @@ let Service, Characteristic, CBusLightAccessory, uuid;
 
 const chalk = require('chalk');
 
-const cbusUtils = require('../cbus-utils.js');
+const cbusUtils = require('../lib/cbus-utils.js');
 const FILE_ID = cbusUtils.extractIdentifierFromFileName(__filename);
 
 module.exports = function (_service, _characteristic, _accessory, _uuid) {

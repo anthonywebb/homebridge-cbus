@@ -4,7 +4,7 @@ const util = require('util');
 
 const test = require('tape').test;
 
-const CBusNetId = require('../cbus-netid.js');
+const CBusNetId = require('../lib/cbus-netid.js');
 
 test('constructor numerical', function (assert) {
 	assert.plan(4);

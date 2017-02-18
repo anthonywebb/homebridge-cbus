@@ -2,7 +2,7 @@
 
 let Service, Characteristic, CBusAccessory, uuid;
 
-let cbusUtils = require('../cbus-utils.js');
+let cbusUtils = require('../lib/cbus-utils.js');
 const FILE_ID = cbusUtils.extractIdentifierFromFileName(__filename);
 
 const SHUTTER_OPEN = 100;

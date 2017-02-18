@@ -39,6 +39,3 @@ jspm_packages
 
 # IDEA config
 .idea/*
-
-# disabled tests
-/tests/*.test-disabled.js

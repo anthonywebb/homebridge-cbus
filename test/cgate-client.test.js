@@ -9,9 +9,9 @@ const test = require('tape').test;
 const rewire = require("rewire");
 const Console = require('console').Console;
 
-const CGateClient = rewire('../cgate-client.js');
-const CGateDatabase = rewire(`../cgate-database.js`);
-const CBusNetId = require('../cbus-netid.js');
+const CGateClient = rewire('../lib/cgate-client.js');
+const CGateDatabase = rewire(`../lib/cgate-database.js`);
+const CBusNetId = require('../lib/cbus-netid.js');
 
 const _parseLine = CGateClient.__get__('_parseLine');
 const _rawToPercent = CGateClient.__get__('_rawToPercent');
@@ -500,7 +500,7 @@ test(`setup tests`, function (assert) {
 	
 	
 	// patch in the EXAMPLE project database dump
-	fs.readFile(`tests/resources/EXAMPLE.xml.txt`, 'utf8', function (err, fileData) {
+	fs.readFile(`test/resources/EXAMPLE.xml.txt`, 'utf8', function (err, fileData) {
 		console.assert(!err, `error loading EXAMPLE.xml.txt`, err);
 		
 		// fill in the fromServer field for the test named `[106] dbgetxml`
