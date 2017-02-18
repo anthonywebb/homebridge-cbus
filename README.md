@@ -159,7 +159,7 @@ On startup, the status of the channels will be determined from the environment v
 
 N.B. If provided, the `client_debug` setting (from `config.json`)  will override the configuration for `cbus:client` from the environment.
 
-<img src="images/logging.png" width="350"/>
+<img src="images/logging.png"/>
 
 ## Unit testing
 homebridge-cbus uses the excellent [tape unit-testing framework](https://github.com/substack/tape).
