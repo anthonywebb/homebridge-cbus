@@ -139,7 +139,7 @@ The platform definition in the `config.json` file contains an `accessories` arra
 ## Logging
 `homebridge-cbus` has four logging channels:
 
-* `cbus:platform`: highest level startup/shutdown and fatal error reporting
+* `cbus:platform`: highest level startup/shutdown and fatal error reporting (enabled by default)
 * `cbus:level`: all level change events reported by C-Gate
 * `cbus:client`: all communication with C-Gate
 * `cbus:db`: significant events reported by the database syncing module
@@ -159,7 +159,9 @@ On startup, the status of the channels will be determined from the environment v
 
 N.B. If provided, the `client_debug` setting (from `config.json`)  will override the configuration for `cbus:client` from the environment.
 
+### Example logging output
 <img src="images/logging.png"/>
+
 
 ## Unit testing
 homebridge-cbus uses the excellent [tape unit-testing framework](https://github.com/substack/tape).
