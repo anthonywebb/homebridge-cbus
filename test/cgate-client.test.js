@@ -19,8 +19,8 @@ const _rawToZoneState = CGateClient.__get__('_rawToZoneState');
 
 const CONSOLE_ENABLED = false;
 
+require("../hot-debug.js");
 const log = require('debug')('test-output');
-log.info = log;
 
 
 //==========================================================================================
@@ -145,7 +145,7 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[105] receiveSecurityStatus`,
 		clientAction: function () {
-			gClient.receiveSecurityStatus(CBusNetId.parse(`//EXAMPLE/254/208/15`), () => { log.info(`received zone status`); } );
+			gClient.receiveSecurityStatus(CBusNetId.parse(`//EXAMPLE/254/208/15`), () => { log(`received zone status`); } );
 		},
 		fromClient: `[105] get //EXAMPLE/254/208/15 zonestate`,
 		fromServer: `[105] 300 //EXAMPLE/254/208/15: zonestate=1`,
@@ -527,7 +527,7 @@ function _validate(message, descriptor, assert) {
 	console.assert(typeof expected == `object`, `_validate: '${descriptor.name}'.expected must be an object`);
 	 
 	// fire up another test
-	log.info(`====> scheduling test for '${testName}'`);
+	log(`====> scheduling test for '${testName}'`);
 	test(testName, assert => {
 		assert.plan(expected.length);
 		Object.keys(expected).forEach(key => {
@@ -604,12 +604,12 @@ function _serverTests(descriptors) {
 		// spin up a fake g-gate server
 		const server = net.createServer(function (connection) {
 			serverConnection = connection;
-			log.info('server listening');
+			log('server listening');
 			connection.write(`201 Service ready: Clipsal C-Gate Version: v4.5.6 (build 789) #cmd-syntax=2.2\r\n`);
 			
 			carrier.carry(connection, (req) => {
 				if (req == EVENTS_REQUEST) {
-					log.info(`settings up CGate events`);
+					log(`settings up CGate events`);
 					connection.write(`${EVENTS_RESPONSE}\n`);
 				} else {
 					const testDescriptor = descriptors[descriptorIndex];
@@ -619,10 +619,10 @@ function _serverTests(descriptors) {
 					console.assert(!res.endsWith(`\n`), `${testDescriptor.name}: fromServer must not end with a \\n`);
 					
 					if (testDescriptor.fromClient == testDescriptor.fromClient) {
-						log.info(`server rx: '${req}', tx: '${res}'`);
+						log(`server rx: '${req}', tx: '${res}'`);
 					} else {
-						log.info(`req: '${req}'`);
-						log.info(`exp: '${exp}'`);
+						log(`req: '${req}'`);
+						log(`exp: '${exp}'`);
 					}
 					
 					// check request is what we expected
@@ -646,20 +646,20 @@ function _serverTests(descriptors) {
 			if (descriptorIndex < descriptors.length) {
 				const descriptor = descriptors[descriptorIndex];
 				const action = descriptor.clientAction;
-				log.info(`\n\n`);
-				log.info(`step ${descriptorIndex}: testing '${descriptor.name}'`);
+				log(`\n\n`);
+				log(`step ${descriptorIndex}: testing '${descriptor.name}'`);
 				
 				// execute an action if there is one
 				if (action) {
-					log.info(`client sending action`);
+					log(`client sending action`);
 					action();
 				} else {
 					// if no action, then must be unsolicited
-					log.info(`server sending unsolicited '${descriptor.fromServer}'`);
+					log(`server sending unsolicited '${descriptor.fromServer}'`);
 					serverConnection.write(`${descriptor.fromServer}\n`);
 				}
 			} else {
-				log.info(`end; disconnecting client`);
+				log(`end; disconnecting client`);
 				gClient.disconnect();
 				assert.end();
 			}
@@ -668,7 +668,7 @@ function _serverTests(descriptors) {
 		// listen for data from the client -- not yet used
 		gClient.on('event', message => {
 			const descriptor = descriptors[descriptorIndex];
-			// log.info(`received 'event' (index ${descriptorIndex})`);
+			// log(`received 'event' (index ${descriptorIndex})`);
 			_validate(message, descriptor, assert);
 			descriptorIndex++;
 			next();
@@ -676,14 +676,14 @@ function _serverTests(descriptors) {
 		
 		gClient.on(`response`, message => {
 			const descriptor = descriptors[descriptorIndex];
-			// log.info(`received 'response' (index ${descriptorIndex})`);
+			// log(`received 'response' (index ${descriptorIndex})`);
 			_validate(message, descriptor, assert);
 			descriptorIndex++;
 			next();
 		});
 		
 		gClient.on('junk', (ex, line) => {
-			log.info(`junk received '${line}', ex '${ex}' (index ${descriptorIndex})`);
+			log(`junk received '${line}', ex '${ex}' (index ${descriptorIndex})`);
 			const descriptor = descriptors[descriptorIndex];
 			const exceptionRegex = descriptor.exception;
 			if (typeof exceptionRegex == `undefined`) {
@@ -705,7 +705,7 @@ function _serverTests(descriptors) {
 		});
 		
 		assert.on("end", function () {
-			log.info(`end; closing server`);
+			log(`end; closing server`);
 			server.close();
 		});
 	});

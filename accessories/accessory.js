@@ -2,7 +2,7 @@
 
 let Service, Characteristic, Accessory, uuid;
 
-require('hot-debug');
+require('../hot-debug.js');
 const log = require('debug')('cbus:accessory');
 
 const chalk = require('chalk'); // does not alter string prototype

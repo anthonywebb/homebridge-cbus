@@ -1,6 +1,6 @@
 'use strict';
 
-require("hot-debug");
+require("../hot-debug.js");
 
 var util = require('util');
 
@@ -14,7 +14,7 @@ var c4 = require('debug')('c3');
 
 var createDebug = require('debug');
 
-var hotdebug = rewire('hot-debug');
+var hotdebug = rewire('../hot-debug.js');
 
 
 //-------------------------------

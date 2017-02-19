@@ -29,7 +29,6 @@
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
-    "hot-debug": "^1.1.0",
     "debug": ">=2.4.0",
     "carrier": "^0.3.0",
     "xml2js": "^0.4.17",

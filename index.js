@@ -3,7 +3,7 @@
 const util = require('util');
 const chalk = require('chalk');
 
-require("hot-debug");
+require("./hot-debug.js");
 
 const log = require('debug')('cbus:platform');
 const logLevel = require('debug')('cbus:level');
