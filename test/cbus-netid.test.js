@@ -3,8 +3,22 @@
 const util = require('util');
 
 const test = require('tape').test;
+const stringify = require('json-stable-stringify');
 
 const CBusNetId = require('../lib/cbus-netid.js');
+
+test('constructor numerical', function (assert) {
+	assert.plan(4);
+
+	const netId = new CBusNetId(`EXAMPLE`, 254, 57, 22);
+	assert.equal(netId.project, 'EXAMPLE');
+	assert.equal(netId.network, 254);
+	assert.equal(netId.application, 57);
+	assert.equal(netId.group, 22);
+
+	assert.end();
+});
+
 
 test('constructor numerical', function (assert) {
 	assert.plan(4);
@@ -72,38 +86,55 @@ test('constructor bad alpha', function (assert) {
 	assert.end();
 });
 
-test('construct network address netId', function (assert) {
-	assert.plan(4);
+test('construct network address', function (assert) {
+	assert.plan(5);
 
 	const netId = CBusNetId.parse(`//SHAC1/254`);
 	assert.equal(netId.project, 'SHAC1');
 	assert.equal(netId.network, 254);
 	assert.equal(netId.application, undefined);
 	assert.equal(netId.group, undefined);
-
-	assert.end();
-});
-
-test('construct group address netId', function (assert) {
-	assert.plan(4);
-
-	const netId = CBusNetId.parse(`//SHAC1/254/57/123`);
-	assert.equal(netId.project, 'SHAC1');
-	assert.equal(netId.network, 254);
-	assert.equal(netId.application, 57);
-	assert.equal(netId.group, 123);
+	assert.equal(netId.toString(), `//SHAC1/254`)
 
 	assert.end();
 });
 
 test('construct application netId', function (assert) {
-	assert.plan(4);
+	assert.plan(5);
 
 	const netId = CBusNetId.parse(`//S31415/254/57`);
 	assert.equal(netId.project, 'S31415');
 	assert.equal(netId.network, 254);
 	assert.equal(netId.application, 57);
 	assert.equal(netId.group, undefined);
+	assert.equal(netId.toString(), `//S31415/254/57`);
+
+	assert.end();
+});
+
+test('construct group address', function (assert) {
+	assert.plan(5);
+
+	const netId = CBusNetId.parse(`//SHAC1/254/57/123`);
+	assert.equal(netId.project, 'SHAC1');
+	assert.equal(netId.network, 254);
+	assert.equal(netId.application, 57);
+	assert.equal(netId.group, 123);
+	assert.equal(netId.toString(), `//SHAC1/254/57/123`);
+
+	assert.end();
+});
+
+test('construct unit address', function (assert) {
+	assert.plan(6);
+
+	const netId = CBusNetId.parse(`//SHAC1/254/p/34`);
+	assert.equal(netId.project, 'SHAC1');
+	assert.equal(netId.network, 254);
+	assert.equal(netId.unitAddress, 34);
+	assert.equal(netId.application, undefined);
+	assert.equal(netId.group, undefined);
+	assert.equal(netId.toString(), `//SHAC1/254/p/34`);
 
 	assert.end();
 });
@@ -306,4 +337,60 @@ test('constructor undefineds', function (assert) {
 	}, /unit netIds must have a unitAddress/, `no unit`);
 
 	assert.end();
+});
+
+test('custom comparison function', function (assert) {
+	assert.plan(1);
+
+	const obj = {
+		"//PROJECT/254/56/3": 6,
+		"//PROJECT/128/56/5": 5,
+		"//PROJECT/254/56/6": 4,
+		"//PROJECT/254/56/1": 3,
+		"//PROJECT/254/56/4": 2,
+		"//PROJECT/254/56/2": 1,
+		"//PROJECT/254/p/7": 1,
+		"//PROJECT/254/p/5": 1,
+		"//PROJECT/254/p/22": 1,
+		"//PROJECT/17/p/21": 1,
+		"//PROJECT/254/56": 1,
+		"//ZZZ/254/54/56": 1,
+		"//AAA/254/56": 1,
+		"//MMM/254/54/56": 1};
+
+	let compare = function (a, b) {
+		if (a.key.startsWith(`//`) && b.key.startsWith(`//`)) {
+			const aId = CBusNetId.parse(a.key);
+			const bId = CBusNetId.parse(b.key);
+
+			if (aId.project !== bId.project) {
+				return aId.project < bId.project ? -1 : 1;
+			}
+
+			if (aId.network !== bId.network) {
+				return aId.network < bId.network ? -1 : 1;
+			}
+
+			let aApp = (typeof aId.application === `undefined`) ? 256 : aId.application;
+			let bApp = (typeof bId.application === `undefined`) ? 256 : bId.application;
+
+			if (aApp !== bApp) {
+				return aApp < bApp ? -1 : 1;
+			}
+
+
+			let aGroup = (typeof aId.group === `undefined`) ? aId.unitAddress : aId.group;
+			let bGroup = (typeof bId.group === `undefined`) ? bId.unitAddress : bId.group;
+
+			if (aGroup !== bGroup) {
+				return aGroup < bGroup ? -1 : 1;
+			}
+		}
+
+		return a.key < b.key ? -1 : 1;
+	};
+
+	const s = stringify(obj, { cmp: compare, space: ` ` });
+	console.log(s);
+	assert.equal(s, '{"c":8,"b":[{"z":6,"y":5,"x":4},7],"a":3}');
 });

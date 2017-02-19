@@ -1,0 +1,832 @@
+{
+  "applications": {
+    "//SHAC/254/56": {
+      "tag": "Lighting"
+    },
+    "//SHAC/254/113": {
+      "tag": "Irrigation"
+    },
+    "//SHAC/254/136": {
+      "tag": "Heating"
+    },
+    "//SHAC/254/202": {
+      "tag": "Trigger Control"
+    },
+    "//SHAC/254/203": {
+      "tag": "Enable Control"
+    },
+    "//SHAC/254/208": {
+      "tag": "Security"
+    },
+    "//SHAC/254/224": {
+      "tag": "Telephony"
+    },
+    "//SHAC/254/255": {
+      "tag": "<Unused>"
+    }
+  },
+  "groups": {
+    "//SHAC/254/56/56": {
+      "tag": "Group 219"
+    },
+    "//SHAC/254/113/113": {
+      "tag": "<Unused>"
+    },
+    "//SHAC/254/136/136": {
+      "tag": "<Unused>"
+    },
+    "//SHAC/254/202/202": {
+      "tag": "EL1 Override Trig"
+    },
+    "//SHAC/254/203/203": {
+      "tag": "<Unused>"
+    },
+    "//SHAC/254/208/208": {
+      "tag": "<Unused>"
+    },
+    "//SHAC/254/224/224": {
+      "tag": "Group 1"
+    },
+    "//SHAC/254/255/255": {
+      "tag": "<Unused>"
+    }
+  },
+  "units": {
+    "//SHAC/254/p/1": {
+      "catalogNumber": "L5508D1A",
+      "firmwareVersion": "1.3.0",
+      "partName": "DIM01",
+      "serialNumber": "100305.3593",
+      "tag": "DIMMER 01",
+      "unitType": "DIMDN8"
+    },
+    "//SHAC/254/p/2": {
+      "catalogNumber": "L5508D1A",
+      "firmwareVersion": "1.3.0",
+      "partName": "DIM02",
+      "serialNumber": "100305.3623",
+      "tag": "DIMMER 02",
+      "unitType": "DIMDN8"
+    },
+    "//SHAC/254/p/3": {
+      "catalogNumber": "L5508D1A",
+      "firmwareVersion": "1.3.0",
+      "partName": "DIM03",
+      "serialNumber": "100293.1655",
+      "tag": "DIMMER 03",
+      "unitType": "DIMDN8"
+    },
+    "//SHAC/254/p/4": {
+      "catalogNumber": "L5508D1A",
+      "firmwareVersion": "1.3.0",
+      "partName": "DIM04",
+      "serialNumber": "100305.3573",
+      "tag": "DIMMER 04",
+      "unitType": "DIMDN8"
+    },
+    "//SHAC/254/p/5": {
+      "catalogNumber": "L5508D1A",
+      "firmwareVersion": "1.3.0",
+      "partName": "DIM05",
+      "serialNumber": "100293.1653",
+      "tag": "DIMMER 05",
+      "unitType": "DIMDN8"
+    },
+    "//SHAC/254/p/6": {
+      "catalogNumber": "L5508D1A",
+      "firmwareVersion": "1.3.0",
+      "partName": "DIM06",
+      "serialNumber": "100305.3034",
+      "tag": "DIMMER 06",
+      "unitType": "DIMDN8"
+    },
+    "//SHAC/254/p/7": {
+      "catalogNumber": "L5508D1A",
+      "firmwareVersion": "1.6.00",
+      "partName": "DIM07",
+      "serialNumber": "100347.79",
+      "tag": "DIMMER 07",
+      "unitType": "DIMDN8"
+    },
+    "//SHAC/254/p/8": {
+      "catalogNumber": "L5508D1AP",
+      "firmwareVersion": "1.6.00",
+      "partName": "DIM08",
+      "serialNumber": "100346.3077",
+      "tag": "DIMMER 08",
+      "unitType": "DIMDN8"
+    },
+    "//SHAC/254/p/9": {
+      "catalogNumber": "L5508D1AP",
+      "firmwareVersion": "1.6.00",
+      "partName": "DIM09",
+      "serialNumber": "100347.31",
+      "tag": "DIMMER 09",
+      "unitType": "DIMDN8"
+    },
+    "//SHAC/254/p/10": {
+      "catalogNumber": "L5504D2AP",
+      "firmwareVersion": "1.6.00",
+      "partName": "DIM10",
+      "serialNumber": "100346.3190",
+      "tag": "DIMMER 10",
+      "unitType": "DIMDN4"
+    },
+    "//SHAC/254/p/11": {
+      "catalogNumber": "L5504D2A",
+      "firmwareVersion": "2.7.00",
+      "partName": "DIM11",
+      "serialNumber": "100746.3558",
+      "tag": "DIMMER11",
+      "unitType": "DIMDN4"
+    },
+    "//SHAC/254/p/13": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "2.3.00",
+      "partName": "BATH1",
+      "serialNumber": "100596.3317",
+      "tag": "Bath1",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/14": {
+      "catalogNumber": "L5508D1A",
+      "firmwareVersion": "1.6.00",
+      "partName": "DIM12",
+      "serialNumber": "100422.570",
+      "tag": "DIMMER 12",
+      "unitType": "DIMDN8"
+    },
+    "//SHAC/254/p/15": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "2.3.00",
+      "partName": "BATH2",
+      "serialNumber": "100596.2079",
+      "tag": "BATH2",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/16": {
+      "catalogNumber": "5751L",
+      "firmwareVersion": "2.3.00",
+      "partName": "POOLWC",
+      "serialNumber": "100600.3102",
+      "tag": "Pool Toilet",
+      "unitType": "SENPIRIA"
+    },
+    "//SHAC/254/p/17": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "1.2.67",
+      "partName": "CLOAK",
+      "serialNumber": "100438.3811",
+      "tag": "NEWUNIT",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/21": {
+      "catalogNumber": "L5512RVF",
+      "firmwareVersion": "1.6.00",
+      "partName": "REL01",
+      "serialNumber": "100346.1786",
+      "tag": "RELAY 01",
+      "unitType": "RELDN12"
+    },
+    "//SHAC/254/p/22": {
+      "catalogNumber": "L5512RVF",
+      "firmwareVersion": "1.6.00",
+      "partName": "REL02",
+      "serialNumber": "100346.1801",
+      "tag": "RELAY 02",
+      "unitType": "RELDN12"
+    },
+    "//SHAC/254/p/23": {
+      "catalogNumber": "L5512RVF",
+      "firmwareVersion": "1.6.00",
+      "partName": "REL03",
+      "serialNumber": "100346.2032",
+      "tag": "RELAY 03",
+      "unitType": "RELDN12"
+    },
+    "//SHAC/254/p/24": {
+      "catalogNumber": "L5512RVFP",
+      "firmwareVersion": "1.6.00",
+      "partName": "REL04",
+      "serialNumber": "00100348.0515",
+      "tag": "RELAY 04",
+      "unitType": "RELDN12"
+    },
+    "//SHAC/254/p/25": {
+      "catalogNumber": "L5512RVF",
+      "firmwareVersion": "1.6.00",
+      "partName": "REL05",
+      "serialNumber": "100425.3997",
+      "tag": "RELAY 05",
+      "unitType": "RELDN12"
+    },
+    "//SHAC/254/p/26": {
+      "catalogNumber": "L5512RVFP",
+      "firmwareVersion": "1.6.00",
+      "partName": "REL06",
+      "serialNumber": "100348.398",
+      "tag": "RELAY 06",
+      "unitType": "RELDN12"
+    },
+    "//SHAC/254/p/27": {
+      "catalogNumber": "L5512RVFP",
+      "firmwareVersion": "1.6.00",
+      "partName": "REL08",
+      "serialNumber": "100356.1677",
+      "tag": "RELAY 08",
+      "unitType": "RELDN12"
+    },
+    "//SHAC/254/p/32": {
+      "catalogNumber": "5085DL",
+      "firmwareVersion": "2.1.00",
+      "partName": "POOL",
+      "serialNumber": "100303.1415",
+      "tag": "POOL AREA",
+      "unitType": "KEYBL5"
+    },
+    "//SHAC/254/p/51": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "1.2.67",
+      "partName": "MUDROOM",
+      "serialNumber": "100404.2888",
+      "tag": "MudRoom",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/52": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "1.2.67",
+      "partName": "ENTRY",
+      "serialNumber": "100404.2889",
+      "tag": "Entry",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/53": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "1.2.67",
+      "partName": "UTILITY1",
+      "serialNumber": "100404.3417",
+      "tag": "Utility1",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/55": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "1.2.67",
+      "partName": "POWDER",
+      "serialNumber": "100406.1383",
+      "tag": "Powder",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/57": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "1.2.67",
+      "partName": "HALL2MB",
+      "serialNumber": "100406.1035",
+      "tag": "Hall2MasterBedEnd",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/58": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "1.2.67",
+      "partName": "HALL2B2",
+      "serialNumber": "100404.2892",
+      "tag": "Hall2Bed2End",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/59": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "1.2.67",
+      "partName": "PANTRY",
+      "serialNumber": "100404.3575",
+      "tag": "Pantry",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/60": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "1.2.67",
+      "partName": "ROBE",
+      "serialNumber": "100404.2900",
+      "tag": "Robe",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/61": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "1.2.67",
+      "partName": "HALL2B3",
+      "serialNumber": "100404.2891",
+      "tag": "Hall2Bed3End",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/62": {
+      "catalogNumber": "5753L",
+      "firmwareVersion": "1.2.67",
+      "partName": "SCULLERY",
+      "serialNumber": "100248.3221",
+      "tag": "Scullery",
+      "unitType": "SENPIRIB"
+    },
+    "//SHAC/254/p/71": {
+      "catalogNumber": "5751L",
+      "firmwareVersion": "1.2.67",
+      "partName": "HALL1KIT",
+      "serialNumber": "100378.2581",
+      "tag": "Hall1KitchenEnd",
+      "unitType": "SENPIRIA"
+    },
+    "//SHAC/254/p/72": {
+      "catalogNumber": "5751L",
+      "firmwareVersion": "1.2.67",
+      "partName": "HALL1ENT",
+      "serialNumber": "100378.2079",
+      "tag": "Hall1EntryEnd",
+      "unitType": "SENPIRIA"
+    },
+    "//SHAC/254/p/73": {
+      "catalogNumber": "5751L",
+      "firmwareVersion": "1.2.67",
+      "partName": "ENSWC",
+      "serialNumber": "100378.2081",
+      "tag": "EnsuiteWC",
+      "unitType": "SENPIRIA"
+    },
+    "//SHAC/254/p/74": {
+      "catalogNumber": "5751L",
+      "firmwareVersion": "1.2.67",
+      "partName": "BATH1HAL",
+      "serialNumber": "100378.2577",
+      "tag": "Bath1Hall",
+      "unitType": "SENPIRIA"
+    },
+    "//SHAC/254/p/81": {
+      "catalogNumber": "5750WPL",
+      "firmwareVersion": "1.2.67",
+      "partName": "VERANDAH",
+      "serialNumber": "100414.529",
+      "tag": "Verandah",
+      "unitType": "SENPIROA"
+    },
+    "//SHAC/254/p/82": {
+      "catalogNumber": "5750WPL",
+      "firmwareVersion": "1.2.67",
+      "partName": "FRONTYAR",
+      "serialNumber": "100367.1363",
+      "tag": "FrontYard",
+      "unitType": "SENPIROA"
+    },
+    "//SHAC/254/p/101": {
+      "catalogNumber": "SC5031BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "GARAGE",
+      "serialNumber": "100420.505",
+      "tag": "02 Garage",
+      "unitType": "KEY1"
+    },
+    "//SHAC/254/p/103": {
+      "catalogNumber": "SC5031BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "KITNOOK",
+      "serialNumber": "100412.4002",
+      "tag": "13 KitchenNook",
+      "unitType": "KEY1"
+    },
+    "//SHAC/254/p/104": {
+      "catalogNumber": "SC5031BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "BED2DESK",
+      "serialNumber": "100412.4008",
+      "tag": "17 Bed2Desk",
+      "unitType": "KEY1"
+    },
+    "//SHAC/254/p/105": {
+      "catalogNumber": "SC5031BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "BED1DESK",
+      "serialNumber": "100412.4006",
+      "tag": "19 Bed1Desk",
+      "unitType": "KEY1"
+    },
+    "//SHAC/254/p/106": {
+      "catalogNumber": "SC5031BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "GYM",
+      "serialNumber": "100412.3996",
+      "tag": "01 Gym",
+      "unitType": "KEY1"
+    },
+    "//SHAC/254/p/111": {
+      "catalogNumber": "C5031NL",
+      "firmwareVersion": "1.2.67",
+      "partName": "ROOFROBE",
+      "serialNumber": "100443.4053",
+      "tag": "29 RoofSpaceRobe",
+      "unitType": "KEY1"
+    },
+    "//SHAC/254/p/112": {
+      "catalogNumber": "C5031NL",
+      "firmwareVersion": "1.2.67",
+      "partName": "ROOFLAUN",
+      "serialNumber": "100443.4056",
+      "tag": "30 RoofSpaceLaundry",
+      "unitType": "KEY1"
+    },
+    "//SHAC/254/p/122": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "KITBATH1",
+      "serialNumber": "100412.4065",
+      "tag": "05 KitchenBath1Hall",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/123": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "ENTRY",
+      "serialNumber": "100412.4039",
+      "tag": "08 Entry",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/124": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "STUDY",
+      "serialNumber": "100412.4037",
+      "tag": "09 Study",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/125": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "HALL1LIB",
+      "serialNumber": "100412.4064",
+      "tag": "10 Hall1Library",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/126": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "BATH1",
+      "serialNumber": "100420.1284",
+      "tag": "11 Bath1",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/127": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "ENSVANBA",
+      "serialNumber": "100368.1632",
+      "tag": "23 EnsuiteVanityBasin",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/129": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "BED2",
+      "serialNumber": "100448.434",
+      "tag": "18 Bed2",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/131": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "MBBNORTH",
+      "serialNumber": "100420.3256",
+      "tag": "22 MasterBedBedNorth",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/132": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "MBBSOUTH",
+      "serialNumber": "100368.1609",
+      "tag": "25 MasterBedBedSouth",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/133": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "BED4",
+      "serialNumber": "100420.3558",
+      "tag": "12 Bed4",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/135": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "MB",
+      "serialNumber": "100412.4055",
+      "tag": "21 MasterBed",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/136": {
+      "catalogNumber": "SC5032BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "ROBE",
+      "serialNumber": "100420.1275",
+      "tag": "25B Robe",
+      "unitType": "KEY2"
+    },
+    "//SHAC/254/p/141": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "MUDROOM",
+      "serialNumber": "100416.379",
+      "tag": "Mud Room Keypad",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/142": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "KITCHEN",
+      "serialNumber": "100445.3811",
+      "tag": "04 Kitchen",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/143": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "HALL1FD",
+      "serialNumber": "100416.335",
+      "tag": "06 Hall1FormalDining",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/144": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "LIVING",
+      "serialNumber": "100414.1",
+      "tag": "07 Living",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/145": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "PIANOROO",
+      "serialNumber": "100400.1764",
+      "tag": "14 PianoRoom",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/147": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "BATH2",
+      "serialNumber": "100400.1767",
+      "tag": "16 Bath2",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/148": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "ENSVANWC",
+      "serialNumber": "100376.2613",
+      "tag": "24 EnsuiteVanityWC",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/149": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "BED3",
+      "serialNumber": "100416.352",
+      "tag": "27 Bed3",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/150": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "LAUNDRY",
+      "serialNumber": "100416.328",
+      "tag": "26 Laundry",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/151": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "PIANOOUT",
+      "serialNumber": "100416.289",
+      "tag": "15 PianoOutside",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/152": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "MBDECK",
+      "serialNumber": "100416.358",
+      "tag": "21A MasterBedDeck",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/153": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "BED1",
+      "serialNumber": "100416.348",
+      "tag": "20 Bed1",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/154": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "MBTOENS",
+      "serialNumber": "100400.1766",
+      "tag": "25A MasterBedtoEnsuite",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/155": {
+      "catalogNumber": "SC5034BNL",
+      "firmwareVersion": "1.2.67",
+      "partName": "BED3BED",
+      "serialNumber": "100419.3122",
+      "tag": "28 Bed3Bed",
+      "unitType": "KEY4"
+    },
+    "//SHAC/254/p/166": {
+      "catalogNumber": "L5501RFCP",
+      "firmwareVersion": "2.6.00",
+      "partName": "NEWUNIT2",
+      "serialNumber": "00000012.3456",
+      "tag": "Temp Fan Controller DeleteMe",
+      "unitType": "RELDF1"
+    },
+    "//SHAC/254/p/168": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT8",
+      "serialNumber": "100425.887",
+      "tag": "Shutter8",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/169": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT9",
+      "serialNumber": "100425.1234",
+      "tag": "Shutter9",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/170": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT10",
+      "serialNumber": "100425.940",
+      "tag": "Shutter10",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/171": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT11",
+      "serialNumber": "100425.876",
+      "tag": "Shutter11",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/172": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT12",
+      "serialNumber": "100425.1370",
+      "tag": "Shutter12",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/173": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT13",
+      "serialNumber": "100425.1075",
+      "tag": "Shutter13",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/174": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT14",
+      "serialNumber": "100425.924",
+      "tag": "Shutter14",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/175": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT15",
+      "serialNumber": "100425.1174",
+      "tag": "Shutter15",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/176": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT16",
+      "serialNumber": "100425.943",
+      "tag": "Shutter16",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/177": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT17",
+      "serialNumber": "100425.647",
+      "tag": "Shutter17",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/178": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT18",
+      "serialNumber": "100425.1281",
+      "tag": "Shutter18",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/179": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT19",
+      "serialNumber": "100425.1209",
+      "tag": "Shutter19",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/180": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT20",
+      "serialNumber": "100425.565",
+      "tag": "Shutter20",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/181": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT21",
+      "serialNumber": "100425.1206",
+      "tag": "Shutter21",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/182": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT22",
+      "serialNumber": "100425.1298",
+      "tag": "Shutter22",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/183": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT23",
+      "serialNumber": "100425.644",
+      "tag": "Shutter23",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/184": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.2.00",
+      "partName": "SHUT24",
+      "serialNumber": "100425.1422",
+      "tag": "Shutter24",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/185": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.7.00",
+      "partName": "POOL",
+      "serialNumber": "100773.3317",
+      "tag": "POOL COVER",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/186": {
+      "catalogNumber": "L5501RBCP",
+      "firmwareVersion": "2.7.00",
+      "partName": "AWNING",
+      "serialNumber": "100773.3425",
+      "tag": "AWNING BBQ AREA",
+      "unitType": "RELDB1"
+    },
+    "//SHAC/254/p/201": {
+      "catalogNumber": "5000CTC",
+      "firmwareVersion": "4.6.00",
+      "partName": "TS",
+      "serialNumber": "100409.1367",
+      "tag": "TS",
+      "unitType": "PC_CTC"
+    },
+    "//SHAC/254/p/211": {
+      "catalogNumber": "L5504AUX",
+      "firmwareVersion": "1.2.67",
+      "partName": "AUX1",
+      "serialNumber": "100399.327",
+      "tag": "AUX1",
+      "unitType": "DINAUX4"
+    },
+    "//SHAC/254/p/213": {
+      "catalogNumber": "{unknown}",
+      "firmwareVersion": "4.6.00",
+      "partName": "M1",
+      "serialNumber": "100402.2914",
+      "tag": "M1",
+      "unitType": "INT_ELK"
+    },
+    "//SHAC/254/p/251": {
+      "catalogNumber": "5500CN",
+      "firmwareVersion": "4.6.00",
+      "partName": "PCI",
+      "serialNumber": "100448.89",
+      "tag": "PCI",
+      "unitType": "PCINT4"
+    }
+  }
+}

@@ -77,5 +77,5 @@ CBusAccessory.prototype.getServices = function () {
 
 CBusAccessory.prototype._log = function (file, message) {
 	const accessory = chalk.magenta(`${this.name} (${this.netId})`);
-	log(`${chalk.gray.bold(file)} ${accessory} ${message}`);
+	log(`${chalk.gray.bold(file.split(`-`)[0])} ${accessory} ${message}`);
 };

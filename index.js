@@ -112,11 +112,43 @@ function CBusPlatform(ignoredLog, config) {
 }
 
 // Invokes callback(accessories[])
+CBusPlatform.prototype._processEvent = function (message) {
+	if (message.netId) {
+		const tag = this.database ? this.database.getTag(message.netId) : `NYI`;
+
+		let source;
+		if (typeof message.sourceunit !== `undefined`) {
+			const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceunit);
+			source = this.database.getNetworkEntity(sourceId);
+		}
+
+		// lookup accessory
+		let output;
+		const accessory = this.registeredAccessories.get(message.netId.getHash());
+		if (accessory) {
+			// process if found
+			output = `${chalk.red.bold(accessory.name)} (${accessory.type}) set to level ${message.level}%`;
+			accessory.processClientData(message);
+		} else {
+			output = `${chalk.red.bold.italic(tag)} (unregistered) set to level ${message.level}%`;
+		}
+
+		if (source) {
+			let sourceType = source.unitType;
+			output = `${output}, by '${chalk.red.bold(source.tag)} (${sourceType})'`;
+		}
+
+		logLevel(output);
+	} else if (message.code === 700) {
+		log(`heartbeat @ ${message.time}`);
+	}
+};
+
 CBusPlatform.prototype.accessories = function (callback) {
 	//--------------------------------------------------
 	//  Initiate the CBus client
 	//--------------------------------------------------
-	log(`Connecting to the local C-Gate server...`);
+	log(`Connecting to the local C-Gate server…`);
 
 	this.client = new CGateClient(this.cgateIpAddress, this.cgateControlPort,
 		this.project, this.network, this.application,
@@ -126,41 +158,13 @@ CBusPlatform.prototype.accessories = function (callback) {
 
 	// listen for data from the client and ensure that the homebridge UI is updated
 	this.client.on(`event`, function (message) {
-		if (message.netId) {
-			const tag = this.database ? this.database.getTag(message.netId) : `NYI`;
-
-			let sourceTag;
-			if (typeof message.sourceunit === `undefined`) {
-				sourceTag = `unknown`;
-			} else {
-				const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceunit);
-				sourceTag = this.database.getTag(sourceId);
-			}
-
-			// lookup accessory
-			let output;
-			const accessory = this.registeredAccessories.get(message.netId.getHash());
-			if (accessory) {
-				// process if found
-				output = `${chalk.red.bold(accessory.name)} (${accessory.type}) set to level ${message.level}%`;
-				accessory.processClientData(message);
-			} else {
-				output = `${chalk.red.bold.italic(tag)} (unregistered) set to level ${message.level}%`;
-			}
-
-			if (sourceTag) {
-				output = `${output}, by '${chalk.red.bold(sourceTag)}'`;
-			}
-
-			logLevel(output);
-		} else if (message.code === 700) {
-			log(`heartbeat @ ${message.time}`);
-		}
+		this._processEvent(message);
 	}.bind(this));
 
 	this.client.connect(function () {
 		this.database.fetch(this.client, () => {
-			log(`Successfully fetched ${this.database.applications.length} applications, ${this.database.groupMap.size} groups and ${this.database.unitMap.size} units from C-Gate.`);
+			log(`Successfully fetched ${this.database.applications.length} applications, ${this.database.groups.size} groups and ${this.database.units.size} units from C-Gate.`);
+			this.database.exportToJSON(`homebridge-cbus.json`);
 		});
 
 		const accessories = this._createAccessories();
@@ -172,14 +176,14 @@ CBusPlatform.prototype.accessories = function (callback) {
 		}
 
 		// hand them back to the callback to fire them up
-		log('Registering the accessories list...');
+		log('Registering the accessories list…');
 		callback(accessories);
 	}.bind(this));
 };
 
 // return a map of newly minted accessories
 CBusPlatform.prototype._createAccessories = function () {
-	log('Loading the accessories list...');
+	log('Loading the accessories list…');
 
 	const accessories = [];
 
@@ -194,9 +198,9 @@ CBusPlatform.prototype._createAccessories = function () {
 	}
 
 	// sort them for good measure
-	accessories.sort(function (a, b) {
-		return (a.name > b.name) - (a.name < b.name);
-	});
+	// accessories.sort(function (a, b) {
+	// 	return (a.name > b.name) - (a.name < b.name);
+	// });
 
 	return accessories;
 };

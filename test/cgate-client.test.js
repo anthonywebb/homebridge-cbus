@@ -225,36 +225,32 @@ const TEST_DESCRIPTORS = [
 			assert.equal(gDatabase.groups.length, 35, `${testName}: checking group count`);
 
 			assert.deepEquals(gDatabase.applications[0], {
-				address: 56,
-				name: 'Lighting'
+				tag: 'Lighting'
 			}, `${testName}: check applications[0]`);
 
 			assert.deepEquals(gDatabase.groups[6], {
-				application: 56,
-				address: 37,
-				name: 'Sprinkler1'
+				tag: 'Sprinkler1'
 			}, `${testName}: check groups[6]`);
 
 			assert.deepEquals(gDatabase.units[4], {
 				tag: 'Gateway to Wireless Net',
 				partName: 'WG',
-				address: 42,
 				firmwareVersion: '4.3.00',
 				serialNumber: '1048575.4095',
 				catalogNumber: '5800WCGA',
 				unitType: 'GATEWLSN'
 			}, `${testName}: check units[4]`);
 
-			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254`)), `net254`, `${testName}: check network label`);
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254`)), `//EXAMPLE/254`, `${testName}: check network label`);
 
 			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/224`)), `Telephony`, `${testName}: check known application label`);
-			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/250`)), `app250`, `${testName}: check unknown application label`);
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/250`)), `//EXAMPLE/254/250`, `${testName}: check unknown application label`);
 
 			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/56/40`)), `Wine Cellar`, `${testName}: check known group label`);
-			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/222/222`)), `group222`, `${testName}: check unknown group label`);
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/222/222`)), `//EXAMPLE/254/222/222`, `${testName}: check unknown group label`);
 
 			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/p/5`)), `Lounge DLT`, `${testName}: check known unit label`);
-			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/p/22`)), `unit22`, `${testName}: check unknown unit label`);
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/p/22`)), `//EXAMPLE/254/p/22`, `${testName}: check unknown unit label`);
 		}
 	},
 	{
@@ -493,7 +489,7 @@ test(`setup tests`, function (assert) {
 	gClient = new CGateClient(`127.0.0.1`, SERVER_PORT, `EXAMPLE`, 254, 56, log, true);
 	gDatabase = new CGateDatabase(new CBusNetId(`EXAMPLE`, 254), log);
 
-	assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254`)), undefined, `check CGateDatabase.getNetLabel() handling before first parse`);
+	assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254`)), `//EXAMPLE/254`, `check CGateDatabase.getNetLabel() handling before first parse`);
 
 	// patch in the EXAMPLE project database dump
 	fs.readFile(`test/resources/EXAMPLE.xml.txt`, 'utf8', function (err, fileData) {

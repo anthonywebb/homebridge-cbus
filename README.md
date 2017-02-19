@@ -25,6 +25,7 @@ To see some action of HomeKit controlling a Clipsal C-Bus system, check out the 
 This project provides a bridge which 'exposes' your devices in a way that you can control then using HomeKit. `homebrige-cbus` is currently able to control and/or monitor:
 
 * lights
+* switches (with optional timeout)
 * dimmers
 * shutter relays
 * motion sensors
@@ -44,8 +45,7 @@ N.B. you will need a C-Bus [C-Gate server](http://www2.clipsal.com/cis/technical
 
 ## Configuration
 
-As with other Homebridge plugins, you configure the `homebridge-cbus` plugin by
-adding it to your `config.json`.
+As with other Homebridge plugins, you configure the `homebridge-cbus` plugin by adding it to your `config.json`.
 
 ```json
   "platforms": [
@@ -83,15 +83,17 @@ N.B. If you are connecting to a remote C-Gate server, you will likely need to co
 Currently you must register devices by hand in a config file. In the future we may auto-discover them.
 
 The platform definition in the `config.json` file contains an `accessories` array, which defines the available accessories using the following keys:
-* `type`: (required) type of the accessory. The valid values are "light", "dimmer", "shutter", "motion", and "security".
+
+* `type`: (required) type of the accessory. The valid values are "light", "switch", "dimmer", "shutter", "motion", and "security".
 * `name`: (required) name of the accessory (e.g. "Living Room Light", "Bedroom Light", "Living Room Curtain" etc.)
 * `network`: (optional, defaults to `client_network`) C-Bus network address of the device
 * `application`: (optional, defaults to `client_application`) The C-Bus Application address of the device
 * `id`: (required) C-Bus address of the device — every accessory in C-Bus has one
 * `invert`: (optional, defaults to false) only used by the shutter relay accessory and indicates that the shutter has been wired to open when commanded closed and vice versa
+* `activeDuration`: (optional) only used by the switch accessory, indicating a timeout period, after which the switch will automatically switch off. This allows a HomeKit switch accessory to be used to generate a *Bell Press* event. The duration can be specified in days, hours, minutes, seconds or milliseconds. (For example: "2 days", "2.5h", "5s", "100 ms", [etc.](https://github.com/zeit/ms))
 
 
-### Fully functional example `config.json`:
+### Functional example `config.json`
 ````json
 {
   "bridge": {
@@ -113,22 +115,23 @@ The platform definition in the `config.json` file contains an `accessories` arra
       "client_network": 254,
       "client_application": 56,
       "client_debug": true,
-      "accessories":
-      [
+      "accessories": [
         { "type": "light", "id": 0, "name": "Flood" },
         { "type": "light", "id": 1, "name": "Main Bay" },
         { "type": "light", "id": 2, "name": "3rd Bay" },
         { "type": "light", "network": "250", "id": 1, "name": "Outside Light" },
         { "type": "light", "network": "250", "application": "203", "id": 3, "name": "Backdoor" },
-        
+			
         { "type": "dimmer", "id": 3, "name": "Closet" },
-        
-		{ "type": "shutter", "id": 145, "name": "Living Blinds" },
+			    
+        { "type": "shutter", "id": 145, "name": "Living Blinds" },
         { "type": "shutter", "id": 142, "name": "Dining Blinds", "invert": "true"},
-
+				
         { "type": "motion", "id": 51, "name": "Main" },
-        
-        { "type": "security", "application": 208, "id": 1, "name": "Entry Zone" }
+			    
+        { "type": "security", "application": 208, "id": 1, "name": "Entry Zone" },
+			    
+        { "type": "switch", "id": "9", "name": "Garden Lights", "activeDuration": "2.5 hrs" }
       ]
     }
   ],
@@ -177,13 +180,15 @@ To run tests and generate code coverage reports:
 ````
 npm run test-coverage
 ````
+
 ## Changes Since 0.5.0
-* 0.5.6: download and cache a copy of the C-Gate database for improved logging
+* 0.5.7: adds support for `switch` accessories including optional `activeDuration` property
+* 0.5.6: fetch and cache a copy of the C-Gate database for improved logging
 * 0.5.5: introduces unit testing and more robust configuration file checking
 * 0.5.4: fixes issue where some required files were missing
-* 0.5.3: adds `shutter` accessory
-* 0.5.2: adds `security` accessory, for PIR presence detectors, typically on application 208
-* 0.5.1: adds optional `network` and `application` parameters per accessory, allowing multiple networks and device types be monitored or controlled.
+* 0.5.3: adds support for `shutter` accessory
+* 0.5.2: adds support for `security` accessory, for PIR presence detectors, typically on application 208
+* 0.5.1: adds optional `network` and `application` parameters per accessory, allowing accessories to be monitored or controlled across multiple networks and applications.
 
 N.B. If you are upgrading from an ealier version of `homebridge-cbus`, you may need to remove the files in your `~/.homebridge/persist/` directory before running for the first time due to new device UUIDs.
 
