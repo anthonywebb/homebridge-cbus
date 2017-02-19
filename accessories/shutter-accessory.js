@@ -46,7 +46,7 @@ function CBusShutterAccessory(platform, accessoryData) {
 
 	setTimeout(function () {
 		this._log(FILE_ID, 'prime shutter level');
-		this.client.receiveLightStatus(this.netId, function (message) {
+		this.client.receiveLevel(this.netId, function (message) {
 			let translated = this.translateShutterToProportional(message.level);
 
 			if (typeof translated === `undefined`) {
@@ -177,7 +177,7 @@ CBusShutterAccessory.prototype.getPositionState = function (callback /* , contex
 
 CBusShutterAccessory.prototype.getTargetPosition = function (callback /* , context */) {
 	setTimeout(function () {
-		this.client.receiveLightStatus(this.netId, function (result) {
+		this.client.receiveLevel(this.netId, function (result) {
 			let proportion = this.translateShutterToProportional(result.level);
 			this._log(FILE_ID, 'getTargetPosition = ' + proportion);
 
@@ -232,7 +232,7 @@ CBusShutterAccessory.prototype.setTargetPosition = function (newPosition, callba
 		let shutterLevel = this.translateProportionalToShutter(newPosition);
 
 		// in this framework, the shutter relay position just looks like the brightness of a light
-		this.client.setLightBrightness(this.netId, shutterLevel, function () {
+		this.client.setBrightness(this.netId, shutterLevel, function () {
 			this._log(FILE_ID, 'sent to client: shutter = ' + shutterLevel);
 
 			// keep the spinner moving for a little while to give the sense of movement

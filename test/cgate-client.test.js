@@ -50,7 +50,7 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[100] turnOnLight`,
 		clientAction: function () {
-			gClient.turnOnLight(CBusNetId.parse(`//EXAMPLE/254/56/3`));
+			gClient.turnOn(CBusNetId.parse(`//EXAMPLE/254/56/3`));
 		},
 		fromClient: `[100] on //EXAMPLE/254/56/3`,
 		fromServer: `[100] 200 OK: //EXAMPLE/254/56/3`,
@@ -65,7 +65,7 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[101] turnOffLight`,
 		clientAction: function () {
-			gClient.turnOffLight(CBusNetId.parse(`//EXAMPLE/254/56/3`));
+			gClient.turnOff(CBusNetId.parse(`//EXAMPLE/254/56/3`));
 		},
 		fromClient: `[101] off //EXAMPLE/254/56/3`,
 		fromServer: `[101] 200 OK: //EXAMPLE/254/56/3`,
@@ -80,7 +80,7 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[102] setLightBrightness`,
 		clientAction: function () {
-			gClient.setLightBrightness(CBusNetId.parse(`//EXAMPLE/254/56/3`), 50, () => {
+			gClient.setBrightness(CBusNetId.parse(`//EXAMPLE/254/56/3`), 50, () => {
 			}, 10);
 		},
 		fromClient: `[102] ramp //EXAMPLE/254/56/3 50% 10`,
@@ -96,7 +96,7 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[103] receiveLightStatus`,
 		clientAction: function () {
-			gClient.receiveLightStatus(CBusNetId.parse(`//EXAMPLE/254/56/3`));
+			gClient.receiveLevel(CBusNetId.parse(`//EXAMPLE/254/56/3`));
 		},
 		fromClient: `[103] get //EXAMPLE/254/56/3 level`,
 		fromServer: `[103] 300 //EXAMPLE/254/56/3: level=128`,
@@ -124,7 +124,7 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[104] receiveLightStatus`,
 		clientAction: function () {
-			gClient.receiveLightStatus(CBusNetId.parse(`//EXAMPLE/254/56/3`));
+			gClient.receiveLevel(CBusNetId.parse(`//EXAMPLE/254/56/3`));
 		},
 		fromClient: `[104] get //EXAMPLE/254/56/3 level`,
 		fromServer: `[104] 300 //EXAMPLE/254/56/3: level=255`,
