@@ -108,7 +108,7 @@ function createHotDebug(namespace) {
 	listener.namespace = namespace;
 	
 	debug.enable = function (toEnable) {
-		if (typeof toEnable == 'undefined') {
+		if (typeof toEnable == `undefined`) {
 			toEnable = true;
 		}
 		
