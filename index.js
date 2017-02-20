@@ -92,12 +92,6 @@ function CBusPlatform(ignoredLog, config) {
 	// platform export path
 	// TODO more rigorous check please!
 	this.platformExportPath = this.config.platform_export;
-	fs.access(this.platformExportPath, fs.W_OK, err => {
-		if (err) {
-			log("can't write to platformExportPath: '${this.platformExportPath}'");
-			process.exit(1);
-		}
-	});
 
 	// logging
 	log.enable(true);
