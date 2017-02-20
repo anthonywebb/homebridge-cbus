@@ -3,6 +3,7 @@
 const net = require('net');
 const fs = require('fs');
 
+const tmp = require('tmp');
 const carrier = require('carrier');
 const test = require('tape').test;
 const rewire = require('rewire');
@@ -13,6 +14,8 @@ const log = require('debug')('test-output');
 const CGateClient = rewire('../lib/cgate-client.js');
 const CGateDatabase = rewire(`../lib/cgate-database.js`);
 const CBusNetId = require('../lib/cbus-netid.js');
+
+const util = require('util');
 
 const _rawToPercent = CGateClient.__get__('_rawToPercent');
 const _rawToZoneState = CGateClient.__get__('_rawToZoneState');
@@ -218,28 +221,32 @@ const TEST_DESCRIPTORS = [
 			type: `response`,
 			commandId: 109
 		},
-		numTestsInValidation: 12,
+		numTestsInValidation: 14,
 		validate: function (message, assert, testName) {
 			console.assert(message);
 			assert.equal(message.snippet.content.length, 24884, `${testName}: checking snippet length`);
-			assert.equal(gDatabase.groups.length, 35, `${testName}: checking group count`);
 
-			assert.deepEquals(gDatabase.applications[0], {
+			const stats = gDatabase.getStats();
+			assert.equal(stats.numApplications, 6, `${testName}: checking application count`);
+			assert.equal(stats.numGroups, 29, `${testName}: checking group count`);
+			assert.equal(stats.numUnits, 10, `${testName}: checking unit count`);
+
+			assert.deepEquals(gDatabase.applications[`//EXAMPLE/254/56`], {
 				tag: 'Lighting'
-			}, `${testName}: check applications[0]`);
+			}, `${testName}: check applications`);
 
-			assert.deepEquals(gDatabase.groups[6], {
+			assert.deepEquals(gDatabase.groups[`//EXAMPLE/254/56/37`], {
 				tag: 'Sprinkler1'
-			}, `${testName}: check groups[6]`);
+			}, `${testName}: check groups`);
 
-			assert.deepEquals(gDatabase.units[4], {
+			assert.deepEquals(gDatabase.units[`//EXAMPLE/254/p/42`], {
 				tag: 'Gateway to Wireless Net',
 				partName: 'WG',
 				firmwareVersion: '4.3.00',
 				serialNumber: '1048575.4095',
 				catalogNumber: '5800WCGA',
 				unitType: 'GATEWLSN'
-			}, `${testName}: check units[4]`);
+			}, `${testName}: check units`);
 
 			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254`)), `//EXAMPLE/254`, `${testName}: check network label`);
 
@@ -704,6 +711,101 @@ function _serverTests(descriptors) {
 }
 
 _serverTests(TEST_DESCRIPTORS);
+
+// now that database has been parsed, let's write it out, and check it
+test(`write out database`, function (assert) {
+	assert.plan(1);
+
+	const path = tmp.tmpNameSync({prefix: 'homebridge-cbus.database.test.', postfix: '.json'});
+
+	gDatabase.exportDatabase(path, function (err) {
+		if (err) {
+			assert.equals(err, undefined, `fs write ok`);
+		} else {
+			const fileSize = fs.statSync(path).size;
+			assert.equals(fileSize, 4433, `file size`);
+		}
+
+		assert.end();
+	});
+});
+
+// now that database has been parsed, let's write it out, and check it
+test(`write out platform`, function (assert) {
+	const EXPECTED = {
+		"platforms": [
+		{
+			"platform": "homebridge-cbus.CBus",
+			"name": "CBus",
+			"client_ip_address": "127.0.0.1",
+			"client_controlport": 20023,
+			"client_cbusname": "EXAMPLE",
+			"client_network": 254,
+			"client_application": 56,
+
+			"accessories": [
+				{ "type": "unknown", "id": 0, "name": "Group 0", "enabled": false },
+				{ "type": "unknown", "id": 15, "name": "Group 15", "enabled": false },
+				{ "type": "unknown", "id": 16, "name": "Group 16", "enabled": false },
+				{ "type": "unknown", "id": 31, "name": "Group 31", "enabled": false },
+				{ "type": "unknown", "id": 32, "name": "Kitchen1", "enabled": false },
+				{ "type": "unknown", "id": 33, "name": "Kitchen2", "enabled": false },
+				{ "type": "unknown", "id": 34, "name": "Dining1", "enabled": false },
+				{ "type": "unknown", "id": 35, "name": "Dining2", "enabled": false },
+				{ "type": "unknown", "id": 36, "name": "Lounge", "enabled": false },
+				{ "type": "unknown", "id": 37, "name": "Sprinkler1", "enabled": false },
+				{ "type": "unknown", "id": 38, "name": "Sprinkler2", "enabled": false },
+				{ "type": "unknown", "id": 39, "name": "Porch", "enabled": false },
+				{ "type": "unknown", "id": 40, "name": "Wine Cellar", "enabled": false },
+				{ "type": "unknown", "id": 41, "name": "Conservatory", "enabled": false },
+				{ "type": "unknown", "id": 42, "name": "Garden Lights", "enabled": false },
+				{ "type": "unknown", "id": 43, "name": "Potting Shed", "enabled": false },
+				{ "type": "unknown", "id": 44, "name": "Pavillion lights", "enabled": false },
+				{ "type": "unknown", "id": 45, "name": "Pavillion internal", "enabled": false },
+				{ "type": "unknown", "id": 46, "name": "Pool Deck", "enabled": false },
+				{ "type": "unknown", "id": 47, "name": "Pool Lights", "enabled": false },
+				{ "type": "unknown", "id": 48, "name": "Barbeque area", "enabled": false },
+				{ "type": "unknown", "id": 63, "name": "Cellar Chiller", "enabled": false },
+				{ "type": "unknown", "id": 81, "name": "Group 81", "enabled": false },
+				{ "type": "unknown", "application": 202, "id": 34, "name": "Group 34", "enabled": false },
+				{ "type": "unknown", "application": 202, "id": 35, "name": "Group 35", "enabled": false },
+				{ "type": "unknown", "application": 202, "id": 80, "name": "Closet light", "enabled": false },
+				{ "type": "unknown", "application": 202, "id": 81, "name": "Hallway light", "enabled": false },
+				{ "type": "unknown", "application": 202, "id": 127, "name": "Main Area Scene Trigger", "enabled": false },
+				{ "type": "unknown", "application": 203, "id": 0, "name": "Group 0", "enabled": false }
+			]
+		}
+	]};
+
+	assert.plan(2);
+
+	let platform = {
+		config: {
+			"platform": "homebridge-cbus.CBus", "name": "CBus", "client_ip_address": "127.0.0.1",
+			"client_controlport": 20023, "client_cbusname": "EXAMPLE", "client_network": 254, "client_application": 56
+		},
+		registeredAccessories: {
+			// no accessories
+		}
+	};
+
+	const path = tmp.tmpNameSync({prefix: 'homebridge-cbus.platform.test.', postfix: '.json'});
+
+	gDatabase.exportPlatform(path, platform, function (err) {
+		if (err) {
+			assert.fail(`fs write failed` + err);
+		} else {
+			const fileSize = fs.statSync(path).size;
+			assert.equals(fileSize, 2782, `file size`);
+
+			// who knew you could load JSON with require!
+			const loaded = require(path);
+			assert.deepEquals(loaded, EXPECTED, `saved  file integrity`);
+		}
+
+		assert.end();
+	});
+});
 
 // ==========================================================================================
 // utils

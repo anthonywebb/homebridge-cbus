@@ -223,13 +223,13 @@ test('construct illegal project name', function (assert) {
 	assert.end();
 });
 
-test('getModuleId', function (assert) {
+test('getHash', function (assert) {
 	assert.plan(4);
 
-	assert.equal(CBusNetId.parse(`//S31415/254`).getHash(), `fe0000`);
-	assert.equal(CBusNetId.parse(`//S31415/254/208`).getHash(), `fed000`);
-	assert.equal(CBusNetId.parse(`//S31415/254/208/128`).getHash(), `fed080`);
-	assert.equal(CBusNetId.parse(`//S31415/254/p/128`).getHash(), `1fe0080`);
+	assert.equal(CBusNetId.parse(`//S31415/254`).getHash(), `1fe0000`);
+	assert.equal(CBusNetId.parse(`//S31415/254/208`).getHash(), `1fed000`);
+	assert.equal(CBusNetId.parse(`//S31415/254/208/128`).getHash(), `1fed080`);
+	assert.equal(CBusNetId.parse(`//S31415/254/p/128`).getHash(), `2fe0080`);
 
 	assert.end();
 });
@@ -339,58 +339,78 @@ test('constructor undefineds', function (assert) {
 	assert.end();
 });
 
-test('custom comparison function', function (assert) {
-	assert.plan(1);
 
-	const obj = {
-		"//PROJECT/254/56/3": 6,
-		"//PROJECT/128/56/5": 5,
-		"//PROJECT/254/56/6": 4,
-		"//PROJECT/254/56/1": 3,
-		"//PROJECT/254/56/4": 2,
-		"//PROJECT/254/56/2": 1,
-		"//PROJECT/254/p/7": 1,
-		"//PROJECT/254/p/5": 1,
-		"//PROJECT/254/p/22": 1,
-		"//PROJECT/17/p/21": 1,
-		"//PROJECT/254/56": 1,
-		"//ZZZ/254/54/56": 1,
-		"//AAA/254/56": 1,
-		"//MMM/254/54/56": 1};
+test('custom comparison function', function (assert) {
+	assert.plan(2);
+
+	const obj1 = {
+		'//PROJECT/254/56/3': 15,
+		'//PROJECT/128/56/5': 14,
+		'//PROJECT/254/56/6': 13,
+		'//PROJECT/254/56/1': 12,
+		'//PROJECT/254/56/4': 11,
+		'//PROJECT/254/56/2': 10,
+		'//PROJECT/254/p/7': 9,
+		'//PROJECT/254/p/5': 8,
+		'//PROJECT/254/p/22': 7,
+		'//PROJECT/17/p/21': 6,
+		'//PROJECT/254/56': 5,
+		'//ZZZ/254/54/56': 4,
+		'//AAA/254/99': 3,
+		'//AAA/254/56': 2,
+		'//MMM/254/54/56': 1
+	};
+
+	const obj2 = {
+		'fire truck': 6,
+		'carrot': 3,
+		'durian': 4,
+		'apple': 1,
+		'banana': 2,
+		'eggplant': 5
+	};
 
 	let compare = function (a, b) {
 		if (a.key.startsWith(`//`) && b.key.startsWith(`//`)) {
 			const aId = CBusNetId.parse(a.key);
 			const bId = CBusNetId.parse(b.key);
 
-			if (aId.project !== bId.project) {
-				return aId.project < bId.project ? -1 : 1;
-			}
-
-			if (aId.network !== bId.network) {
-				return aId.network < bId.network ? -1 : 1;
-			}
-
-			let aApp = (typeof aId.application === `undefined`) ? 256 : aId.application;
-			let bApp = (typeof bId.application === `undefined`) ? 256 : bId.application;
-
-			if (aApp !== bApp) {
-				return aApp < bApp ? -1 : 1;
-			}
-
-
-			let aGroup = (typeof aId.group === `undefined`) ? aId.unitAddress : aId.group;
-			let bGroup = (typeof bId.group === `undefined`) ? bId.unitAddress : bId.group;
-
-			if (aGroup !== bGroup) {
-				return aGroup < bGroup ? -1 : 1;
-			}
+			return CBusNetId.compare(aId, bId);
 		}
 
 		return a.key < b.key ? -1 : 1;
 	};
 
-	const s = stringify(obj, { cmp: compare, space: ` ` });
-	console.log(s);
-	assert.equal(s, '{"c":8,"b":[{"z":6,"y":5,"x":4},7],"a":3}');
+	let stringified = stringify(obj1, { cmp: compare, space: ` ` });
+	assert.equal(stringified, `` +
+		`{\n` +
+		` "//AAA/254/56": 2,\n` +
+		` "//AAA/254/99": 3,\n` +
+		` "//MMM/254/54/56": 1,\n` +
+		` "//PROJECT/128/56/5": 14,\n` +
+		` "//PROJECT/254/56": 5,\n` +
+		` "//PROJECT/254/56/1": 12,\n` +
+		` "//PROJECT/254/56/2": 10,\n` +
+		` "//PROJECT/254/56/3": 15,\n` +
+		` "//PROJECT/254/56/4": 11,\n` +
+		` "//PROJECT/254/56/6": 13,\n` +
+		` "//PROJECT/17/p/21": 6,\n` +
+		` "//PROJECT/254/p/5": 8,\n` +
+		` "//PROJECT/254/p/7": 9,\n` +
+		` "//PROJECT/254/p/22": 7,\n` +
+		` "//ZZZ/254/54/56": 4\n` +
+		`}`);
+
+	stringified = stringify(obj2, { cmp: compare, space: ` ` });
+	assert.equal(stringified, `` +
+		`{\n` +
+		` "apple": 1,\n` +
+		` "banana": 2,\n` +
+		` "carrot": 3,\n` +
+		` "durian": 4,\n` +
+		` "eggplant": 5,\n` +
+		` "fire truck": 6\n` +
+		`}`);
+
+	assert.end();
 });

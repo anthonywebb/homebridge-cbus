@@ -78,7 +78,7 @@ CBusSwitchAccessory.prototype.setOn = function (turnOn, callback, context) {
 						this._log(FILE_ID, `activity timer expired. turning off`);
 						this.client.turnOff(this.netId);
 					}.bind(this), this.activeDuration);
-					this._log(FILE_ID, `turned on. setting activity timer'`);
+					this._log(FILE_ID, `turned on. setting activity timer for ${this.activeDuration}ms`);
 				}
 				callback();
 			}.bind(this));

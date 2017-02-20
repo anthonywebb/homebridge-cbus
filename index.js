@@ -1,5 +1,7 @@
 'use strict';
 
+var fs = require('fs');
+
 const chalk = require('chalk');
 
 require('./hot-debug.js');
@@ -19,19 +21,13 @@ const cbusUtils = require(`./lib/cbus-utils.js`);
 // ==========================================================================================
 
 module.exports = function (homebridge) {
-	//--------------------------------------------------
-	//  Setup the global vars
-	//--------------------------------------------------
+	// globals
 	const Service = homebridge.hap.Service;
 	const Characteristic = homebridge.hap.Characteristic;
 	const Accessory = homebridge.hap.Accessory;
 	const uuid = homebridge.hap.uuid;
 
-	//--------------------------------------------------
-	//  Setup the CBus accessories
-	//--------------------------------------------------
-
-	// load
+	// load accessories
 	const CBusAccessory = require('./accessories/accessory.js')(Service, Characteristic, Accessory, uuid);
 	const CBusLightAccessory = require('./accessories/light-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusDimmerAccessory = require('./accessories/dimmer-accessory.js')(Service, Characteristic, CBusLightAccessory, uuid);
@@ -64,28 +60,21 @@ module.exports = function (homebridge) {
 };
 
 // ==========================================================================================
-// CBus Platform
+// CBusPlatform
 // ==========================================================================================
 
 function CBusPlatform(ignoredLog, config) {
-	// log is now unused
-
-	//--------------------------------------------------
-	//  vars definition
-	//--------------------------------------------------
+	// stash vars
 	this.config = config;
 
 	this.registeredAccessories = undefined;
 	this.client = undefined;
 	this.database = undefined;
 
-	//--------------------------------------------------
-	//  setup vars
-	//--------------------------------------------------
-
 	// client IP and port
 	if (typeof config.client_ip_address === `undefined`) {
-		throw new Error('client IP address missing');
+		log('client IP address missing');
+		process.exit(1);
 	}
 	this.cgateIpAddress = config.client_ip_address;
 	this.cgateControlPort = (typeof config.client_contolport === `undefined`) ? undefined : config.client_contolport;
@@ -100,9 +89,17 @@ function CBusPlatform(ignoredLog, config) {
 	this.network = (typeof config.client_network === `undefined`) ? undefined : config.client_network;
 	this.application = (typeof config.client_application === `undefined`) ? undefined : config.client_application;
 
-	//--------------------------------------------------
-	//  setup logging
-	//--------------------------------------------------
+	// platform export path
+	// TODO more rigorous check please!
+	this.platformExportPath = this.config.platform_export;
+	fs.access(this.platformExportPath, fs.W_OK, err => {
+		if (err) {
+			log("can't write to platformExportPath: '${this.platformExportPath}'");
+			process.exit(1);
+		}
+	});
+
+	// logging
 	log.enable(true);
 
 	// if set, client_debug overrides the setting in the environment
@@ -124,7 +121,7 @@ CBusPlatform.prototype._processEvent = function (message) {
 
 		// lookup accessory
 		let output;
-		const accessory = this.registeredAccessories.get(message.netId.getHash());
+		const accessory = this.registeredAccessories[message.netId.toString()];
 		if (accessory) {
 			// process if found
 			output = `${chalk.red.bold(accessory.name)} (${accessory.type}) set to level ${message.level}%`;
@@ -135,12 +132,14 @@ CBusPlatform.prototype._processEvent = function (message) {
 
 		if (source) {
 			let sourceType = source.unitType;
-			output = `${output}, by '${chalk.red.bold(source.tag)} (${sourceType})'`;
+			output = `${output}, by '${chalk.red.bold(source.tag)}' (${sourceType})`;
 		}
 
 		logLevel(output);
 	} else if (message.code === 700) {
-		log(`heartbeat @ ${message.time}`);
+		log(`Heartbeat @ ${message.time}`);
+	} else if (message.code === 751) {
+		log(`Tag information changed.`);
 	}
 };
 
@@ -164,15 +163,19 @@ CBusPlatform.prototype.accessories = function (callback) {
 	this.client.connect(function () {
 		this.database.fetch(this.client, () => {
 			log(`Successfully fetched ${this.database.applications.length} applications, ${this.database.groups.size} groups and ${this.database.units.size} units from C-Gate.`);
-			this.database.exportToJSON(`homebridge-cbus.json`);
+
+			// export platform file is platform_export property is set
+			if (this.config.platform_export) {
+				this.database.exportPlatform(this.platformExportPath, this);
+			}
 		});
 
 		const accessories = this._createAccessories();
 
 		// build the lookup map
-		this.registeredAccessories = new Map();
+		this.registeredAccessories = {};
 		for (const accessory of accessories) {
-			this.registeredAccessories.set(accessory.netId.getHash(), accessory);
+			this.registeredAccessories[accessory.netId.toString()] = accessory;
 		}
 
 		// hand them back to the callback to fire them up
@@ -196,11 +199,6 @@ CBusPlatform.prototype._createAccessories = function () {
 			process.exit(0);
 		}
 	}
-
-	// sort them for good measure
-	// accessories.sort(function (a, b) {
-	// 	return (a.name > b.name) - (a.name < b.name);
-	// });
 
 	return accessories;
 };
