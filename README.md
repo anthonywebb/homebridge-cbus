@@ -58,6 +58,9 @@ As with other Homebridge plugins, you configure the `homebridge-cbus` plugin by 
       "client_network": 254,
       "client_application": 56,
       "client_debug": true,
+      
+      "platform_export": "my-platform.json",
+      
       "accessories": [ ... ]
      }
 ]
@@ -75,12 +78,13 @@ N.B. If you are connecting to a remote C-Gate server, you will likely need to co
 * `client_application`: (optional, defaults to 56) default application address for your C-Bus devices
 * `client_debug`: (optional, defaults to `false`) set to `true` to write C-Bus client debug logs to the console
 * `accessories`: (required) list of accessories to expose to the Homebridge server
+* `platform_export`: (optional) path to file for exporting a unified accessory list, see below.
 
-(NB. `client_eventport` and `client_statusport` are no longer required, but will be safely ignored)
+(NB. `client_eventport` and `client_statusport` are no longer required, and will be safely ignored)
 
 
 ### Registering accessories
-Currently you must register devices by hand in a config file. In the future we may auto-discover them.
+You must register devices by hand in a config file, however to make this easier for you, `homebridge-cbus` can automatically build most of the file for you. See Unified Accessory List, below.
 
 The platform definition in the `config.json` file contains an `accessories` array, which defines the available accessories using the following keys:
 
@@ -91,6 +95,7 @@ The platform definition in the `config.json` file contains an `accessories` arra
 * `id`: (required) C-Bus address of the device — every accessory in C-Bus has one
 * `invert`: (optional, defaults to false) only used by the shutter relay accessory and indicates that the shutter has been wired to open when commanded closed and vice versa
 * `activeDuration`: (optional) only used by the switch accessory, indicating a timeout period, after which the switch will automatically switch off. This allows a HomeKit switch accessory to be used to generate a *Bell Press* event. The duration can be specified in days, hours, minutes, seconds or milliseconds. (For example: "2 days", "2.5h", "5s", "100 ms", [etc.](https://github.com/zeit/ms))
+* `enabled`: (optional, default: true) set to false to inhibit the accessory from loading.
 
 
 ### Functional example `config.json`
@@ -102,7 +107,7 @@ The platform definition in the `config.json` file contains an `accessories` arra
     "port": 51826,
     "pin": "031-45-154"
   },
-
+  
   "description": "My home HomeKit API configuration file",
 
   "platforms": [
@@ -115,6 +120,9 @@ The platform definition in the `config.json` file contains an `accessories` arra
       "client_network": 254,
       "client_application": 56,
       "client_debug": true,
+
+      "platform_export": "my-platform.json",
+            
       "accessories": [
         { "type": "light", "id": 0, "name": "Flood" },
         { "type": "light", "id": 1, "name": "Main Bay" },
@@ -138,6 +146,13 @@ The platform definition in the `config.json` file contains an `accessories` arra
   "accessories": [ ]
 }
 ````
+
+## Unified Accessory List
+
+If the `platform_export` property is set to a valid pathname, upon startup `homebridge-cbus` will export a suggested accessory list. The list will include all groups found in your C-Gate database. By default found groups are disabled, unless they are already defined as enabled in your current `config.json` file.
+
+It is suggested that you check this file after your first successful run of `homebridge` with this plug-in loaded. You'll then be able to open the generated file and copy the entries of interest into your `config.json` file.
+
 
 ## Logging
 `homebridge-cbus` has four logging channels:
