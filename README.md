@@ -197,7 +197,12 @@ npm run test-coverage
 ````
 
 ## Changes Since 0.5.0
-* 0.5.7: adds support for `switch` accessories including optional `activeDuration` property
+* 0.5.7: 
+  * adds support for `switch` accessories including optional `activeDuration` property
+  * adds Unified Accessory List export
+  * adds support for `enabled` property on accessories
+
+
 * 0.5.6: fetch and cache a copy of the C-Gate database for improved logging
 * 0.5.5: introduces unit testing and more robust configuration file checking
 * 0.5.4: fixes issue where some required files were missing
