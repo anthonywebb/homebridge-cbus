@@ -733,46 +733,56 @@ test(`write out database`, function (assert) {
 // now that database has been parsed, let's write it out, and check it
 test(`write out platform`, function (assert) {
 	const EXPECTED = {
-		"platforms": [
+		platforms: [
 		{
-			"platform": "homebridge-cbus.CBus",
-			"name": "CBus",
-			"client_ip_address": "127.0.0.1",
-			"client_controlport": 20023,
-			"client_cbusname": "EXAMPLE",
-			"client_network": 254,
-			"client_application": 56,
+			platform: 'homebridge-cbus.CBus',
+			name: 'CBus',
+			client_ip_address: '127.0.0.1',
+			client_controlport: 20023,
+			client_cbusname: 'EXAMPLE',
+			client_network: 254,
+			client_application: 56,
 
-			"accessories": [
-				{ "type": "unknown", "id": 0, "name": "Group 0", "enabled": false },
-				{ "type": "unknown", "id": 15, "name": "Group 15", "enabled": false },
-				{ "type": "unknown", "id": 16, "name": "Group 16", "enabled": false },
-				{ "type": "unknown", "id": 31, "name": "Group 31", "enabled": false },
-				{ "type": "unknown", "id": 32, "name": "Kitchen1", "enabled": false },
-				{ "type": "unknown", "id": 33, "name": "Kitchen2", "enabled": false },
-				{ "type": "unknown", "id": 34, "name": "Dining1", "enabled": false },
-				{ "type": "unknown", "id": 35, "name": "Dining2", "enabled": false },
-				{ "type": "unknown", "id": 36, "name": "Lounge", "enabled": false },
-				{ "type": "unknown", "id": 37, "name": "Sprinkler1", "enabled": false },
-				{ "type": "unknown", "id": 38, "name": "Sprinkler2", "enabled": false },
-				{ "type": "unknown", "id": 39, "name": "Porch", "enabled": false },
-				{ "type": "unknown", "id": 40, "name": "Wine Cellar", "enabled": false },
-				{ "type": "unknown", "id": 41, "name": "Conservatory", "enabled": false },
-				{ "type": "unknown", "id": 42, "name": "Garden Lights", "enabled": false },
-				{ "type": "unknown", "id": 43, "name": "Potting Shed", "enabled": false },
-				{ "type": "unknown", "id": 44, "name": "Pavillion lights", "enabled": false },
-				{ "type": "unknown", "id": 45, "name": "Pavillion internal", "enabled": false },
-				{ "type": "unknown", "id": 46, "name": "Pool Deck", "enabled": false },
-				{ "type": "unknown", "id": 47, "name": "Pool Lights", "enabled": false },
-				{ "type": "unknown", "id": 48, "name": "Barbeque area", "enabled": false },
-				{ "type": "unknown", "id": 63, "name": "Cellar Chiller", "enabled": false },
-				{ "type": "unknown", "id": 81, "name": "Group 81", "enabled": false },
-				{ "type": "unknown", "application": 202, "id": 34, "name": "Group 34", "enabled": false },
-				{ "type": "unknown", "application": 202, "id": 35, "name": "Group 35", "enabled": false },
-				{ "type": "unknown", "application": 202, "id": 80, "name": "Closet light", "enabled": false },
-				{ "type": "unknown", "application": 202, "id": 81, "name": "Hallway light", "enabled": false },
-				{ "type": "unknown", "application": 202, "id": 127, "name": "Main Area Scene Trigger", "enabled": false },
-				{ "type": "unknown", "application": 203, "id": 0, "name": "Group 0", "enabled": false }
+			accessories: [
+				// new enabled
+				{ type: 'light', network: 252, application: 32, id: 199, name: 'Light 199' },
+				{ type: 'dimmer', id: 120, name: 'Dimmer 120' },
+
+				// modified / enabled
+				{ type: 'switch', application: 202, id: 127, name: 'Shiny new name', dbtag: `Main Area Scene Trigger` },
+
+				// new disabled
+				{ type: 'switch', network: 253, application: 57, id: 140, name: 'Switch 140', enabled: false },
+
+				// unchanged
+				{ type: 'unknown', id: 0, name: 'Group 0', enabled: false },
+				{ type: 'unknown', id: 15, name: 'Group 15', enabled: false },
+				{ type: 'unknown', id: 16, name: 'Group 16', enabled: false },
+				{ type: 'unknown', id: 31, name: 'Group 31', enabled: false },
+				{ type: 'unknown', id: 32, name: 'Kitchen1', enabled: false },
+				{ type: 'unknown', id: 33, name: 'Kitchen2', enabled: false },
+				{ type: 'unknown', id: 34, name: 'Dining1', enabled: false },
+				{ type: 'unknown', id: 35, name: 'Dining2', enabled: false },
+				{ type: 'unknown', id: 36, name: 'Lounge', enabled: false },
+				{ type: 'unknown', id: 37, name: 'Sprinkler1', enabled: false },
+				{ type: 'unknown', id: 38, name: 'Sprinkler2', enabled: false },
+				{ type: 'unknown', id: 39, name: 'Porch', enabled: false },
+				{ type: 'unknown', id: 40, name: 'Wine Cellar', enabled: false },
+				{ type: 'unknown', id: 41, name: 'Conservatory', enabled: false },
+				{ type: 'unknown', id: 42, name: 'Garden Lights', enabled: false },
+				{ type: 'unknown', id: 43, name: 'Potting Shed', enabled: false },
+				{ type: 'unknown', id: 44, name: 'Pavillion lights', enabled: false },
+				{ type: 'unknown', id: 45, name: 'Pavillion internal', enabled: false },
+				{ type: 'unknown', id: 46, name: 'Pool Deck', enabled: false },
+				{ type: 'unknown', id: 47, name: 'Pool Lights', enabled: false },
+				{ type: 'unknown', id: 48, name: 'Barbeque area', enabled: false },
+				{ type: 'unknown', id: 63, name: 'Cellar Chiller', enabled: false },
+				{ type: 'unknown', id: 81, name: 'Group 81', enabled: false },
+				{ type: 'unknown', application: 202, id: 34, name: 'Group 34', enabled: false },
+				{ type: 'unknown', application: 202, id: 35, name: 'Group 35', enabled: false },
+				{ type: 'unknown', application: 202, id: 80, name: 'Closet light', enabled: false },
+				{ type: 'unknown', application: 202, id: 81, name: 'Hallway light', enabled: false },
+				{ type: 'unknown', application: 203, id: 0, name: 'Group 0', enabled: false }
 			]
 		}
 	]};
@@ -781,13 +791,37 @@ test(`write out platform`, function (assert) {
 
 	let platform = {
 		config: {
-			"platform": "homebridge-cbus.CBus", "name": "CBus", "client_ip_address": "127.0.0.1",
-			"client_controlport": 20023, "client_cbusname": "EXAMPLE", "client_network": 254, "client_application": 56
-		},
-		registeredAccessories: {
-			// no accessories
+			"platform": "homebridge-cbus.CBus",
+			"name": "CBus",
+			"client_ip_address": "127.0.0.1",
+			"client_controlport": 20023,
+			"client_cbusname": "EXAMPLE",
+			"client_network": 254,
+			"client_application": 56,
+			accessories: []
 		}
 	};
+
+	function _register(netIdStr, config) {
+		const netId = CBusNetId.parse(netIdStr);
+
+		config.network = netId.network;
+		config.application = netId.application;
+		console.assert(netId.group === config.id);
+		platform.config.accessories.push(config);
+	}
+
+	// duplicate of the database (with updated name)
+	_register(`//EXAMPLE/254/202/127`, {type: "switch", name: "Shiny new name", "id": 127, "enabled": true});
+
+	// no enabled property
+	_register(`//EXAMPLE/254/56/120`, {type: "dimmer", name: "Dimmer 120", id: 120});
+
+	// enabled: false
+	_register(`//EXAMPLE/253/57/140`, {type: "switch", name: "Switch 140", id: 140, enabled: false});
+
+	// enabled: true
+	_register(`//EXAMPLE/252/32/199`, {type: "light", name: "Light 199", id: 199, enabled: true});
 
 	const path = tmp.tmpNameSync({prefix: 'homebridge-cbus.platform.test.', postfix: '.json'});
 
@@ -796,11 +830,11 @@ test(`write out platform`, function (assert) {
 			assert.fail(`fs write failed` + err);
 		} else {
 			const fileSize = fs.statSync(path).size;
-			assert.equals(fileSize, 2782, `file size`);
+			assert.equals(fileSize, 3066, `file size`);
 
 			// who knew you could load JSON with require!
 			const loaded = require(path);
-			assert.deepEquals(loaded, EXPECTED, `saved  file integrity`);
+			assert.deepEquals(loaded, EXPECTED, `saved file integrity`);
 		}
 
 		assert.end();
