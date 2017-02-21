@@ -29,7 +29,7 @@ function CBusLightAccessory(platform, accessoryData) {
 	//--------------------------------------------------
 	//  State variable
 	//--------------------------------------------------
-	this.currentLevel = 0;	// TODO how do we prime this?
+	this.currentState = 0;	// TODO how do we prime this?
 
 	//--------------------------------------------------
 	//  Register the on-off service
@@ -42,10 +42,10 @@ function CBusLightAccessory(platform, accessoryData) {
 
 CBusLightAccessory.prototype.getOn = function (callback /* , context */) {
 	setTimeout(function () {
-		this.client.receiveLightStatus(this.netId, function (message) {
-			this.currentLevel = message.level;
+		this.client.receiveLevel(this.netId, function (message) {
+			this.currentState = message.level;
 			this._log(FILE_ID, `receiveLightStatus returned ${message.level}`);
-			callback(false, this.currentLevel > 0);
+			callback(false, this.currentState > 0);
 		}.bind(this));
 	}.bind(this), 50);
 };
@@ -56,17 +56,17 @@ CBusLightAccessory.prototype.setOn = function (turnOn, callback, context) {
 		// this._log(SCRIPT_NAME, `ignoring setOn 'event'`);
 		callback();
 	} else {
-		const isOn = this.currentLevel > 0;
+		const isOn = this.currentState > 0;
 
 		if (isOn === turnOn) {
-			this._log(FILE_ID, `setOn: no state change from ${this.currentLevel}%`);
+			this._log(FILE_ID, `setOn: no state change from ${this.currentState}%`);
 			callback();
 		} else {
-			const oldLevel = this.currentLevel;
+			const oldLevel = this.currentState;
 			const newLevel = turnOn ? 100 : 0;
-			this.currentLevel = newLevel;
+			this.currentState = newLevel;
 			this._log(FILE_ID, `setOn changing level to ${newLevel}% ` + chalk.dim(`from ${oldLevel}%`));
-			this.client.setLightBrightness(this.netId, newLevel, function () {
+			this.client.setBrightness(this.netId, newLevel, function () {
 				callback();
 			});
 		}

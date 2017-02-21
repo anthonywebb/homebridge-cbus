@@ -29,7 +29,7 @@ function CBusDimmerAccessory(platform, accessoryData) {
 	//--------------------------------------------------
 	//  State variable
 	//--------------------------------------------------
-	this.currentLevel = 0;	// TODO how do we prime this?
+	this.currentState = 0;	// TODO how do we prime this?
 
 	//--------------------------------------------------
 	//  Register the brightness service
@@ -41,7 +41,7 @@ function CBusDimmerAccessory(platform, accessoryData) {
 
 CBusDimmerAccessory.prototype.getBrightness = function (callback /* , context */) {
 	setTimeout(function () {
-		this.client.receiveLightStatus(this.netId, function (message) {
+		this.client.receiveLevel(this.netId, function (message) {
 			this._log(FILE_ID, `getBrightness returned ${message.level}%`);
 			callback(false, message.level);
 		}.bind(this));
@@ -54,13 +54,13 @@ CBusDimmerAccessory.prototype.setBrightness = function (newLevel, callback, cont
 		// this._log(SCRIPT_NAME, `ignoring setBrightness 'event' ${level}%`);
 		callback();
 	} else {
-		if (this.currentLevel === newLevel) {
+		if (this.currentState === newLevel) {
 			callback();
 		} else {
-			const oldLevel = this.currentLevel;
-			this.currentLevel = newLevel;
+			const oldLevel = this.currentState;
+			this.currentState = newLevel;
 			this._log(FILE_ID, `setBrightness: change level to ${newLevel}% ` + chalk.dim(`from ${oldLevel}%`));
-			this.client.setLightBrightness(this.netId, newLevel, function () {
+			this.client.setBrightness(this.netId, newLevel, function () {
 				callback();
 			});
 		}
@@ -77,5 +77,5 @@ CBusDimmerAccessory.prototype.processClientData = function (message) {
 	// set the brightness characteristic
 	this.lightService.getCharacteristic(Characteristic.Brightness).setValue(level, undefined, `event`);
 
-	this.currentLevel = level;
+	this.currentState = level;
 };

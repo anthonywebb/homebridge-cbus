@@ -34,7 +34,7 @@ function CBusMotionAccessory(platform, accessoryData) {
 
 CBusMotionAccessory.prototype.getMotionState = function (callback /* , context */) {
 	setTimeout(function () {
-		this.client.receiveLightStatus(this.netId, function (message) {
+		this.client.receiveLevel(this.netId, function (message) {
 			this._log(FILE_ID, `getState = ${message.level}`);
 			callback(false, /* state: */ message.level ? 1 : 0);
 		}.bind(this));
