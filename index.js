@@ -184,26 +184,30 @@ CBusPlatform.prototype._createAccessories = function () {
 
 	const accessories = [];
 
-	for (let accessoryData of this.config.accessories) {
-		try {
-			const accessory = this.createAccessory(accessoryData);
-			accessories.push(accessory);
-		} catch (err) {
-			log(`Unable to instantiate accessory of type '${accessoryData.type}' (reason: ${err}). ABORTING`);
-			process.exit(0);
+	for (let config of this.config.accessories) {
+		if (config.enabled === false) {
+			log(`Skipping disabled accessory '${config.name}' (${config.type})`);
+		} else {
+			try {
+				const accessory = this.createAccessory(config);
+				accessories.push(accessory);
+			} catch (err) {
+				log(`Unable to instantiate accessory '${config.name}' (${config.type}) reason: ${err}. ABORTING`);
+				process.exit(0);
+			}
 		}
 	}
 
 	return accessories;
 };
 
-CBusPlatform.prototype.createAccessory = function (entry) {
-	console.assert(typeof entry.type === `string`, `accessory missing type property`);
+CBusPlatform.prototype.createAccessory = function (config) {
+	console.assert(typeof config.type === `string`, `accessory missing type property`);
 
-	const constructor = module.exports.accessoryDefinitions[entry.type];
+	const constructor = module.exports.accessoryDefinitions[config.type];
 	if (!constructor) {
-		throw new Error(`unknown accessory type '${entry.type}'`);
+		throw new Error(`unknown accessory type '${config.type}'`);
 	}
 
-	return new constructor(this, entry);
+	return new constructor(this, config);
 };
