@@ -122,9 +122,13 @@ CBusShutterAccessory.prototype.translateProportionalToShutter = function (level)
 };
 
 CBusShutterAccessory.prototype.translateShutterToProportional = function (level) {
+	if (typeof level === undefined) {
+		return undefined;
+	}
+
 	if ((level > 100) || (level < 0)) {
 		this._log(FILE_ID, `illegal network level = ${level}`);
-		return;
+		return undefined;
 	}
 
 	let translated;

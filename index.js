@@ -138,11 +138,7 @@ CBusPlatform.prototype._processEvent = function (message) {
 };
 
 CBusPlatform.prototype.accessories = function (callback) {
-	//--------------------------------------------------
-	//  Initiate the CBus client
-	//--------------------------------------------------
-	log(`Connecting to the local C-Gate server…`);
-
+	// initiate the CBus client
 	this.client = new CGateClient(this.cgateIpAddress, this.cgateControlPort,
 		this.project, this.network, this.application,
 		this.clientDebug);
@@ -156,7 +152,8 @@ CBusPlatform.prototype.accessories = function (callback) {
 
 	this.client.connect(function () {
 		this.database.fetch(this.client, () => {
-			log(`Successfully fetched ${this.database.applications.length} applications, ${this.database.groups.size} groups and ${this.database.units.size} units from C-Gate.`);
+			const stats = this.database.getStats();
+			log(`Successfully fetched ${stats.numApplications} applications, ${stats.numGroups} groups and ${stats.numUnits} units from C-Gate.`);
 
 			// export platform file is platform_export property is set
 			if (this.config.platform_export) {
