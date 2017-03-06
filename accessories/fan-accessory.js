@@ -64,57 +64,50 @@ function CBusFanAccessory(platform, accessoryData) {
 }
 
 CBusFanAccessory.prototype.getOn = function (callback) {
-	this._showInternals(`enter-getOn`);
-	this.client.receiveLevel(this.netId, function (message) {
-		this._log(FILE_ID, `receiveLevel returned ${message.level}`);
+	this.client.receiveLevel(this.netId, message => {
+		this._log(FILE_ID, `getOn receiveLevel returned ${message.level}`);
 		this.isOn = (message.level > 0) ? 1 : 0;
 		if (this.isOn) {
 			this.speed = message.level;
 		}
 
 		callback(false, this.isOn);
-		this._showInternals(`exit-getOn`);
-	}.bind(this));
+	}, `getOn`);
 };
 
 CBusFanAccessory.prototype.setOn = function (turnOn, callback, context) {
-	// context helps us avoid a never-ending loop
-	if (context === `event`) {
-		this._showInternals(`enter-setOn/event`);
-		this.isOn = turnOn;
-		callback();
-		this._showInternals(`exit-setOn/event`);
-	} else {
+	// delay by a fraction of a second to allow setSpeed to work first
+	setTimeout(() => {
 		const oldIsOn = this.isOn;
-		const newIsOn = turnOn;
 		this.isOn = turnOn;
 
-		const speed = turnOn ? this.speed : 0;
-		this._log(FILE_ID, `setOn changing level to ${speed}%`);
-		this._showInternals(`enter-setOn/change`);
-
-		if (oldIsOn && turnOn) {
-			this._log(FILE_ID, chalk.green(`setOn SWALLOW! already on`));
-			callback();
-		} else if (turnOn && speed === 0) {
-			this._log(FILE_ID, chalk.green(`SWALLOW! not sure why!?!?!?`));
+		// context helps us avoid a never-ending loop
+		if (context === `event`) {
 			callback();
 		} else {
-			this.client.setBrightness(this.netId, speed, function () {
+			const speed = turnOn ? this.speed : 0;
+
+			if (oldIsOn && turnOn) {
+				this._log(FILE_ID, `setOn already on; ignoring`);
 				callback();
-				this._showInternals(`exit-setOn/change`);
-			}, 0, `setOn`);
+			} else {
+				if (turnOn && speed === 0) {
+					this._log(FILE_ID, chalk.green.bold(`SWALLOW! *** not sure why if this is still needed -- remove? ***`));
+					callback();
+				} else {
+					this._log(FILE_ID, `setOn changing level to ${speed}%`);
+					this.client.setBrightness(this.netId, speed, function () {
+						callback();
+					}, 0, `setOn`);
+				}
+			}
 		}
-	}
+	}, 50);
 };
 
-var counter = 10;
-
 CBusFanAccessory.prototype.getSpeed = function (callback) {
-	var myCount = counter++;
-	this._showInternals(`enter-getSpeed${myCount}`);
-	this.client.receiveLevel(this.netId, function (message) {
-		this._log(FILE_ID, `receiveLevel returned ${message.level}`);
+	this.client.receiveLevel(this.netId, message => {
+		this._log(FILE_ID, `getSpeed receiveLevel returned ${message.level}`);
 		this.isOn = (message.level > 0) ? 1 : 0;
 		
 		if (this.isOn) {
@@ -125,39 +118,26 @@ CBusFanAccessory.prototype.getSpeed = function (callback) {
 		if (callback) {
 			callback(/* error */ false, /* newValue */ this.speed);
 		}
-		this._showInternals(`exit-getSpeed${myCount}`);
-	}.bind(this));
+	}, `getSpeed`);
 };
 
 CBusFanAccessory.prototype.setSpeed = function (newSpeed, callback, context) {
+	const oldSpeed = this.speed;
+	this.speed = newSpeed;
+
 	// context helps us avoid a never-ending loop
 	if (context === `event`) {
-		this._showInternals(`enter-setSpeed/event`);
-		this.speed = newSpeed;
 		callback();
-		this._showInternals(`exit-setSpeed/event`);
 	} else {
-		const oldSpeed = this.speed;
 		this.isOn = (newSpeed > 0) ? 1 : 0;
-		this.speed = newSpeed;
 
-		this._log(FILE_ID, `setSpeed changing speed to ${newSpeed}%`);
-		this._showInternals(`enter-setSpeed/change`);
-
-		if (newSpeed === 100) {
-			this._log(FILE_ID, `--> 100%`);
-		}
-
-		if (oldSpeed === newSpeed) {
-			this._log(FILE_ID, chalk.green(`setSpeed SWALLOW! no change`));
-			callback();
-		} if (!this.isOn && (newSpeed === 0)) {
-			this._log(FILE_ID, chalk.green(`setSpeed SWALLOW! special case`));
+		if (!this.isOn && (newSpeed === 0)) {
+			this._log(FILE_ID, chalk.green(`setSpeed swallowing special case: ${oldSpeed}% -> ${newSpeed}%`));
 			callback();
 		} else {
+			this._log(FILE_ID, `setSpeed changing speed to ${newSpeed}%`);
 			this.client.setBrightness(this.netId, newSpeed, function () {
 				callback();
-				this._showInternals(`exit-setSpeed/change`);
 			}, 0, `setSpeed`);
 		}
 	}
@@ -167,8 +147,7 @@ CBusFanAccessory.prototype.setSpeed = function (newSpeed, callback, context) {
 // could have been in response to one of our commands, or someone else
 CBusFanAccessory.prototype.processClientData = function (message) {
 	const speed = message.level;
-
-	this._log(FILE_ID, `client: received ${speed}%`);
+	this._log(FILE_ID, `cbus event: speed ${speed}%`);
 
 	if (typeof speed !== `undefined`) {
 		const wasOn = this.isOn;
@@ -177,36 +156,14 @@ CBusFanAccessory.prototype.processClientData = function (message) {
 		const oldSpeed = this.speed;
 		const newSpeed = isOn ? message.level : oldSpeed;
 
-		this._log(FILE_ID, `from client: on ${wasOn} -> ${isOn}, speed ${oldSpeed} -> ${newSpeed}`);
+		// update isOn
+		this.onC10tic.setValue(isOn, undefined, `event`);
 
+		// update speed
 		if (speed === 0) {
-			// it was probably just a turn off command
-			this._log(FILE_ID, chalk.green(`client`) + ` speed 0; interpreting as 'off'`);
-			this.onC10tic.setValue(isOn, undefined, `event`);
+			this._log(FILE_ID, `speed 0%; interpreting as 'off'`);
 		} else {
-			if (wasOn !== isOn) {
-				this.onC10tic.setValue(isOn, undefined, `event`);
-			}
-
-			if (oldSpeed !== newSpeed) {
-				this.speedC10tic.setValue(newSpeed, undefined, `event`);
-			}
+			this.speedC10tic.setValue(newSpeed, undefined, `event`);
 		}
-
-		// if (!wasOn && isOn) {
-		// 	// we were off, restore
-		// 	this._log(FILE_ID, chalk.green(`client`) + ` was off; restoring`);
-		// 	this.onC10tic.setValue(isOn, undefined, `event`);
-		// 	this.speedC10tic.setValue(newSpeed, undefined, `event`);
-		// }
 	}
-};
-
-require('../hot-debug.js');
-const fanLog = require('debug')('cbus:fan');
-
-CBusFanAccessory.prototype._showInternals = function (marker) {
-	const isOn = this.isOn;
-	const speed = this.speed;
-	fanLog(chalk.red.bold(`<<<${marker}>>> `) + `isOn: ${chalk.red(isOn)}, speed: ${chalk.red(speed + `%`)}`);
 };
