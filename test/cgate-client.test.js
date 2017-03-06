@@ -11,6 +11,8 @@ const rewire = require('rewire');
 require('../hot-debug.js');
 const log = require('debug')('test-output');
 
+const cgateLog = require('debug')('cbus:client');
+
 const CGateClient = rewire('../lib/cgate-client.js');
 const CGateDatabase = rewire(`../lib/cgate-database.js`);
 const CBusNetId = require('../lib/cbus-netid.js');
@@ -520,6 +522,8 @@ test(`setup tests`, function (assert) {
 });
 
 function _validate(message, descriptor, assert) {
+	cgateLog.enable();
+
 	const testName = `parsed message from '${descriptor.name}'`;
 
 	const expected = descriptor.expected;
@@ -574,6 +578,8 @@ test('server premature disconnect', function (assert) {
 
 function _serverTests(descriptors) {
 	test(`server responses`, assert => {
+		cgateLog.enable();
+
 		let descriptorIndex = 0;
 
 		const EVENTS_REQUEST = `[99] events e7s0c0`;

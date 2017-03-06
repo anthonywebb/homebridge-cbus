@@ -34,9 +34,9 @@ function CBusDimmerAccessory(platform, accessoryData) {
 	//--------------------------------------------------
 	//  Register the brightness service
 	//--------------------------------------------------
-	this.lightService.addCharacteristic(Characteristic.Brightness)
-	.on('get', this.getBrightness.bind(this))
-	.on('set', this.setBrightness.bind(this));
+	this.service.addCharacteristic(Characteristic.Brightness)
+		.on('get', this.getBrightness.bind(this))
+		.on('set', this.setBrightness.bind(this));
 }
 
 CBusDimmerAccessory.prototype.getBrightness = function (callback /* , context */) {
@@ -72,10 +72,10 @@ CBusDimmerAccessory.prototype.processClientData = function (message) {
 	const level = message.level;
 
 	// pick up the special cases of 'on' and 'off'
-	this.lightService.getCharacteristic(Characteristic.On).setValue(level > 0, undefined, `event`);
+	this.service.getCharacteristic(Characteristic.On).setValue(level > 0, undefined, `event`);
 
 	// set the brightness characteristic
-	this.lightService.getCharacteristic(Characteristic.Brightness).setValue(level, undefined, `event`);
+	this.service.getCharacteristic(Characteristic.Brightness).setValue(level, undefined, `event`);
 
 	this.currentState = level;
 };
