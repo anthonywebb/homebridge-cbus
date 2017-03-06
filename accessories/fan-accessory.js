@@ -65,7 +65,7 @@ function CBusFanAccessory(platform, accessoryData) {
 
 CBusFanAccessory.prototype.getOn = function (callback) {
 	this.client.receiveLevel(this.netId, message => {
-		this._log(FILE_ID, `getOn receiveLevel returned ${message.level}`);
+		this._log(FILE_ID, `getOn receiveLevel returned ${message.level}%`);
 		this.isOn = (message.level > 0) ? 1 : 0;
 		if (this.isOn) {
 			this.speed = message.level;
@@ -107,7 +107,7 @@ CBusFanAccessory.prototype.setOn = function (turnOn, callback, context) {
 
 CBusFanAccessory.prototype.getSpeed = function (callback) {
 	this.client.receiveLevel(this.netId, message => {
-		this._log(FILE_ID, `getSpeed receiveLevel returned ${message.level}`);
+		this._log(FILE_ID, `getSpeed receiveLevel returned ${message.level}%`);
 		this.isOn = (message.level > 0) ? 1 : 0;
 		
 		if (this.isOn) {
