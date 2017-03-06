@@ -34,6 +34,7 @@ module.exports = function (homebridge) {
 	const CBusMotionAccessory = require('./accessories/motion-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusSecurityAccessory = require('./accessories/security-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusShutterAccessory = require('./accessories/shutter-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
+	const CBusFanAccessory = require('./accessories/fan-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusSwitchAccessory = require('./accessories/switch-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 
 	// fix inheritance, since we've loaded our classes before the Accessory class has been loaded
@@ -43,6 +44,7 @@ module.exports = function (homebridge) {
 	cbusUtils.fixInheritance(CBusMotionAccessory, CBusAccessory);
 	cbusUtils.fixInheritance(CBusSecurityAccessory, CBusAccessory);
 	cbusUtils.fixInheritance(CBusShutterAccessory, CBusAccessory);
+	cbusUtils.fixInheritance(CBusFanAccessory, CBusAccessory);
 	cbusUtils.fixInheritance(CBusSwitchAccessory, CBusAccessory);
 
 	// register ourself with homebridge
@@ -55,6 +57,7 @@ module.exports = function (homebridge) {
 		motion: CBusMotionAccessory,
 		security: CBusSecurityAccessory,
 		shutter: CBusShutterAccessory,
+		fan: CBusFanAccessory,
 		switch: CBusSwitchAccessory
 	};
 };
@@ -107,29 +110,28 @@ CBusPlatform.prototype._processEvent = function (message) {
 	if (message.netId) {
 		const tag = this.database ? this.database.getTag(message.netId) : `NYI`;
 
-		let source;
-		if (typeof message.sourceunit !== `undefined`) {
-			const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceunit);
-			source = this.database.getNetworkEntity(sourceId);
-		}
-
 		// lookup accessory
 		let output;
 		const accessory = this.registeredAccessories[message.netId.toString()];
 		if (accessory) {
-			// process if found
 			output = `${chalk.red.bold(accessory.name)} (${accessory.type}) set to level ${message.level}%`;
-			accessory.processClientData(message);
 		} else {
-			output = `${chalk.red.bold.italic(tag)} (unregistered) set to level ${message.level}%`;
+			output = `${chalk.red.bold.italic(tag)} (not-registered) set to level ${message.level}%`;
 		}
 
-		if (source) {
-			let sourceType = source.unitType;
-			output = `${output}, by '${chalk.red.bold(source.tag)}' (${sourceType})`;
+		// append source info, if applicable
+		if (typeof message.sourceunit !== `undefined`) {
+			const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceunit);
+			const source = this.database.getNetworkEntity(sourceId);
+			output = `${output}, by ${chalk.red.bold(source.tag)} (${source.unitType})`;
 		}
 
 		logLevel(output);
+
+		if (accessory) {
+			// process if found
+			accessory.processClientData(message);
+		}
 	} else if (message.code === 700) {
 		log(`Heartbeat @ ${message.time}`);
 	} else if (message.code === 751) {
