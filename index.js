@@ -130,7 +130,8 @@ CBusPlatform.prototype._processEvent = function (message) {
 
 		if (accessory) {
 			// process if found
-			accessory.processClientData(message);
+			const err = (message.code !== 730);
+			accessory.processClientData(err, message);
 		}
 	} else if (message.code === 700) {
 		log(`Heartbeat @ ${message.time}`);
