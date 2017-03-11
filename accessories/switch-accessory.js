@@ -42,8 +42,8 @@ function CBusSwitchAccessory(platform, accessoryData) {
 	//--------------------------------------------------
 	//  Register the on-off service
 	//--------------------------------------------------
-	this.switchService = this.addService(new Service.Switch(this.name));
-	this.switchService.getCharacteristic(Characteristic.On)
+	this.service = this.addService(new Service.Switch(this.name));
+	this.service.getCharacteristic(Characteristic.On)
 		.on('get', this.getOn.bind(this))
 		.on('set', this.setOn.bind(this));
 }
@@ -103,5 +103,5 @@ CBusSwitchAccessory.prototype.processClientData = function (message) {
 	console.assert(typeof message.level !== `undefined`, `message.level must be defined`);
 	const level = message.level;
 
-	this.switchService.getCharacteristic(Characteristic.On).setValue(level > 0, undefined, `event`);
+	this.service.getCharacteristic(Characteristic.On).setValue(level > 0, undefined, `event`);
 };

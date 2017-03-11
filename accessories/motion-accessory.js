@@ -27,9 +27,9 @@ function CBusMotionAccessory(platform, accessoryData) {
 	//--------------------------------------------------
 	//  Register the on-off service
 	//--------------------------------------------------
-	this.motionService = this.addService(new Service.MotionSensor(this.name));
-	this.motionService.getCharacteristic(Characteristic.MotionDetected)
-	.on('get', this.getMotionState.bind(this));
+	this.service = this.addService(new Service.MotionSensor(this.name));
+	this.service.getCharacteristic(Characteristic.MotionDetected)
+		.on('get', this.getMotionState.bind(this));
 }
 
 CBusMotionAccessory.prototype.getMotionState = function (callback /* , context */) {
@@ -44,6 +44,6 @@ CBusMotionAccessory.prototype.getMotionState = function (callback /* , context *
 CBusMotionAccessory.prototype.processClientData = function (message) {
 	const level = message.level;
 
-	this.motionService.getCharacteristic(Characteristic.MotionDetected)
+	this.service.getCharacteristic(Characteristic.MotionDetected)
 	.setValue(level > 0);
 };

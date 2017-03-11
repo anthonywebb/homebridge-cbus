@@ -34,17 +34,17 @@ function CBusLightAccessory(platform, accessoryData) {
 	//--------------------------------------------------
 	//  Register the on-off service
 	//--------------------------------------------------
-	this.lightService = this.addService(new Service.Lightbulb(this.name));
-	this.lightService.getCharacteristic(Characteristic.On)
-	.on('get', this.getOn.bind(this))
-	.on('set', this.setOn.bind(this));
+	this.service = this.addService(new Service.Lightbulb(this.name));
+	this.service.getCharacteristic(Characteristic.On)
+		.on('get', this.getOn.bind(this))
+		.on('set', this.setOn.bind(this));
 }
 
 CBusLightAccessory.prototype.getOn = function (callback /* , context */) {
 	setTimeout(function () {
 		this.client.receiveLevel(this.netId, function (message) {
 			this.currentState = message.level;
-			this._log(FILE_ID, `receiveLightStatus returned ${message.level}`);
+			this._log(FILE_ID, `receiveLevel returned ${message.level}`);
 			callback(false, this.currentState > 0);
 		}.bind(this));
 	}.bind(this), 50);
@@ -77,6 +77,6 @@ CBusLightAccessory.prototype.processClientData = function (message) {
 	console.assert(typeof message.level !== `undefined`, `message.level must not be undefined`);
 	const level = message.level;
 
-	this.lightService.getCharacteristic(Characteristic.On)
+	this.service.getCharacteristic(Characteristic.On)
 	.setValue(level > 0, undefined, `event`);
 };

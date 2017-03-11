@@ -28,6 +28,7 @@ This project provides a bridge which 'exposes' your devices in a way that you ca
 * switches (with optional timeout)
 * dimmers
 * shutter relays
+* fans
 * motion sensors
 * security presence detectors.
 
@@ -134,6 +135,8 @@ The platform definition in the `config.json` file contains an `accessories` arra
 			    
         { "type": "shutter", "id": 145, "name": "Living Blinds" },
         { "type": "shutter", "id": 142, "name": "Dining Blinds", "invert": "true"},
+        
+        { "type": "fan", "id": 7, "name": "Kitchen Fan"},
 				
         { "type": "motion", "id": 51, "name": "Main" },
 			    
@@ -197,11 +200,12 @@ npm run test-coverage
 ````
 
 ## Changes Since 0.5.0
+* 0.5.8: adds support for `fan` accessories 
+
 * 0.5.7: 
   * adds support for `switch` accessories including optional `activeDuration` property
   * adds Unified Accessory List export
   * adds support for `enabled` property on accessories
-
 
 * 0.5.6: fetch and cache a copy of the C-Gate database for improved logging
 * 0.5.5: introduces unit testing and more robust configuration file checking
