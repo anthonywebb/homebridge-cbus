@@ -22,60 +22,65 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
 
 function CBusDimmerAccessory(platform, accessoryData) {
 	//--------------------------------------------------
-	//  Initialize the parent
-	//--------------------------------------------------
+	// initialize parent
 	CBusLightAccessory.call(this, platform, accessoryData);
 
 	//--------------------------------------------------
-	//  State variable
-	//--------------------------------------------------
-	this.currentState = 0;	// TODO how do we prime this?
+	// register brightness service
+	this.brightnessC10tic = this.service.getCharacteristic(Characteristic.Brightness);
 
-	//--------------------------------------------------
-	//  Register the brightness service
-	//--------------------------------------------------
-	this.service.addCharacteristic(Characteristic.Brightness)
+	this.brightnessC10tic
 		.on('get', this.getBrightness.bind(this))
 		.on('set', this.setBrightness.bind(this));
 }
 
-CBusDimmerAccessory.prototype.getBrightness = function (callback /* , context */) {
-	setTimeout(function () {
-		this.client.receiveLevel(this.netId, function (message) {
-			this._log(FILE_ID, `getBrightness returned ${message.level}%`);
-			callback(false, message.level);
-		}.bind(this));
-	}.bind(this), 50);
+CBusDimmerAccessory.prototype.getBrightness = function (callback) {
+	this.client.receiveLevel(this.netId, message => {
+		this._log(FILE_ID, `getBrightness returned ${message.level}%`);
+
+		if (message.level) {
+			// update level if the level is non-zero
+			this.brightness = message.level;
+		}
+
+		callback(/* error */ false, /* newValue */ message.level);
+	}, `getBrightness`);
 };
 
 CBusDimmerAccessory.prototype.setBrightness = function (newLevel, callback, context) {
-	// context helps us avoid a never-ending loop
+	this.brightness = newLevel;
+
 	if (context === `event`) {
-		// this._log(SCRIPT_NAME, `ignoring setBrightness 'event' ${level}%`);
+		// context helps us avoid a never-ending loop
 		callback();
 	} else {
-		if (this.currentState === newLevel) {
+		const oldSpeed = this.speed;
+
+		if (!this.isOn && (newLevel === 0)) {
+			this._log(FILE_ID, chalk.green(`setBrightness swallowing 0%`));
 			callback();
 		} else {
-			const oldLevel = this.currentState;
-			this.currentState = newLevel;
-			this._log(FILE_ID, `setBrightness: change level to ${newLevel}% ` + chalk.dim(`from ${oldLevel}%`));
-			this.client.setBrightness(this.netId, newLevel, function () {
+			this._log(FILE_ID, `setBrightness changing level to ${newLevel}%`);
+			this.client.setLevel(this.netId, newLevel, function () {
 				callback();
-			});
+			}, 0, `setBrightness`);
 		}
 	}
 };
 
-CBusDimmerAccessory.prototype.processClientData = function (message) {
-	console.assert(typeof message.level !== `undefined`, `CBusDimmerAccessory.processClientData must receive message.level`);
-	const level = message.level;
+CBusDimmerAccessory.prototype.processClientData = function (err, message) {
+	if (!err) {
+		console.assert(typeof message.level !== `undefined`, `CBusDimmerAccessory.processClientData must receive message.level`);
+		const level = message.level;
 
-	// pick up the special cases of 'on' and 'off'
-	this.service.getCharacteristic(Characteristic.On).setValue(level > 0, undefined, `event`);
+		// pick up the special cases of 'on' and 'off'
+		this.onC10tic.setValue((level > 0) ? 1 : 0, undefined, `event`);
 
-	// set the brightness characteristic
-	this.service.getCharacteristic(Characteristic.Brightness).setValue(level, undefined, `event`);
-
-	this.currentState = level;
+		// update brightness
+		if (level === 0) {
+			this._log(FILE_ID, `level 0%; interpreting as 'off'`);
+		} else {
+			this.brightnessC10tic.setValue(level, undefined, `event`);
+		}
+	}
 };

@@ -46,7 +46,8 @@ function CBusFanAccessory(platform, accessoryData) {
 
 	//--------------------------------------------------
 	// prime the fan state
-	this.isOn = false;
+	// TODO work out whether we really do need to prime…
+	this.isOn = 0;
 	this.speed = 0;
 
 	setTimeout(() => {
@@ -76,27 +77,27 @@ CBusFanAccessory.prototype.getOn = function (callback) {
 };
 
 CBusFanAccessory.prototype.setOn = function (turnOn, callback, context) {
-	// delay by a fraction of a second to allow setSpeed to work first
+	// delay by a fraction of a second to give setSpeed a chance to work first
 	setTimeout(() => {
-		const oldIsOn = this.isOn;
+		const wasOn = this.isOn;
 		this.isOn = turnOn;
 
-		// context helps us avoid a never-ending loop
 		if (context === `event`) {
+			// context helps us avoid a never-ending loop
 			callback();
 		} else {
 			const speed = turnOn ? this.speed : 0;
 
-			if (oldIsOn && turnOn) {
+			if (wasOn && this.isOn) {
 				this._log(FILE_ID, `setOn already on; ignoring`);
 				callback();
 			} else {
-				if (turnOn && speed === 0) {
+				if (this.isOn && speed === 0) {
 					this._log(FILE_ID, chalk.green.bold(`SWALLOW! *** not sure why if this is still needed -- remove? ***`));
 					callback();
 				} else {
 					this._log(FILE_ID, `setOn changing level to ${speed}%`);
-					this.client.setBrightness(this.netId, speed, function () {
+					this.client.setLevel(this.netId, speed, function () {
 						callback();
 					}, 0, `setOn`);
 				}
@@ -110,8 +111,8 @@ CBusFanAccessory.prototype.getSpeed = function (callback) {
 		this._log(FILE_ID, `getSpeed receiveLevel returned ${message.level}%`);
 		this.isOn = (message.level > 0) ? 1 : 0;
 		
-		if (this.isOn) {
-			// only update level if the level is non-zero
+		if (message.level > 0) {
+			// update speed if the speed is non-zero
 			this.speed = message.level;
 		}
 
@@ -125,8 +126,8 @@ CBusFanAccessory.prototype.setSpeed = function (newSpeed, callback, context) {
 	const oldSpeed = this.speed;
 	this.speed = newSpeed;
 
-	// context helps us avoid a never-ending loop
 	if (context === `event`) {
+		// context helps us avoid a never-ending loop
 		callback();
 	} else {
 		this.isOn = (newSpeed > 0) ? 1 : 0;
@@ -136,7 +137,7 @@ CBusFanAccessory.prototype.setSpeed = function (newSpeed, callback, context) {
 			callback();
 		} else {
 			this._log(FILE_ID, `setSpeed changing speed to ${newSpeed}%`);
-			this.client.setBrightness(this.netId, newSpeed, function () {
+			this.client.setLevel(this.netId, newSpeed, function () {
 				callback();
 			}, 0, `setSpeed`);
 		}
@@ -145,14 +146,15 @@ CBusFanAccessory.prototype.setSpeed = function (newSpeed, callback, context) {
 
 // received an event over the network
 // could have been in response to one of our commands, or someone else
-CBusFanAccessory.prototype.processClientData = function (message) {
-	const speed = message.level;
-	this._log(FILE_ID, `cbus event: speed ${speed}%`);
+CBusFanAccessory.prototype.processClientData = function (err, message) {
+	if (!err) {
+		const speed = message.level;
+		this._log(FILE_ID, `cbus event: speed ${speed}%`);
 
-	if (typeof speed !== `undefined`) {
 		const wasOn = this.isOn;
-		const isOn = speed > 0 ? 1 : 0;
+		const isOn = (speed > 0) ? 1 : 0;
 
+		// TODO isn't this duplicated lower down the call chain?
 		const oldSpeed = this.speed;
 		const newSpeed = isOn ? message.level : oldSpeed;
 

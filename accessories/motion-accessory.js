@@ -20,30 +20,27 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
 
 function CBusMotionAccessory(platform, accessoryData) {
 	//--------------------------------------------------
-	//  Initialize the parent
-	//--------------------------------------------------
+	// initialize parent
 	CBusAccessory.call(this, platform, accessoryData);
 
 	//--------------------------------------------------
-	//  Register the on-off service
-	//--------------------------------------------------
+	// register on-off service
 	this.service = this.addService(new Service.MotionSensor(this.name));
 	this.service.getCharacteristic(Characteristic.MotionDetected)
 		.on('get', this.getMotionState.bind(this));
 }
 
-CBusMotionAccessory.prototype.getMotionState = function (callback /* , context */) {
-	setTimeout(function () {
-		this.client.receiveLevel(this.netId, function (message) {
-			this._log(FILE_ID, `getState = ${message.level}`);
-			callback(false, /* state: */ message.level ? 1 : 0);
-		}.bind(this));
-	}.bind(this), 50);
+CBusMotionAccessory.prototype.getMotionState = function (callback) {
+	this.client.receiveLevel(this.netId, message => {
+		this._log(FILE_ID, `getState = ${message.level}`);
+		callback(false, /* state: */ message.level ? 1 : 0);
+	});
 };
 
-CBusMotionAccessory.prototype.processClientData = function (message) {
-	const level = message.level;
-
-	this.service.getCharacteristic(Characteristic.MotionDetected)
-	.setValue(level > 0);
+CBusMotionAccessory.prototype.processClientData = function (err, message) {
+	if (!err) {
+		const level = message.level;
+		this.service.getCharacteristic(Characteristic.MotionDetected)
+			.setValue((level > 0) ? 1 : 0);
+	}
 };
