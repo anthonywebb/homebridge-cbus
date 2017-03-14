@@ -57,9 +57,10 @@ CBusLightAccessory.prototype.setOn = function (turnOn, callback, context) {
 	} else {
 		// delay by a fraction of a second to give any superclass (nb. there may not be one) a chance to work first
 		setTimeout(() => {
-			console.assert((turnOn === 1) || (turnOn === 0));
+			// it appears that Siri uses true/false but the Home app uses 1/0 -- odd!
+			console.assert((turnOn === 1) || (turnOn === 0) || (turnOn === true) || (turnOn === false));
 			const wasOn = this.isOn;
-			this.isOn = (turnOn === 1);
+			this.isOn = (turnOn === 1) || (turnOn === true);
 
 			if (this.isOn === wasOn) {
 				this._log(FILE_ID, `setOn: no state change from ${wasOn}`);

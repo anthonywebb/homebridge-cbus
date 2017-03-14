@@ -59,9 +59,9 @@ CBusSwitchAccessory.prototype.setOn = function (turnOn, callback, context) {
 		// context helps us avoid a never-ending loop
 		callback();
 	} else {
-		console.assert((turnOn === 1) || (turnOn === 0));
+		console.assert((turnOn === 1) || (turnOn === 0) || (turnOn === true) || (turnOn === false));
 		const wasOn = this.isOn;
-		this.isOn = (turnOn === 1);
+		this.isOn = (turnOn === 1) || (turnOn === true);
 
 		if (wasOn === this.isOn) {
 			this._log(FILE_ID, `setOn: no state change from ${turnOn}`);
