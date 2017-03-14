@@ -56,10 +56,8 @@ function CBusAccessory(platform, accessoryData) {
 		groupAddress
 	);
 
-	this.id = this.netId.getHash();
-
 	// fire our parent
-	const ourUUID = uuid.generate(this.id);
+	const ourUUID = uuid.generate(this.netId.getHash());
 	Accessory.call(this, this.name, ourUUID);
 
 	// setup service

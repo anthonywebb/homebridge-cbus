@@ -182,6 +182,11 @@ CBusPlatform.prototype.accessories = function (callback) {
 CBusPlatform.prototype._createAccessories = function () {
 	log('Loading the accessories list…');
 
+	if (typeof this.config.accessories === `undefined`) {
+		log(`Your config.json file is missing the 'accessories' section for this platform. (Check spelling!)`);
+		process.exit(0);
+	}
+
 	const accessories = [];
 
 	for (let config of this.config.accessories) {
