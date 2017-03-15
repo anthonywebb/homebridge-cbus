@@ -204,6 +204,8 @@ npm run test-coverage
 ````
 
 ## Changes Since 0.5.0
+* 0.5.9: adds support for `rampDuration` (for dimmers) and remove extraneous C-Bus comms when dimming or changing fan speed 
+
 * 0.5.8: adds support for `fan` accessories 
 
 * 0.5.7: 
