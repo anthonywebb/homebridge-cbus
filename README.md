@@ -95,9 +95,11 @@ The platform definition in the `config.json` file contains an `accessories` arra
 * `application`: (optional, defaults to `client_application`) The C-Bus Application address of the device
 * `id`: (required) C-Bus address of the device — every accessory in C-Bus has one
 * `invert`: (optional, defaults to false) only used by the shutter relay accessory and indicates that the shutter has been wired to open when commanded closed and vice versa
-* `activeDuration`: (optional) only used by the switch accessory, indicating a timeout period, after which the switch will automatically switch off. This allows a HomeKit switch accessory to be used to generate a *Bell Press* event. The duration can be specified in days, hours, minutes, seconds or milliseconds. (For example: "2 days", "2.5h", "5s", "100 ms", [etc.](https://github.com/zeit/ms))
+* `activeDuration`: (optional) only used by the switch accessory, indicating a timeout period, after which the switch will automatically switch off. This allows a HomeKit switch accessory to be used to generate a *Bell Press* event.
+* `rampDuration`: (optional, maximum 17 minutes) only used by the dimmer accessory, indicating the ramp up/down time when dimming.
 * `enabled`: (optional, default: true) set to false to inhibit the accessory from loading.
 
+(NB. Durations can be specified in days, hours, minutes, seconds or milliseconds. (eg.: "2 days", "2.5h", "5s", "100 ms", etc. ) For more information on allowable formats, please see the [ms library](https://github.com/zeit/ms))
 
 ### Functional example `config.json`
 ````json
@@ -132,7 +134,9 @@ The platform definition in the `config.json` file contains an `accessories` arra
         { "type": "light", "network": "250", "application": "203", "id": 3, "name": "Backdoor" },
 			
         { "type": "dimmer", "id": 3, "name": "Closet" },
-			    
+        
+        { "type": "dimmer", "id": 22, "name": "Wake Up Lights", "rampDuration": "10 min"},		
+       	    
         { "type": "shutter", "id": 145, "name": "Living Blinds" },
         { "type": "shutter", "id": 142, "name": "Dining Blinds", "invert": "true"},
         

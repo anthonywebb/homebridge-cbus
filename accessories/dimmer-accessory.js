@@ -58,14 +58,14 @@ CBusDimmerAccessory.prototype.getBrightness = function (callback) {
 
 CBusDimmerAccessory.prototype.setBrightness = function (newLevel, callback, context) {
 	this.brightness = newLevel;
+	const wasOn = this.isOn;
+	this.isOn = (this.brightness > 0);
 
 	if (context === `event`) {
 		// context helps us avoid a never-ending loop
 		callback();
 	} else {
-		const oldSpeed = this.speed;
-
-		if (!this.isOn && (newLevel === 0)) {
+		if (!wasOn && (newLevel === 0)) {
 			this._log(FILE_ID, chalk.green(`setBrightness swallowing 0%`));
 			callback();
 		} else {
