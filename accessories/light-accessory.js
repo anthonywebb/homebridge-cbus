@@ -30,6 +30,7 @@ function CBusLightAccessory(platform, accessoryData) {
 	// TODO do we need to prime this?
 	this.isOn = false;
 	this.brightness = 100;
+	this.rampDuration = 0;		// duration in ms
 
 	//--------------------------------------------------
 	// register on-off service
@@ -72,7 +73,7 @@ CBusLightAccessory.prototype.setOn = function (turnOn, callback, context) {
 				this._log(FILE_ID, `setOn changing level to ${newLevel}%`);
 				this.client.setLevel(this.netId, newLevel, () => {
 					callback();
-				}, 0, `setOn`);
+				}, this.rampDuration / 1000, `setOn`);
 			}
 		}, 50);
 	}
