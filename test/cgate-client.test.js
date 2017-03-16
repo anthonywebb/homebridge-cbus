@@ -85,7 +85,7 @@ const TEST_DESCRIPTORS = [
 	{
 		name: `[102] setLightBrightness`,
 		clientAction: function () {
-			gClient.setBrightness(CBusNetId.parse(`//EXAMPLE/254/56/3`), 50, () => {
+			gClient.setLevel(CBusNetId.parse(`//EXAMPLE/254/56/3`), 50, () => {
 			}, 10);
 		},
 		fromClient: `[102] ramp //EXAMPLE/254/56/3 50% 10`,

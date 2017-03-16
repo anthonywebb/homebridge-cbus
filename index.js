@@ -130,7 +130,8 @@ CBusPlatform.prototype._processEvent = function (message) {
 
 		if (accessory) {
 			// process if found
-			accessory.processClientData(message);
+			const err = (message.code !== 730);
+			accessory.processClientData(err, message);
 		}
 	} else if (message.code === 700) {
 		log(`Heartbeat @ ${message.time}`);
@@ -180,6 +181,11 @@ CBusPlatform.prototype.accessories = function (callback) {
 // return a map of newly minted accessories
 CBusPlatform.prototype._createAccessories = function () {
 	log('Loading the accessories list…');
+
+	if (typeof this.config.accessories === `undefined`) {
+		log(`Your config.json file is missing the 'accessories' section for this platform. (Check spelling!)`);
+		process.exit(0);
+	}
 
 	const accessories = [];
 

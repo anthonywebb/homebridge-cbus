@@ -23,85 +23,78 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
 };
 
 function CBusSwitchAccessory(platform, accessoryData) {
-	//--------------------------------------------------
-	//  Initialize the parent
-	//--------------------------------------------------
+	// initialize the parent
 	CBusAccessory.call(this, platform, accessoryData);
 
 	// if we have an activeDuration specified, stash it away
 	if (typeof accessoryData.activeDuration !== `undefined`) {
 		this.activeDuration = ms(accessoryData.activeDuration);
-		this._log(FILE_ID, `configured to automatically turn off ${this.activeDuration}ms after being switched on by homebridge`);
+		this._log(FILE_ID, `configured to automatically turn off ${this.activeDuration}ms when activated via homebridge`);
 	}
 
-	//--------------------------------------------------
-	//  State variable
-	//--------------------------------------------------
-	this.currentState = false;	// TODO how do we prime this?
+	// TODO do we need to prime this?
+	this.isOn = false;
 
-	//--------------------------------------------------
-	//  Register the on-off service
-	//--------------------------------------------------
+	// register the on-off service
 	this.service = this.addService(new Service.Switch(this.name));
 	this.service.getCharacteristic(Characteristic.On)
 		.on('get', this.getOn.bind(this))
 		.on('set', this.setOn.bind(this));
 }
 
-CBusSwitchAccessory.prototype.getOn = function (callback /* , context */) {
-	setTimeout(function () {
-		this.client.receiveLevel(this.netId, function (message) {
-			this.currentState = message.level > 0;
-			this._log(FILE_ID, `getOn: status = '${this.currentState ? `on` : `off`}'`);
-			callback(false, this.currentState > 0);
-		}.bind(this));
-	}.bind(this), 50);
+CBusSwitchAccessory.prototype.getOn = function (callback) {
+	this.client.receiveLevel(this.netId, message => {
+		this.isOn = message.level > 0;
+		this._log(FILE_ID, `getOn: status = '${this.isOn ? `on` : `off`}'`);
+		callback(false, this.isOn ? 1 : 0);
+	}, `getOn`);
 };
 
 CBusSwitchAccessory.prototype.setOn = function (turnOn, callback, context) {
-	// context helps us avoid a never-ending loop
 	if (context === `event`) {
-		// this._log(SCRIPT_NAME, `ignoring setOn 'event'`);
+		// context helps us avoid a never-ending loop
 		callback();
 	} else {
-		const isOn = this.currentState > 0;
+		console.assert((turnOn === 1) || (turnOn === 0) || (turnOn === true) || (turnOn === false));
+		const wasOn = this.isOn;
+		this.isOn = (turnOn === 1) || (turnOn === true);
 
-		if (isOn === turnOn) {
-			this._log(FILE_ID, `setOn: no state change from ${isOn}`);
+		if (wasOn === this.isOn) {
+			this._log(FILE_ID, `setOn: no state change from ${turnOn}`);
 			callback();
-		} if (turnOn) {
-			this.currentState = turnOn;
+		} else if (turnOn) {
 			this._log(FILE_ID, `setOn(true): changing to 'on'`);
-			this.client.turnOn(this.netId, function () {
+			this.client.turnOn(this.netId, () => {
 				if (this.activeDuration) {
-					this.timeout = setTimeout(function () {
+					this.timeout = setTimeout(() => {
 						this._log(FILE_ID, `activity timer expired. turning off`);
 						this.client.turnOff(this.netId);
-					}.bind(this), this.activeDuration);
-					this._log(FILE_ID, `turned on. setting activity timer for ${this.activeDuration}ms`);
+					}, this.activeDuration);
+					this._log(FILE_ID, `turned on; will turn off in ${ms(this.activeDuration)} (${this.activeDuration}ms)`);
 				}
 				callback();
-			}.bind(this));
+			});
 		} else {
-			// turnOn == false, ie. turn off
-			this.currentState = turnOn;
+			// turnOn === false, ie. turn off
 			this._log(FILE_ID, `setOn(false): changing to 'off'`);
-			this.client.turnOff(this.netId, function () {
+			this.client.turnOff(this.netId, () => {
 				callback();
 			});
 		}
 	}
 
-	// if we turn off (regardless of whether by homebridge or switch), clear out any timeout
+	// if we turn off (regardless of whether by homebridge or cbus), clear out any timeout
 	if (!turnOn && this.timeout) {
 		this._log(FILE_ID, `turned off. clearing activity timer`);
 		clearTimeout(this.timeout);
 	}
 };
 
-CBusSwitchAccessory.prototype.processClientData = function (message) {
-	console.assert(typeof message.level !== `undefined`, `message.level must be defined`);
-	const level = message.level;
+CBusSwitchAccessory.prototype.processClientData = function (err, message) {
+	if (!err) {
+		console.assert(typeof message.level !== `undefined`, `message.level must be defined`);
+		const level = message.level;
 
-	this.service.getCharacteristic(Characteristic.On).setValue(level > 0, undefined, `event`);
+		this.service.getCharacteristic(Characteristic.On).setValue((level > 0) ? 1 : 0, undefined, `event`);
+	}
 };

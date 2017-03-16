@@ -29,13 +29,11 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
 
 function CBusShutterAccessory(platform, accessoryData) {
 	//--------------------------------------------------
-	//  Initialize the parent
-	//--------------------------------------------------
+	// initialize the parent
 	CBusAccessory.call(this, platform, accessoryData);
 
 	//--------------------------------------------------
-	//  Initialize state variables
-	//--------------------------------------------------
+	// state variables
 	// handle inversion
 	this.invert = accessoryData.invert || 'false';
 
@@ -44,9 +42,9 @@ function CBusShutterAccessory(platform, accessoryData) {
 	// if we can infer the position from the shutter state
 	this.cachedTargetPosition = 0;
 
-	setTimeout(function () {
+	setTimeout(() => {
 		this._log(FILE_ID, 'prime shutter state');
-		this.client.receiveLevel(this.netId, function (message) {
+		this.client.receiveLevel(this.netId, message => {
 			let translated = this.translateShutterToProportional(message.level);
 
 			if (typeof translated === `undefined`) {
@@ -57,12 +55,11 @@ function CBusShutterAccessory(platform, accessoryData) {
 				this._log(FILE_ID, `prime cachedTargetPosition = ${translated}%`);
 				this.cachedTargetPosition = translated;
 			}
-		}.bind(this));
-	}.bind(this), 5000);
+		});
+	}, 5000);
 
 	//--------------------------------------------------
-	//  Register the Window Covering service
-	//--------------------------------------------------
+	// register the Window Covering service
 	this.service = this.addService(new Service.WindowCovering(this.name));
 
 	// the current position (0-100%)
@@ -132,7 +129,6 @@ CBusShutterAccessory.prototype.translateShutterToProportional = function (level)
 	}
 
 	let translated;
-
 	switch (level) {
 		case SHUTTER_OPEN:
 			translated = 100;
@@ -165,12 +161,12 @@ CBusShutterAccessory.prototype.translateShutterToProportional = function (level)
 	return translated;
 };
 
-CBusShutterAccessory.prototype.getCurrentPosition = function (callback /* , context */) {
+CBusShutterAccessory.prototype.getCurrentPosition = function (callback) {
 	this._log(FILE_ID, 'getCurrentPosition = ' + this.cachedTargetPosition);
 	callback(false, /* value */ this.cachedTargetPosition);
 };
 
-CBusShutterAccessory.prototype.getPositionState = function (callback /* , context */) {
+CBusShutterAccessory.prototype.getPositionState = function (callback) {
 	// unless/until we simulate the shutter relay, we don't know whether it is moving
 	// so assume that it is stopped
 	const currentPositionState = Characteristic.PositionState.STOPPED;
@@ -179,29 +175,27 @@ CBusShutterAccessory.prototype.getPositionState = function (callback /* , contex
 	callback(false, currentPositionState);
 };
 
-CBusShutterAccessory.prototype.getTargetPosition = function (callback /* , context */) {
-	setTimeout(function () {
-		this.client.receiveLevel(this.netId, function (result) {
-			let proportion = this.translateShutterToProportional(result.level);
-			this._log(FILE_ID, 'getTargetPosition = ' + proportion);
+CBusShutterAccessory.prototype.getTargetPosition = function (callback) {
+	this.client.receiveLevel(this.netId, result => {
+		let proportion = this.translateShutterToProportional(result.level);
+		this._log(FILE_ID, 'getTargetPosition = ' + proportion);
 
-			if (typeof proportion === `undefined`) {
-				// TODO be smarter here
-				this._log(FILE_ID, 'getTargetPosition indeterminate; defaulting to 0%');
-				callback(false, 0);
-			} else {
-				// cache a copy
-				this.cachedTargetPosition = proportion;
-				callback(false, proportion);
-			}
-		}.bind(this));
-	}.bind(this), 50);
+		if (typeof proportion === `undefined`) {
+			// TODO be smarter here
+			this._log(FILE_ID, 'getTargetPosition indeterminate; defaulting to 0%');
+			callback(false, 0);
+		} else {
+			// cache a copy
+			this.cachedTargetPosition = proportion;
+			callback(false, proportion);
+		}
+	});
 };
 
 CBusShutterAccessory.prototype.setTargetPosition = function (newPosition, callback, context) {
 	// context helps us avoid a never-ending loop
 	if (context === `event`) {
-		this._log(FILE_ID, 'suppressing remote setTargetPosition');
+		// this._log(FILE_ID, 'suppressing remote setTargetPosition');
 		callback();
 	} else {
 		this._log(FILE_ID, `setTargetPosition = ${newPosition} (was ${this.cachedTargetPosition})`);
@@ -236,50 +230,52 @@ CBusShutterAccessory.prototype.setTargetPosition = function (newPosition, callba
 		let shutterLevel = this.translateProportionalToShutter(newPosition);
 
 		// in this framework, the shutter relay position just looks like the brightness of a light
-		this.client.setBrightness(this.netId, shutterLevel, function () {
+		this.client.setLevel(this.netId, shutterLevel, () => {
 			this._log(FILE_ID, 'sent to client: shutter = ' + shutterLevel);
 
 			// keep the spinner moving for a little while to give the sense of movement
-			setTimeout(function () {
+			setTimeout(() => {
 				this.cachedTargetPosition = newPosition;
 				this._log(FILE_ID, `finishing movement; signalling stopping at ${this.cachedTargetPosition}`);
 				this.service.setCharacteristic(Characteristic.CurrentPosition, this.cachedTargetPosition);
 				this.service.setCharacteristic(Characteristic.PositionState, Characteristic.PositionState.STOPPED);
 				this._log(FILE_ID, 'finished movement.\n\n');
-			}.bind(this), SPIN_TIME);
+			}, SPIN_TIME);
 
 			callback();
-		}.bind(this));
+		});
 	}
 };
 
-CBusShutterAccessory.prototype.processClientData = function (message) {
-	const level = message.level;
-	const translated = this.translateShutterToProportional(level);
+CBusShutterAccessory.prototype.processClientData = function (err, message) {
+	if (!err) {
+		const level = message.level;
+		const translated = this.translateShutterToProportional(level);
 
-	if (typeof translated === `undefined`) {
-		this._log(FILE_ID, 'client: indeterminate');
+		if (typeof translated === `undefined`) {
+			this._log(FILE_ID, 'client: indeterminate');
 
-		// could be a bit smarter here
-		this.cachedTargetPosition = 0;
-	} else {
-		this._log(FILE_ID, `client: received ${translated}%`);
+			// could be a bit smarter here
+			this.cachedTargetPosition = 0;
+		} else {
+			this._log(FILE_ID, `client: received ${translated}%`);
 
-		if (this.cachedTargetPosition !== translated) {
-			this.service.getCharacteristic(Characteristic.TargetPosition).setValue(translated, undefined, `event`);
+			if (this.cachedTargetPosition !== translated) {
+				this.service.getCharacteristic(Characteristic.TargetPosition).setValue(translated, undefined, `event`);
 
-			//  move over 2 seconds
-			setTimeout(function () {
-				this.cachedTargetPosition = translated;
+				//  move over 2 seconds
+				setTimeout(() => {
+					this.cachedTargetPosition = translated;
 
-				// in many cases the shutter will still be travelling for a while, but unless/until we
-				// simulate the shutter relay, we won't know when it has stopped.
-				// so just assume it gets there immediately.
-				this.service.getCharacteristic(Characteristic.CurrentPosition)
-				.setValue(this.cachedTargetPosition, undefined, `event`);
-				this.service.getCharacteristic(Characteristic.PositionState)
-				.setValue(Characteristic.PositionState.STOPPED, undefined, `event`);
-			}.bind(this), SPIN_TIME);
+					// in many cases the shutter will still be travelling for a while, but unless/until we
+					// simulate the shutter relay, we won't know when it has stopped.
+					// so just assume it gets there immediately.
+					this.service.getCharacteristic(Characteristic.CurrentPosition)
+						.setValue(this.cachedTargetPosition, undefined, `event`);
+					this.service.getCharacteristic(Characteristic.PositionState)
+						.setValue(Characteristic.PositionState.STOPPED, undefined, `event`);
+				}, SPIN_TIME);
+			}
 		}
 	}
 };
