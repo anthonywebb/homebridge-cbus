@@ -23,22 +23,18 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
 };
 
 function CBusSwitchAccessory(platform, accessoryData) {
-	//--------------------------------------------------
 	// initialize the parent
 	CBusAccessory.call(this, platform, accessoryData);
 
 	// if we have an activeDuration specified, stash it away
 	if (typeof accessoryData.activeDuration !== `undefined`) {
 		this.activeDuration = ms(accessoryData.activeDuration);
-		this._log(FILE_ID, `configured to automatically turn off ${this.activeDuration}ms after being switched on by homebridge`);
+		this._log(FILE_ID, `configured to automatically turn off ${this.activeDuration}ms when activated via homebridge`);
 	}
 
-	//--------------------------------------------------
-	// state variable
 	// TODO do we need to prime this?
 	this.isOn = false;
 
-	//--------------------------------------------------
 	// register the on-off service
 	this.service = this.addService(new Service.Switch(this.name));
 	this.service.getCharacteristic(Characteristic.On)
@@ -59,9 +55,9 @@ CBusSwitchAccessory.prototype.setOn = function (turnOn, callback, context) {
 		// context helps us avoid a never-ending loop
 		callback();
 	} else {
-		console.assert((turnOn === 1) || (turnOn === 0));
+		console.assert((turnOn === 1) || (turnOn === 0) || (turnOn === true) || (turnOn === false));
 		const wasOn = this.isOn;
-		this.isOn = (turnOn === 1);
+		this.isOn = (turnOn === 1) || (turnOn === true);
 
 		if (wasOn === this.isOn) {
 			this._log(FILE_ID, `setOn: no state change from ${turnOn}`);

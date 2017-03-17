@@ -7,6 +7,8 @@ let uuid;
 
 const chalk = require('chalk');
 
+const ms = require('ms');
+
 const cbusUtils = require('../lib/cbus-utils.js');
 
 const FILE_ID = cbusUtils.extractIdentifierFromFileName(__filename);
@@ -21,11 +23,18 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
 };
 
 function CBusDimmerAccessory(platform, accessoryData) {
-	//--------------------------------------------------
 	// initialize parent
 	CBusLightAccessory.call(this, platform, accessoryData);
 
-	//--------------------------------------------------
+	// if we have an activeDuration specified, stash it away
+	if (typeof accessoryData.rampDuration !== `undefined`) {
+		this.rampDuration = ms(accessoryData.rampDuration);
+		if (this.rampDuration > ms(`17m`)) {
+			throw new Error(`accessory '${this.name} rampDuration (${ms(this.rampDuration)}) is greater than maximum (17m)`);
+		}
+		this._log(FILE_ID, `configured to ramp up/down over ${this.rampDuration}ms when activated via homebridge`);
+	}
+
 	// register brightness service
 	this.brightnessC10tic = this.service.getCharacteristic(Characteristic.Brightness);
 
@@ -49,21 +58,21 @@ CBusDimmerAccessory.prototype.getBrightness = function (callback) {
 
 CBusDimmerAccessory.prototype.setBrightness = function (newLevel, callback, context) {
 	this.brightness = newLevel;
+	const wasOn = this.isOn;
+	this.isOn = (this.brightness > 0);
 
 	if (context === `event`) {
 		// context helps us avoid a never-ending loop
 		callback();
 	} else {
-		const oldSpeed = this.speed;
-
-		if (!this.isOn && (newLevel === 0)) {
+		if (!wasOn && (newLevel === 0)) {
 			this._log(FILE_ID, chalk.green(`setBrightness swallowing 0%`));
 			callback();
 		} else {
 			this._log(FILE_ID, `setBrightness changing level to ${newLevel}%`);
 			this.client.setLevel(this.netId, newLevel, function () {
 				callback();
-			}, 0, `setBrightness`);
+			}, this.rampDuration / 1000, `setBrightness`);
 		}
 	}
 };
