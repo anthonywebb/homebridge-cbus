@@ -198,16 +198,11 @@ test('construct illegal whitespace', function (assert) {
 });
 
 test('construct illegal project name', function (assert) {
-	assert.plan(4);
+	assert.plan(3);
 
 	assert.throws(function () {
 		// non numerical group
 		CBusNetId.parse(`//S,3AC/254/56`);
-	});
-
-	assert.throws(function () {
-		// first char not alpha
-		CBusNetId.parse(`//1SHAC/254/56`);
 	});
 
 	assert.throws(function () {
