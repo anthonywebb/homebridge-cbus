@@ -198,16 +198,11 @@ test('construct illegal whitespace', function (assert) {
 });
 
 test('construct illegal project name', function (assert) {
-	assert.plan(4);
+	assert.plan(10);
 
 	assert.throws(function () {
 		// non numerical group
 		CBusNetId.parse(`//S,3AC/254/56`);
-	});
-
-	assert.throws(function () {
-		// first char not alpha
-		CBusNetId.parse(`//1SHAC/254/56`);
 	});
 
 	assert.throws(function () {
@@ -218,6 +213,41 @@ test('construct illegal project name', function (assert) {
 	assert.throws(function () {
 		// name empty
 		CBusNetId.parse(`///254/56/191`);
+	});
+
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//P/254/56/34`);
+	});
+
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//CBUS/254/56/34`);
+	});
+	
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//VM/254/56/34`);
+	});
+
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//CMDINT/254/56/34`);
+	});
+
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//CGATE/254/56/34`);
+	});
+	
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//TAG/254/56/34`);
+	});
+
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//CMD` + (Math.floor((Math.random() * 100) + 1)) + `/254/56/34`);
 	});
 
 	assert.end();
