@@ -139,6 +139,19 @@ test('construct unit address', function (assert) {
 	assert.end();
 });
 
+test('construct application netId', function (assert) {
+  assert.plan(5);
+
+  const netId = CBusNetId.parse(`//S31415/254/57`);
+  assert.equal(netId.project, 'S31415');
+  assert.equal(netId.network, 254);
+  assert.equal(netId.application, 57);
+  assert.equal(netId.group, undefined);
+  assert.equal(netId.toString(), `//S31415/254/57`);
+
+  assert.end();
+});
+
 test('construct illegal group address', function (assert) {
 	assert.plan(1);
 
@@ -197,8 +210,37 @@ test('construct illegal whitespace', function (assert) {
 	assert.end();
 });
 
+test('construct legal project name', function (assert) {
+  assert.plan(1);
+
+  const addresses = [
+    '//HELLO/254/56/3',
+    '//3PROJECT/128/56/5',
+    '//_PROJECT/254/56/6',
+    '//MY_CBUS/254/56/1',
+    '//7_LIGHT/254/54/56'
+  ];
+
+  var netIDs = addresses.map(function (s){
+    const netId = CBusNetId.parse(s);
+    return(netId.project);
+  });
+
+  var result = [
+    'HELLO',
+		'3PROJECT',
+		'_PROJECT',
+		'MY_CBUS',
+    '7_LIGHT'
+	]
+
+	assert.deepEqual(netIDs, result);
+
+  assert.end();
+});
+
 test('construct illegal project name', function (assert) {
-	assert.plan(10);
+	assert.plan(12);
 
 	assert.throws(function () {
 		// non numerical group
@@ -209,6 +251,16 @@ test('construct illegal project name', function (assert) {
 		// name too long
 		CBusNetId.parse(`//S12345678/254/56`);
 	});
+
+  assert.throws(function () {
+    // cannot contain lowercase
+    CBusNetId.parse(`//project/254/56`);
+  });
+
+  assert.throws(function () {
+    // cannot contain dash
+    CBusNetId.parse(`//MY-CBUS/254/56`);
+  });
 
 	assert.throws(function () {
 		// name empty
