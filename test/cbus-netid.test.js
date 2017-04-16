@@ -139,19 +139,6 @@ test('construct unit address', function (assert) {
 	assert.end();
 });
 
-test('construct application netId', function (assert) {
-  assert.plan(5);
-
-  const netId = CBusNetId.parse(`//S31415/254/57`);
-  assert.equal(netId.project, 'S31415');
-  assert.equal(netId.network, 254);
-  assert.equal(netId.application, 57);
-  assert.equal(netId.group, undefined);
-  assert.equal(netId.toString(), `//S31415/254/57`);
-
-  assert.end();
-});
-
 test('construct illegal group address', function (assert) {
 	assert.plan(1);
 
