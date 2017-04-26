@@ -86,15 +86,29 @@ test('constructor bad alpha', function (assert) {
 	assert.end();
 });
 
-test('construct network address', function (assert) {
+test('construct project address', function (assert) {
 	assert.plan(5);
+
+	const netId = CBusNetId.parse(`//GOO`);
+	assert.equal(netId.project, 'GOO');
+	assert.equal(netId.network, undefined);
+	assert.equal(netId.application, undefined);
+	assert.equal(netId.group, undefined);
+	assert.equal(netId.toString(), `//GOO`);
+
+	assert.end();
+});
+
+test('construct network address', function (assert) {
+	assert.plan(6);
 
 	const netId = CBusNetId.parse(`//SHAC1/254`);
 	assert.equal(netId.project, 'SHAC1');
 	assert.equal(netId.network, 254);
 	assert.equal(netId.application, undefined);
 	assert.equal(netId.group, undefined);
-	assert.equal(netId.toString(), `//SHAC1/254`)
+	assert.equal(netId.toString(), `//SHAC1/254`);
+	assert.getHash(netId, 0xff0000)
 
 	assert.end();
 });
@@ -224,8 +238,9 @@ test('construct illegal project name', function (assert) {
 });
 
 test('getHash', function (assert) {
-	assert.plan(4);
+	assert.plan(5);
 
+	assert.equal(CBusNetId.parse(`//S31415`).getHash(), `S31415`);
 	assert.equal(CBusNetId.parse(`//S31415/254`).getHash(), `1fe0000`);
 	assert.equal(CBusNetId.parse(`//S31415/254/208`).getHash(), `1fed000`);
 	assert.equal(CBusNetId.parse(`//S31415/254/208/128`).getHash(), `1fed080`);
@@ -260,9 +275,23 @@ test('CBusNetId not equals', function (assert) {
 	assert.end();
 });
 
+test('CBusNetId isProjectId', function (assert) {
+	assert.plan(5);
+
+	assert.true(CBusNetId.parse(`//BAR`).isProjectId());
+	assert.false(CBusNetId.parse(`//BAR/1`).isProjectId());
+	assert.false(CBusNetId.parse(`//BAR/1/2`).isProjectId());
+	assert.false(CBusNetId.parse(`//BAR/1/2/3`).isProjectId());
+	assert.false(CBusNetId.parse(`//BAR/1/p/3`).isProjectId());
+
+
+	assert.end();
+});
+
 test('CBusNetId isNetworkId', function (assert) {
 	assert.plan(4);
 
+	assert.false(CBusNetId.parse(`//BAR`).isNetworkId());
 	assert.true(CBusNetId.parse(`//BAR/1`).isNetworkId());
 	assert.false(CBusNetId.parse(`//BAR/1/2`).isNetworkId());
 	assert.false(CBusNetId.parse(`//BAR/1/2/3`).isNetworkId());
@@ -274,6 +303,7 @@ test('CBusNetId isNetworkId', function (assert) {
 test('CBusNetId isApplicationId', function (assert) {
 	assert.plan(4);
 
+	assert.false(CBusNetId.parse(`//BAR`).isApplicationId());
 	assert.false(CBusNetId.parse(`//BAR/1`).isApplicationId());
 	assert.true(CBusNetId.parse(`//BAR/1/2`).isApplicationId());
 	assert.false(CBusNetId.parse(`//BAR/1/2/3`).isApplicationId());
@@ -285,6 +315,7 @@ test('CBusNetId isApplicationId', function (assert) {
 test('CBusNetId isGroupId', function (assert) {
 	assert.plan(4);
 
+	assert.false(CBusNetId.parse(`//BAR`).isGroupId());
 	assert.false(CBusNetId.parse(`//BAR/1`).isGroupId());
 	assert.false(CBusNetId.parse(`//BAR/1/2`).isGroupId());
 	assert.true(CBusNetId.parse(`//BAR/1/2/3`).isGroupId());
@@ -296,6 +327,7 @@ test('CBusNetId isGroupId', function (assert) {
 test('CBusNetId isUnitId', function (assert) {
 	assert.plan(4);
 
+	assert.false(CBusNetId.parse(`//BAR`).isUnitId());
 	assert.false(CBusNetId.parse(`//BAR/1`).isUnitId());
 	assert.false(CBusNetId.parse(`//BAR/1/2`).isUnitId());
 	assert.false(CBusNetId.parse(`//BAR/1/2/3`).isUnitId());
@@ -318,15 +350,23 @@ test('unit constructor', function (assert) {
 });
 
 test('constructor undefineds', function (assert) {
-	assert.plan(4);
+	assert.plan(6);
 
 	assert.throws(function () {
 		new CBusNetId(undefined, 254, 57, 22);
 	}, /netIds must have a project/, `no project`);
 
 	assert.throws(function () {
+		new CBusNetId(`EXAMPLE`, undefined, 57);
+	}, /netIds with group must have a network/, `application no network`);
+
+	assert.throws(function () {
 		new CBusNetId(`EXAMPLE`, undefined, 57, 22);
-	}, /netIds must have a network/, `no network`);
+	}, /netIds with group must have a network/, `group no network`);
+
+	assert.throws(function () {
+		new CBusNetId(`EXAMPLE`, undefined, `p`, 22);
+	}, /netIds with group must have a network/, `unit no network`);
 
 	assert.throws(function () {
 		new CBusNetId(`EXAMPLE`, 254, undefined, 22);

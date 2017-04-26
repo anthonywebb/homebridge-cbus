@@ -1,0 +1,31 @@
+{
+  "DIMDN8": {"type": "dimmer", "description": "8 Channel Dimmer, 1A per Channel", "groups": 8},
+  "DIMDN4": {"type": "dimmer", "description": "4 Channel Dimmer, 2A per Channel", "groups": 4},
+
+  "RELDN12": {"type": "light", "description": "12 Channel Voltage Free Relay 10A per Channel", "groups": 12},
+
+  "RELDB1": {"type": "shutter", "description": "Single Channel Shutter Relay", "groups": 1},
+
+  "RELDF1": {"type": "fan", "description": "Ceiling Sweep Fan Controller", "groups": 1},
+
+  "SENPIROA": {"type": "motion", "description": "Outdoor Passive Infrared Occupancy Detector", "groups": 1},
+  "SENPIRIA": {"type": "motion", "description": "Indoor Passive Infrared Occupancy Detector", "groups": 1},
+  "SENPIRIB": {"type": "motion", "description": "Indoor Passive Infrared Occupancy Detector", "groups": 1},
+  "SENPIRIC": {"type": "motion", "description": "360° Occupancy/Light Level Detector", "groups": 1},
+  "SENPIRSS": {"type": "motion", "description": "Passive Infrared Occupancy Detector", "groups": 1},
+
+  "DINAUX4": {"type": "input", "description": "4 Channel Auxiliary Input Unit", "groups": 4},
+
+  "KEY1": {"type": "key", "description": "1 Gang Key Input Unit", "groups": 1},
+  "KEY2": {"type": "key", "description": "2 Gang Key Input Unit", "groups": 2},
+  "KEY4": {"type": "key", "description": "4 Gang Key Input Unit", "groups": 4},
+
+  "KEYBL5": {"type": "key", "description": "5 Gang DLT Key Input Unit (Saturn)"},
+  "KEYM4": {"type": "key", "description": "4 Gang NEO Key Input Unit"},
+  "KEYM8": {"type": "key", "description": "8 Gang NEO Key Input Unit"},
+
+  "INT_ELK": {"type": "misc", "description": "ELK/NESS M1 Security Panel"},
+  "PCINT4": {"type": "misc", "description": "DIN Rail PC Interface"},
+  "PC_CTC": {"type": "misc", "description": "Colour C-Touch Screen"},
+  "PCLOCAL4": {"type": "misc", "description": ""}
+}

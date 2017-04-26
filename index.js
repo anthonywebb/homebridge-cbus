@@ -146,7 +146,7 @@ CBusPlatform.prototype.accessories = function (callback) {
 		this.project, this.network, this.application,
 		this.clientDebug);
 
-	this.database = new CGateDatabase(new CBusNetId(this.project, this.network));
+	this.database = new CGateDatabase(new CBusNetId(this.project));
 
 	// listen for data from the client and ensure that the homebridge UI is updated
 	this.client.on(`event`, function (message) {
