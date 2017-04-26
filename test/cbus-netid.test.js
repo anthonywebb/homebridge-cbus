@@ -211,8 +211,37 @@ test('construct illegal whitespace', function (assert) {
 	assert.end();
 });
 
+test('construct legal project name', function (assert) {
+  assert.plan(1);
+
+  const addresses = [
+    '//HELLO/254/56/3',
+    '//3PROJECT/128/56/5',
+    '//_PROJECT/254/56/6',
+    '//MY_CBUS/254/56/1',
+    '//7_LIGHT/254/54/56'
+  ];
+
+  var netIDs = addresses.map(function (s){
+    const netId = CBusNetId.parse(s);
+    return(netId.project);
+  });
+
+  var result = [
+    'HELLO',
+		'3PROJECT',
+		'_PROJECT',
+		'MY_CBUS',
+    '7_LIGHT'
+	]
+
+	assert.deepEqual(netIDs, result);
+
+  assert.end();
+});
+
 test('construct illegal project name', function (assert) {
-	assert.plan(4);
+	assert.plan(12);
 
 	assert.throws(function () {
 		// non numerical group
@@ -220,18 +249,58 @@ test('construct illegal project name', function (assert) {
 	});
 
 	assert.throws(function () {
-		// first char not alpha
-		CBusNetId.parse(`//1SHAC/254/56`);
-	});
-
-	assert.throws(function () {
 		// name too long
 		CBusNetId.parse(`//S12345678/254/56`);
 	});
 
+  assert.throws(function () {
+    // cannot contain lowercase
+    CBusNetId.parse(`//project/254/56`);
+  });
+
+  assert.throws(function () {
+    // cannot contain dash
+    CBusNetId.parse(`//MY-CBUS/254/56`);
+  });
+
 	assert.throws(function () {
 		// name empty
 		CBusNetId.parse(`///254/56/191`);
+	});
+
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//P/254/56/34`);
+	});
+
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//CBUS/254/56/34`);
+	});
+	
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//VM/254/56/34`);
+	});
+
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//CMDINT/254/56/34`);
+	});
+
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//CGATE/254/56/34`);
+	});
+	
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//TAG/254/56/34`);
+	});
+
+	assert.throws(function () {
+		// reserved name
+		CBusNetId.parse(`//CMD` + (Math.floor((Math.random() * 100) + 1)) + `/254/56/34`);
 	});
 
 	assert.end();
