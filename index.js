@@ -1,17 +1,15 @@
 'use strict';
 
-var fs = require('fs');
-
-const chalk = require('chalk');
-
 require('./hot-debug.js');
-
 const log = require('debug')('cbus:platform');
 const logLevel = require('debug')('cbus:level');
 const logClient = require('debug')('cbus:client');
 
+const chalk = require('chalk');
+
 const CGateClient = require(`./lib/cgate-client.js`);
 const CGateDatabase = require(`./lib/cgate-database.js`);
+const CGateExport = require(`./lib/cgate-export.js`);
 
 const CBusNetId = require(`./lib/cbus-netid.js`);
 const cbusUtils = require(`./lib/cbus-utils.js`);
@@ -92,10 +90,6 @@ function CBusPlatform(ignoredLog, config) {
 	this.network = (typeof config.client_network === `undefined`) ? undefined : config.client_network;
 	this.application = (typeof config.client_application === `undefined`) ? undefined : config.client_application;
 
-	// platform export path
-	// TODO more rigorous check please!
-	this.platformExportPath = this.config.platform_export;
-
 	// logging
 	log.enable(true);
 
@@ -158,9 +152,14 @@ CBusPlatform.prototype.accessories = function (callback) {
 			const stats = this.database.getStats();
 			log(`Successfully fetched ${stats.numApplications} applications, ${stats.numGroups} groups and ${stats.numUnits} units from C-Gate.`);
 
-			// export platform file is platform_export property is set
+			// export platform file if platform_export property is set
 			if (this.config.platform_export) {
-				this.database.exportPlatform(this.platformExportPath, this);
+				new CGateExport(this.database).exportPlatform(this.config.platform_export, this);
+			}
+
+			// export platform file if platform_export property is set
+			if (this.config.database_export) {
+				new CGateExport(this.database).exportDatabase(this.config.database_export);
 			}
 		});
 
