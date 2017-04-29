@@ -13,19 +13,29 @@ const log = require('debug')('test-output');
 const CGateDatabase = rewire(`../lib/cgate-database.js`);
 const CBusNetId = require('../lib/cbus-netid.js');
 
-const _parseXML = CGateDatabase.__get__('_parseXML');
+const _processDatabase = CGateDatabase.__get__('_processDatabase');
 
 test(`setup tests`, function (assert) {
 	assert.plan(2);
 
-	const dbxml = fs.readFileSync(`test/resources/EMPTY_APPLICATION.xml`);
+	const rawXML = fs.readFileSync(`test/resources/EMPTY_APPLICATION.xml`);
 
-	xml2js.parseString(dbxml, {
+	xml2js.parseString(rawXML, {
 		normalizeTags: true,
 		explicitArray: false
-	}, (err, databaseXML) => {
+	}, (err, networkTree) => {
 		assert.equals(err, null, `parsing XML`);
-		const result = _parseXML(databaseXML, new CBusNetId(`FOO`, 254));
+
+		const database = {
+			installation: {
+				project: {
+					address: `FOO`,
+					network: networkTree
+				}
+			}
+		};
+
+		const result = _processDatabase(database, new CBusNetId(`FOO`));
 		assert.equals(Object.keys(result.applications).length, 8, `application count`);
 		assert.end();
 	});

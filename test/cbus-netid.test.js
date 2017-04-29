@@ -197,7 +197,7 @@ test('construct legal project name', function (assert) {
 });
 
 test('construct illegal project name', function (assert) {
-	assert.plan(12);
+	assert.plan(13);
 
 	assert.throws(function () {
 		// non numerical group
@@ -208,6 +208,11 @@ test('construct illegal project name', function (assert) {
 		// name too long
 		CBusNetId.parse(`//S12345678/254/56`);
 	});
+
+	assert.throws(function () {
+		// name all numeric
+		CBusNetId.parse(`//12345678/254/56`);
+	}, /illegal project name \(cannot be all numeric\) '12345678'/, `all numeric`);
 
 	assert.throws(function () {
 		// cannot contain lowercase
