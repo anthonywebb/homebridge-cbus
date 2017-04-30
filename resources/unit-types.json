@@ -110,6 +110,261 @@
     "inputCount": 0,
     "outputCount": 12
   },
+  "KEY1": {
+    "type": "key",
+    "description": "1 Gang Key Input Unit",
+    "inputCount": 1,
+    "outputCount": 0
+  },
+  "KEY2": {
+    "type": "key",
+    "description": "2 Gang Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEY4": {
+    "type": "key",
+    "description": "4 Gang Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYA1": {
+    "type": "key",
+    "description": "1 Gang Reflection Key Input Unit",
+    "inputCount": 1,
+    "outputCount": 0
+  },
+  "KEYA3": {
+    "type": "key",
+    "description": "3 Gang Reflection Key Input Unit",
+    "inputCount": 3,
+    "outputCount": 0
+  },
+  "KEYA6": {
+    "type": "key",
+    "description": "6 Gang Reflection Key Input Unit",
+    "inputCount": 6,
+    "outputCount": 0
+  },
+  "KEYA8": {
+    "type": "key",
+    "description": "8 Gang Reflection Key Input Unit",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYAV2": {
+    "type": "key",
+    "description": "2 Gang Reflection Vertical Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYAV4": {
+    "type": "key",
+    "description": "4 Gang Reflection Vertical Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYB2": {
+    "type": "key",
+    "description": "2 Gang Saturn Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYB4": {
+    "type": "key",
+    "description": "4 Gang Saturn Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYB6": {
+    "type": "key",
+    "description": "6 Gang Saturn Key Input Unit",
+    "inputCount": 6,
+    "outputCount": 0
+  },
+  "KEYBIR2": {
+    "type": "key",
+    "description": "2 Gang Saturn IR Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYBIR4": {
+    "type": "key",
+    "description": "4 Gang Saturn IR Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYBIR6": {
+    "type": "key",
+    "description": "6 Gang Saturn IR Key Input Unit",
+    "inputCount": 6,
+    "outputCount": 0
+  },
+  "KEYBL4": {
+    "type": "key",
+    "description": "4 Gang DLT Input Unit (Saturn)",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYBL5": {
+    "type": "key",
+    "description": "5 Gang DLT Input Unit (Saturn)",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYC1": {
+    "type": "key",
+    "description": "1 Gang Key Input Unit",
+    "inputCount": 1,
+    "outputCount": 0
+  },
+  "KEYC2": {
+    "type": "key",
+    "description": "2 Gang Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYC4": {
+    "type": "key",
+    "description": "4 Gang Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYDL4": {
+    "type": "key",
+    "description": "4 Gang DLT Input Unit",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYDV1": {
+    "type": "key",
+    "description": [
+      "1 Gang Neo Decorator Key Input Unit",
+      "1 Gang Saturn Decorator Key Input Unit"
+    ],
+    "inputCount": 1,
+    "outputCount": 0
+  },
+  "KEYDV2": {
+    "type": "key",
+    "description": [
+      "2 Gang Neo Decorator Key Input Unit",
+      "2 Gang Saturn Decorator Key Input Unit"
+    ],
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYDV3": {
+    "type": "key",
+    "description": [
+      "3 Gang Neo Decorator Key Input Unit",
+      "3 Gang Saturn Decorator Key Input Unit"
+    ],
+    "inputCount": 3,
+    "outputCount": 0
+  },
+  "KEYDV4": {
+    "type": "key",
+    "description": [
+      "4 Gang Neo Decorator Key Input Unit",
+      "4 Gang Saturn Decorator Key Input Unit"
+    ],
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYGL5": {
+    "type": "key",
+    "description": [
+      "5 Gang eDLT Input Unit",
+      "5 Gang Saturn ZEN eDLT Input Unit"
+    ],
+    "inputCount": 16,
+    "outputCount": 0
+  },
+  "KEYH1": {
+    "type": "key",
+    "description": "1 Gang Saturn ZEN Key Input Unit",
+    "inputCount": 1,
+    "outputCount": 0
+  },
+  "KEYH2": {
+    "type": "key",
+    "description": "2 Gang Saturn ZEN Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYH3": {
+    "type": "key",
+    "description": "3 Gang Saturn ZEN Key Input Unit",
+    "inputCount": 3,
+    "outputCount": 0
+  },
+  "KEYH4": {
+    "type": "key",
+    "description": "4 Gang Saturn ZEN Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYL4": {
+    "type": "key",
+    "description": "4 Gang DLT Input Unit",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYL5": {
+    "type": "key",
+    "description": "5 Gang DLT Input Unit",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYM2": {
+    "type": "key",
+    "description": "2 Gang NEO Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYM4": {
+    "type": "key",
+    "description": "4 Gang NEO Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYM8": {
+    "type": "key",
+    "description": "8 Gang NEO Key Input Unit",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYML4": {
+    "type": "key",
+    "description": "4 Gang DLT Input Unit (Neo)",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYML5": {
+    "type": "key",
+    "description": "5 Gang DLT Input Unit (Neo)",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYP2": {
+    "type": "key",
+    "description": "2 Gang Modena Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYP4": {
+    "type": "key",
+    "description": "4 Gang Modena Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYP6": {
+    "type": "key",
+    "description": "6 Gang Modena Key Input Unit",
+    "inputCount": 6,
+    "outputCount": 0
+  },
   "RELAY1": {
     "type": "light",
     "description": "1 Channel Relay 10A per Channel",

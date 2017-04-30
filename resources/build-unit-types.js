@@ -56,7 +56,9 @@ const TYPE_MAP = {
 const DESCRIPTION_MAP = {
 	'Shutter Relay': `shutter`,
 	'C-Bus Ceiling Sweep Fan Controller': `fan`,
-	'Passive Infrared Motion Detector': `motion`
+	'Passive Infrared Motion Detector': `motion`,
+	'Key Input Unit': `key`,
+	'DLT Input Unit': `key`
 };
 
 //Object.assign()
