@@ -737,7 +737,7 @@ test(`write out database`, function (assert) {
 			assert.equals(err, undefined, `fs write ok`);
 		} else {
 			const fileSize = fs.statSync(path).size;
-			assert.equals(fileSize, 13504, `file size`);
+			assert.equals(fileSize, 14977, `file size`);
 		}
 
 		assert.end();
@@ -791,11 +791,11 @@ test(`write out platform`, function (assert) {
 				{ type: "unknown", network: 253, id: 36, name: "Children's bedroom 2", enabled: false },
 				{ type: "unknown", network: 253, id: 37, name: "Master Bathroom", enabled: false },
 				{ type: "unknown", network: 253, id: 38, name: "Upstairs Toilet", enabled: false },
-				{ type: "unknown", network: 253, id: 39, name: "Upstairs Fan", enabled: false },
+				{ type: "light", network: 253, id: 39, name: "Upstairs Fan", enabled: false },
 				{ type: "unknown", network: 253, id: 80, name: "Jacuzzi", enabled: false },
-				{ type: "unknown", network: 253, id: 81, name: "Bar Heater Master", enabled: false },
-				{ type: "unknown", network: 253, id: 82, name: "Bar Heater children 1", enabled: false },
-				{ type: "unknown", network: 253, id: 83, name: "Bar Heater children 2", enabled: false },
+				{ type: "light", network: 253, id: 81, name: "Bar Heater Master", enabled: false },
+				{ type: "light", network: 253, id: 82, name: "Bar Heater children 1", enabled: false },
+				{ type: "light", network: 253, id: 83, name: "Bar Heater children 2", enabled: false },
 				{ type: "unknown", network: 253, id: 127, name: "Group 127", enabled: false },
 				{ type: "unknown", network: 253, id: 243, name: "Group 243", enabled: false },
 
@@ -808,14 +808,14 @@ test(`write out platform`, function (assert) {
 				{ type: 'unknown', id: 15, name: 'Group 15', enabled: false },
 				{ type: 'unknown', id: 16, name: 'Group 16', enabled: false },
 				{ type: 'unknown', id: 31, name: 'Group 31', enabled: false },
-				{ type: 'unknown', id: 32, name: 'Kitchen1', enabled: false },
-				{ type: 'unknown', id: 33, name: 'Kitchen2', enabled: false },
-				{ type: 'unknown', id: 34, name: 'Dining1', enabled: false },
-				{ type: 'unknown', id: 35, name: 'Dining2', enabled: false },
-				{ type: 'unknown', id: 36, name: 'Lounge', enabled: false },
-				{ type: 'unknown', id: 37, name: 'Sprinkler1', enabled: false },
-				{ type: 'unknown', id: 38, name: 'Sprinkler2', enabled: false },
-				{ type: 'unknown', id: 39, name: 'Porch', enabled: false },
+				{ type: 'dimmer', id: 32, name: 'Kitchen1', enabled: false },
+				{ type: 'dimmer', id: 33, name: 'Kitchen2', enabled: false },
+				{ type: 'dimmer', id: 34, name: 'Dining1', enabled: false },
+				{ type: 'dimmer', id: 35, name: 'Dining2', enabled: false },
+				{ type: 'dimmer', id: 36, name: 'Lounge', enabled: false },
+				{ type: 'dimmer', id: 37, name: 'Sprinkler1', enabled: false },
+				{ type: 'dimmer', id: 38, name: 'Sprinkler2', enabled: false },
+				{ type: 'dimmer', id: 39, name: 'Porch', enabled: false },
 				{ type: 'unknown', id: 40, name: 'Wine Cellar', enabled: false },
 				{ type: 'unknown', id: 41, name: 'Conservatory', enabled: false },
 				{ type: 'unknown', id: 42, name: 'Garden Lights', enabled: false },
@@ -879,7 +879,7 @@ test(`write out platform`, function (assert) {
 			assert.fail(`fs write failed` + err);
 		} else {
 			const fileSize = fs.statSync(path).size;
-			assert.equals(fileSize, 6212, `file size`);
+			assert.equals(fileSize, 6196, `file size`);
 
 			// who knew you could load JSON with require!
 			const loaded = require(path);
