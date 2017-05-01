@@ -50,6 +50,7 @@
   "scripts": {
     "test": "node $NODE_DEBUG_OPTION ./node_modules/tape/bin/tape test/*.test.js --coverage",
     "test-netId": "node $NODE_DEBUG_OPTION ./node_modules/tape/bin/tape test/cbus-netid.test.js",
+    "test-database": "node $NODE_DEBUG_OPTION ./node_modules/tape/bin/tape test/cgate-database.test.js",
     "build-unit-types": "node $NODE_DEBUG_OPTION ./resources/build-unit-types.js",
     "test-coverage": "tap test/*.test.js --cov --coverage-report=html"
   }
