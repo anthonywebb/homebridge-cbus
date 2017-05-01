@@ -32,7 +32,7 @@ function CBusDimmerAccessory(platform, accessoryData) {
 		if (this.rampDuration > ms(`17m`)) {
 			throw new Error(`accessory '${this.name} rampDuration (${ms(this.rampDuration)}) is greater than maximum (17m)`);
 		}
-		this._log(FILE_ID, `configured to ramp up/down over ${this.rampDuration}ms when activated via homebridge`);
+		this._log(FILE_ID, `constructed`, `ramp up/down over ${this.rampDuration}ms when activated via homebridge`);
 	}
 
 	// register brightness service
@@ -45,7 +45,7 @@ function CBusDimmerAccessory(platform, accessoryData) {
 
 CBusDimmerAccessory.prototype.getBrightness = function (callback) {
 	this.client.receiveLevel(this.netId, message => {
-		this._log(FILE_ID, `getBrightness returned ${message.level}%`);
+		this._log(FILE_ID, `getBrightness`, `returned ${message.level}%`);
 
 		if (message.level) {
 			// update level if the level is non-zero
@@ -66,10 +66,10 @@ CBusDimmerAccessory.prototype.setBrightness = function (newLevel, callback, cont
 		callback();
 	} else {
 		if (!wasOn && (newLevel === 0)) {
-			this._log(FILE_ID, chalk.green(`setBrightness swallowing 0%`));
+			this._log(FILE_ID, `setBrightness`, chalk.green(`swallowing 0%`));
 			callback();
 		} else {
-			this._log(FILE_ID, `setBrightness changing level to ${newLevel}%`);
+			this._log(FILE_ID, `setBrightness`, `changing level to ${newLevel}%`);
 			this.client.setLevel(this.netId, newLevel, function () {
 				callback();
 			}, this.rampDuration / 1000, `setBrightness`);
@@ -87,7 +87,7 @@ CBusDimmerAccessory.prototype.processClientData = function (err, message) {
 
 		// update brightness
 		if (level === 0) {
-			this._log(FILE_ID, `level 0%; interpreting as 'off'`);
+			this._log(FILE_ID, `processClientData`, `level 0%; interpreting as 'off'`);
 		} else {
 			this.brightnessC10tic.setValue(level, undefined, `event`);
 		}

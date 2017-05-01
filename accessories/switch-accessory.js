@@ -29,7 +29,7 @@ function CBusSwitchAccessory(platform, accessoryData) {
 	// if we have an activeDuration specified, stash it away
 	if (typeof accessoryData.activeDuration !== `undefined`) {
 		this.activeDuration = ms(accessoryData.activeDuration);
-		this._log(FILE_ID, `configured to automatically turn off ${this.activeDuration}ms when activated via homebridge`);
+		this._log(FILE_ID, `construct`, `automatically turn off ${this.activeDuration}ms when activated via homebridge`);
 	}
 
 	// TODO do we need to prime this?
@@ -45,7 +45,7 @@ function CBusSwitchAccessory(platform, accessoryData) {
 CBusSwitchAccessory.prototype.getOn = function (callback) {
 	this.client.receiveLevel(this.netId, message => {
 		this.isOn = message.level > 0;
-		this._log(FILE_ID, `getOn: status = '${this.isOn ? `on` : `off`}'`);
+		this._log(FILE_ID, `getOn`, `status = '${this.isOn ? `on` : `off`}'`);
 		callback(false, this.isOn ? 1 : 0);
 	}, `getOn`);
 };
@@ -60,23 +60,23 @@ CBusSwitchAccessory.prototype.setOn = function (turnOn, callback, context) {
 		this.isOn = (turnOn === 1) || (turnOn === true);
 
 		if (wasOn === this.isOn) {
-			this._log(FILE_ID, `setOn: no state change from ${turnOn}`);
+			this._log(FILE_ID, `setOn`, `no state change from ${turnOn}`);
 			callback();
 		} else if (turnOn) {
-			this._log(FILE_ID, `setOn(true): changing to 'on'`);
+			this._log(FILE_ID, `setOn(true)`, `changing to 'on'`);
 			this.client.turnOn(this.netId, () => {
 				if (this.activeDuration) {
 					this.timeout = setTimeout(() => {
-						this._log(FILE_ID, `activity timer expired. turning off`);
+						this._log(FILE_ID, `activity timer expired`, `turning off`);
 						this.client.turnOff(this.netId);
 					}, this.activeDuration);
-					this._log(FILE_ID, `turned on; will turn off in ${ms(this.activeDuration)} (${this.activeDuration}ms)`);
+					this._log(FILE_ID, `activity timer activated`, `will turn off in ${ms(this.activeDuration)} (${this.activeDuration}ms)`);
 				}
 				callback();
 			});
 		} else {
 			// turnOn === false, ie. turn off
-			this._log(FILE_ID, `setOn(false): changing to 'off'`);
+			this._log(FILE_ID, `setOn(false)`, `changing to 'off'`);
 			this.client.turnOff(this.netId, () => {
 				callback();
 			});
@@ -85,7 +85,7 @@ CBusSwitchAccessory.prototype.setOn = function (turnOn, callback, context) {
 
 	// if we turn off (regardless of whether by homebridge or cbus), clear out any timeout
 	if (!turnOn && this.timeout) {
-		this._log(FILE_ID, `turned off. clearing activity timer`);
+		this._log(FILE_ID, `turned off`, `clearing activity timer`);
 		clearTimeout(this.timeout);
 	}
 };

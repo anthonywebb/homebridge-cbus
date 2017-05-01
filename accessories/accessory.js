@@ -73,7 +73,8 @@ CBusAccessory.prototype.getServices = function () {
 	return this.services;
 };
 
-CBusAccessory.prototype._log = function (file, message) {
-	const accessory = chalk.red.bold(`${this.name}`) + ` (${this.netId})`;
-	log(`${chalk.gray.bold(file.split(`-`)[0])} ${accessory} ${message}`);
+CBusAccessory.prototype._log = function (file, action, message) {
+	const fileName = file.split(`-`)[0];
+	const accessoryLabel = cbusUtils.formatTag(this.name, this.netId);
+	log(`${chalk.gray.bold(fileName)} ${accessoryLabel} ${chalk.red(action)} ${message}`);
 };

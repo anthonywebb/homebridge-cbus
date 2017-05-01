@@ -46,7 +46,7 @@ function CBusLightAccessory(platform, accessoryData) {
 CBusLightAccessory.prototype.getOn = function (callback) {
 	this.client.receiveLevel(this.netId, message => {
 		this.isOn = (message.level > 0);
-		this._log(FILE_ID, `getOn: receiveLevel returned ${message.level}`);
+		this._log(FILE_ID, `getOn`, `receiveLevel returned ${message.level}`);
 		callback(false, this.isOn ? 1 : 0);
 	}, `getOn`);
 };
@@ -64,13 +64,13 @@ CBusLightAccessory.prototype.setOn = function (turnOn, callback, context) {
 			callback();
 		} else {
 			if (this.isOn === wasOn) {
-				this._log(FILE_ID, `setOn: no state change from ${wasOn}`);
+				this._log(FILE_ID, `setOn`, `no state change from ${wasOn}`);
 				callback();
 			} else {
 				const newLevel = turnOn ? this.brightness : 0;
 				const reasonExtension = turnOn ? ((this.brightness === 100) ? `on` : `restore`) : `off`;
 
-				this._log(FILE_ID, `setOn: changing level to ${newLevel}%`);
+				this._log(FILE_ID, `setOn`, `changing level to ${newLevel}%`);
 				this.client.setLevel(this.netId, newLevel, () => {
 					callback();
 				}, this.rampDuration / 1000, `setOn (${reasonExtension})`);
