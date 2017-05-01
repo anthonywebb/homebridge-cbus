@@ -15,6 +15,7 @@ const cgateLog = require('debug')('cbus:client');
 
 const CGateClient = rewire('../lib/cgate-client.js');
 const CGateDatabase = rewire(`../lib/cgate-database.js`);
+const CGateExport = rewire(`../lib/cgate-export.js`);
 const CBusNetId = require('../lib/cbus-netid.js');
 
 const util = require('util');
@@ -215,31 +216,29 @@ const TEST_DESCRIPTORS = [
 			gDatabase.fetch(gClient, () => { /* console.log(`fetched`) */
 			});
 		},
-		fromClient: `[109] dbgetxml //EXAMPLE/254`,
+		fromClient: `[109] dbgetxml //EXAMPLE`,
 		fromServer: '[109] 343-Begin XML snippet\n' +
-		'[109] 347-this is just a placeholder -- will be filled in later\n' +
-		'[109] 344 End XML snippet',
+			'[109] 347-this is just a placeholder -- will be filled in later\n' +
+			'[109] 344 End XML snippet',
 		expected: {
 			type: `response`,
 			commandId: 109
 		},
-		numTestsInValidation: 14,
+		numTestsInValidation: 16,
 		validate: function (message, assert, testName) {
 			console.assert(message);
-			assert.equal(message.snippet.content.length, 24884, `${testName}: checking snippet length`);
+			assert.equal(message.snippet.content.length, 77742, `${testName}: checking snippet length`);
 
 			const stats = gDatabase.getStats();
-			assert.equal(stats.numApplications, 6, `${testName}: checking application count`);
-			assert.equal(stats.numGroups, 29, `${testName}: checking group count`);
-			assert.equal(stats.numUnits, 10, `${testName}: checking unit count`);
+			assert.equal(stats.numApplications, 18, `${testName}: checking application count`);
+			assert.equal(stats.numGroups, 59, `${testName}: checking group count`);
+			assert.equal(stats.numUnits, 21, `${testName}: checking unit count`);
 
 			assert.deepEquals(gDatabase.applications[`//EXAMPLE/254/56`], {
 				tag: 'Lighting'
 			}, `${testName}: check applications`);
 
-			assert.deepEquals(gDatabase.groups[`//EXAMPLE/254/56/37`], {
-				tag: 'Sprinkler1'
-			}, `${testName}: check groups`);
+			assert.equal(gDatabase.groups[`//EXAMPLE/254/56/37`].tag, 'Sprinkler1', `${testName}: check groups`);
 
 			assert.deepEquals(gDatabase.units[`//EXAMPLE/254/p/42`], {
 				tag: 'Gateway to Wireless Net',
@@ -247,10 +246,15 @@ const TEST_DESCRIPTORS = [
 				firmwareVersion: '4.3.00',
 				serialNumber: '1048575.4095',
 				catalogNumber: '5800WCGA',
-				unitType: 'GATEWLSN'
+				unitType: 'GATEWLSN',
+				application: 255
 			}, `${testName}: check units`);
 
+			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE`)), `//EXAMPLE`, `${testName}: check project label`);
 			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254`)), `//EXAMPLE/254`, `${testName}: check network label`);
+			assert.throws(function () {
+				gDatabase.getTag(new CBusNetId(`BLAH`));
+			}, /getNetworkEntity unable to search outside default project/, `invalid project name`);
 
 			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/224`)), `Telephony`, `${testName}: check known application label`);
 			assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254/250`)), `//EXAMPLE/254/250`, `${testName}: check unknown application label`);
@@ -496,29 +500,28 @@ test(`setup tests`, function (assert) {
 
 	// setup globals
 	gClient = new CGateClient(`127.0.0.1`, SERVER_PORT, `EXAMPLE`, 254, 56, log, true);
-	gDatabase = new CGateDatabase(new CBusNetId(`EXAMPLE`, 254), log);
+	gDatabase = new CGateDatabase(new CBusNetId(`EXAMPLE`), log);
 
-	assert.equals(gDatabase.getTag(CBusNetId.parse(`//EXAMPLE/254`)), `//EXAMPLE/254`, `check CGateDatabase.getNetLabel() handling before first parse`);
+	// test behaviour pre-initialisation
+	assert.throws(function () {
+		gDatabase.getTag(new CBusNetId(`ANYTHING`));
+	}, /database access before initialisation/, `access before initialisation`);
 
 	// patch in the EXAMPLE project database dump
-	fs.readFile(`test/resources/EXAMPLE.xml.txt`, 'utf8', function (err, fileData) {
-		console.assert(!err, `error loading EXAMPLE.xml.txt`, err);
+	const fileData = fs.readFileSync(`test/resources/EXAMPLE.xml.txt`, 'utf8');
 
-		// fill in the fromServer field for the test named `[106] dbgetxml`
-		let foundCount = 0;
-		TEST_DESCRIPTORS.forEach(descriptor => {
-			if (typeof descriptor.expected !== `undefined`) {
-				if (descriptor.name === `[109] parse big xml`) {
-					descriptor.fromServer = fileData;
-					foundCount++;
-				}
-			}
-		});
-
-		assert.equals(foundCount, 1, `fromServer patched`);
-
-		assert.end();
+	// fill in the fromServer field for the test named `[106] dbgetxml`
+	let foundCount = 0;
+	TEST_DESCRIPTORS.forEach(descriptor => {
+		if (descriptor.name === `[109] parse big xml`) {
+			descriptor.fromServer = fileData;
+			foundCount++;
+		}
 	});
+
+	assert.equals(foundCount, 1, `fromServer patched`);
+
+	assert.end();
 });
 
 function _validate(message, descriptor, assert) {
@@ -682,7 +685,12 @@ function _serverTests(descriptors) {
 		gClient.on(`response`, message => {
 			const descriptor = descriptors[descriptorIndex];
 			// log(`received 'response' (index ${descriptorIndex})`);
-			_validate(message, descriptor, assert);
+
+			try {
+				_validate(message, descriptor, assert);
+			} catch (ex) {
+				assert.fail(`** unexpected exception when validating '${descriptor.name}'; ${ex.stack}`);
+			}
 			descriptorIndex++;
 			next();
 		});
@@ -718,26 +726,27 @@ function _serverTests(descriptors) {
 
 _serverTests(TEST_DESCRIPTORS);
 
-// now that database has been parsed, let's write it out, and check it
+// write out the database and check it
 test(`write out database`, function (assert) {
 	assert.plan(1);
 
 	const path = tmp.tmpNameSync({prefix: 'homebridge-cbus.database.test.', postfix: '.json'});
 
-	gDatabase.exportDatabase(path, function (err) {
+	new CGateExport(gDatabase).exportDatabase(path, function (err) {
 		if (err) {
 			assert.equals(err, undefined, `fs write ok`);
 		} else {
 			const fileSize = fs.statSync(path).size;
-			assert.equals(fileSize, 4433, `file size`);
+			assert.equals(fileSize, 14977, `file size`);
 		}
 
 		assert.end();
 	});
 });
 
-// now that database has been parsed, let's write it out, and check it
+// write out the platform and check it
 test(`write out platform`, function (assert) {
+	// order must be exact
 	const EXPECTED = {
 		platforms: [
 		{
@@ -757,22 +766,56 @@ test(`write out platform`, function (assert) {
 				// modified / enabled
 				{ type: 'switch', application: 202, id: 127, name: 'Shiny new name', dbtag: `Main Area Scene Trigger` },
 
+				// unchanged
+				{ type: "unknown", network: 42, id: 34, name: "Barbeque", enabled: false },
+				{ type: "unknown", network: 42, id: 35, name: "Group 35", enabled: false },
+				{ type: "unknown", network: 42, id: 36, name: "Group 36", enabled: false },
+				{ type: "unknown", network: 42, id: 37, name: "Group 37", enabled: false },
+				{ type: "unknown", network: 42, id: 38, name: "Group 38", enabled: false },
+				{ type: "unknown", network: 42, id: 39, name: "Group 39", enabled: false },
+				{ type: "unknown", network: 42, id: 42, name: "Garden Lights", enabled: false },
+				{ type: "unknown", network: 42, id: 43, name: "Potting Shed", enabled: false },
+				{ type: "unknown", network: 42, id: 44, name: "Pavillion lights", enabled: false },
+				{ type: "unknown", network: 42, id: 46, name: "Pool deck", enabled: false },
+				{ type: "unknown", network: 42, id: 47, name: "Pool lights", enabled: false },
+				{ type: "unknown", network: 42, application: 136, id: 0, name: "Main heater", enabled: false },
+				{ type: "unknown", network: 42, application: 136, id: 1, name: "Pool heater", enabled: false },
+				{ type: "unknown", network: 42, application: 202, id: 1, name: "Group 1", enabled: false },
+				{ type: "unknown", network: 42, application: 203, id: 1, name: "Main Switch Key Sets control", enabled: false },
+
+				// unchanged
+				{ type: "unknown", network: 253, id: 32, name: "Master Bedroom Main", enabled: false },
+				{ type: "unknown", network: 253, id: 33, name: "Master Bedroom right side", enabled: false },
+				{ type: "unknown", network: 253, id: 34, name: "Master Bedroom left side", enabled: false },
+				{ type: "unknown", network: 253, id: 35, name: "Children's bedroom 1", enabled: false },
+				{ type: "unknown", network: 253, id: 36, name: "Children's bedroom 2", enabled: false },
+				{ type: "unknown", network: 253, id: 37, name: "Master Bathroom", enabled: false },
+				{ type: "unknown", network: 253, id: 38, name: "Upstairs Toilet", enabled: false },
+				{ type: "light", network: 253, id: 39, name: "Upstairs Fan", enabled: false },
+				{ type: "unknown", network: 253, id: 80, name: "Jacuzzi", enabled: false },
+				{ type: "light", network: 253, id: 81, name: "Bar Heater Master", enabled: false },
+				{ type: "light", network: 253, id: 82, name: "Bar Heater children 1", enabled: false },
+				{ type: "light", network: 253, id: 83, name: "Bar Heater children 2", enabled: false },
+				{ type: "unknown", network: 253, id: 127, name: "Group 127", enabled: false },
+				{ type: "unknown", network: 253, id: 243, name: "Group 243", enabled: false },
+
 				// new disabled
 				{ type: 'switch', network: 253, application: 57, id: 140, name: 'Switch 140', enabled: false },
 
-				// unchanged
+				{ type: "unknown", network: 253, application: 202, id: 127, name: "Group 127", enabled: false },
+
 				{ type: 'unknown', id: 0, name: 'Group 0', enabled: false },
 				{ type: 'unknown', id: 15, name: 'Group 15', enabled: false },
 				{ type: 'unknown', id: 16, name: 'Group 16', enabled: false },
 				{ type: 'unknown', id: 31, name: 'Group 31', enabled: false },
-				{ type: 'unknown', id: 32, name: 'Kitchen1', enabled: false },
-				{ type: 'unknown', id: 33, name: 'Kitchen2', enabled: false },
-				{ type: 'unknown', id: 34, name: 'Dining1', enabled: false },
-				{ type: 'unknown', id: 35, name: 'Dining2', enabled: false },
-				{ type: 'unknown', id: 36, name: 'Lounge', enabled: false },
-				{ type: 'unknown', id: 37, name: 'Sprinkler1', enabled: false },
-				{ type: 'unknown', id: 38, name: 'Sprinkler2', enabled: false },
-				{ type: 'unknown', id: 39, name: 'Porch', enabled: false },
+				{ type: 'dimmer', id: 32, name: 'Kitchen1', enabled: false },
+				{ type: 'dimmer', id: 33, name: 'Kitchen2', enabled: false },
+				{ type: 'dimmer', id: 34, name: 'Dining1', enabled: false },
+				{ type: 'dimmer', id: 35, name: 'Dining2', enabled: false },
+				{ type: 'dimmer', id: 36, name: 'Lounge', enabled: false },
+				{ type: 'dimmer', id: 37, name: 'Sprinkler1', enabled: false },
+				{ type: 'dimmer', id: 38, name: 'Sprinkler2', enabled: false },
+				{ type: 'dimmer', id: 39, name: 'Porch', enabled: false },
 				{ type: 'unknown', id: 40, name: 'Wine Cellar', enabled: false },
 				{ type: 'unknown', id: 41, name: 'Conservatory', enabled: false },
 				{ type: 'unknown', id: 42, name: 'Garden Lights', enabled: false },
@@ -831,16 +874,16 @@ test(`write out platform`, function (assert) {
 
 	const path = tmp.tmpNameSync({prefix: 'homebridge-cbus.platform.test.', postfix: '.json'});
 
-	gDatabase.exportPlatform(path, platform, function (err) {
+	new CGateExport(gDatabase).exportPlatform(path, platform, function (err) {
 		if (err) {
 			assert.fail(`fs write failed` + err);
 		} else {
 			const fileSize = fs.statSync(path).size;
-			assert.equals(fileSize, 3066, `file size`);
+			assert.equals(fileSize, 6196, `file size`);
 
 			// who knew you could load JSON with require!
 			const loaded = require(path);
-			assert.deepEquals(loaded, EXPECTED, `saved file integrity`);
+			assert.deepEquals(loaded.platforms, EXPECTED.platforms, `saved file integrity`);
 		}
 
 		assert.end();

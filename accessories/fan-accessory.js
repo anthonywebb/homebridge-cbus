@@ -53,7 +53,7 @@ function CBusFanAccessory(platform, accessoryData) {
 	// it seems that the Home app kicks off an update only when activating the app,
 	// but not automatically if homekit is restarted.
 	setTimeout(() => {
-		this._log(FILE_ID, 'prime fan state');
+		this._log(FILE_ID, `construct`, `prime state`);
 		this.getSpeed((err, speed) => {
 			if (!err) {
 				this.isOn = (speed > 0);
@@ -84,23 +84,21 @@ CBusFanAccessory.prototype.setOn = function (turnOn, callback, context) {
 		const wasOn = this.isOn;
 		this.isOn = (turnOn === 1) || (turnOn === true);
 
-		//this._log(chalk.green.bold(`CBusFanAccessory.prototype.setOn '${wasOn}' to '${this.isOn}' ${context}`));
-
 		if (context === `event`) {
 			// context helps us avoid a never-ending loop
 			callback();
 		} else {
 			if (wasOn === this.isOn) {
-				this._log(FILE_ID, `setOn no state change from ${wasOn}`);
+				this._log(FILE_ID, `setOn`, `no state change from ${wasOn}`);
 				callback();
 			} else {
 				const speed = turnOn ? this.speed : 0;
 
 				if (this.isOn && speed === 0) {
-					this._log(FILE_ID, chalk.green.bold(`SWALLOW! *** not sure why if this is still needed -- remove? ***`));
+					this._log(FILE_ID, `setOn`, chalk.green.bold(`SWALLOW! *** not sure why if this is still needed -- remove? ***`));
 					callback();
 				} else {
-					this._log(FILE_ID, `setOn changing level to ${speed}%`);
+					this._log(FILE_ID, `setOn`, `changing level to ${speed}%`);
 					this.client.setLevel(this.netId, speed, function () {
 						callback();
 					}, 0, `setOn`);
@@ -113,7 +111,7 @@ CBusFanAccessory.prototype.setOn = function (turnOn, callback, context) {
 CBusFanAccessory.prototype.getSpeed = function (callback) {
 	this.client.receiveLevel(this.netId, message => {
 		const speed = message.level;
-		this._log(FILE_ID, `getSpeed receiveLevel returned ${speed}%`);
+		this._log(FILE_ID, `getSpeed`, `receiveLevel returned ${speed}%`);
 		this.isOn = (speed > 0);
 		
 		if (speed > 0) {
@@ -132,17 +130,15 @@ CBusFanAccessory.prototype.setSpeed = function (newSpeed, callback, context) {
 	const wasOn = this.isOn;
 	this.isOn = (newSpeed > 0);
 
-	// this._log(chalk.green.bold(`CBusFanAccessory.prototype.setSpeed '${wasOn}' to '${this.isOn}' ${context}`));
-
 	if (context === `event`) {
 		// context helps us avoid a never-ending loop
 		callback();
 	} else {
 		if (!wasOn && (newSpeed === 0)) {
-			this._log(FILE_ID, chalk.green(`setSpeed swallowing 0%`));
+			this._log(FILE_ID, `setSpeed`, chalk.green(`swallowing 0%`));
 			callback();
 		} else {
-			this._log(FILE_ID, `setSpeed changing speed to ${newSpeed}%`);
+			this._log(FILE_ID, `setSpeed`, `changing speed to ${newSpeed}%`);
 			this.client.setLevel(this.netId, newSpeed, function () {
 				callback();
 			}, 0, `setSpeed`);
@@ -162,7 +158,7 @@ CBusFanAccessory.prototype.processClientData = function (err, message) {
 
 		// update speed
 		if (speed === 0) {
-			this._log(FILE_ID, `speed 0%; interpreting as 'off'`);
+			this._log(FILE_ID, `processClientData`, `speed 0%; interpreting as 'off'`);
 		} else {
 			this.speedC10tic.setValue(speed, undefined, `event`);
 		}

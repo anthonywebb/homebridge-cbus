@@ -39,7 +39,7 @@ CBusSecurityAccessory.prototype.getMotionState = function (callback) {
 			detected = 0;
 		}
 
-		this._log(FILE_ID, `zonestate = ${message.zonestate} => ${detected}`);
+		this._log(FILE_ID, `getMotionState`, `${message.zonestate} => ${detected}`);
 		callback(false, detected);
 	}, `getMotionState`);
 };

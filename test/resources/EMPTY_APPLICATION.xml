@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Network>
+    <OID>92feb400-eb9e-1034-ba56-ed57540ae279</OID>
+    <TagName>MYNET</TagName>
+    <Address>254</Address>
+    <NetworkNumber>254</NetworkNumber>
+    <Interface>
+        <OID>92ff2930-eb9e-1034-ba59-ed57540ae279</OID>
+        <InterfaceType>CNI</InterfaceType>
+        <InterfaceAddress>127.0.0.1:10001</InterfaceAddress>
+    </Interface>
+    <Languages>
+        <Language>
+            <OID>92fedb10-eb9e-1034-ba57-ed57540ae279</OID>
+            <ID>1</ID>
+            <TagValue>English</TagValue>
+        </Language>
+        <Language>
+            <OID>92ff0220-eb9e-1034-ba58-ed57540ae279</OID>
+            <ID>0</ID>
+            <TagValue>1</TagValue>
+        </Language>
+    </Languages>
+    <Application>
+        <OID>92ff5040-eb9e-1034-ba5a-ed57540ae279</OID>
+        <TagName>Lighting</TagName>
+        <Address>56</Address>
+        <Group>
+            <OID>92ff7750-eb9e-1034-ba5b-ed57540ae279</OID>
+            <TagName>&lt;Unused&gt;</TagName>
+            <Address>255</Address>
+        </Group>
+        <Group>
+            <OID>92ff0220-eb9e-1034-ba5d-ed57540ae279</OID>
+            <TagName>Bed</TagName>
+            <Address>1</Address>
+        </Group>
+        <Group>
+            <OID>92ff2930-eb9e-1034-ba5e-ed57540ae279</OID>
+            <TagName>Toilet</TagName>
+            <Address>3</Address>
+        </Group>
+    </Application>
+    <Application>
+        <OID>93001390-eb9e-1034-bad4-ed57540ae279</OID>
+        <TagName>Telephony</TagName>
+        <Address>224</Address>
+        <Group>
+            <OID>93003aa0-eb9e-1034-bad5-ed57540ae279</OID>
+            <TagName>&lt;Unused&gt;</TagName>
+            <Address>255</Address>
+        </Group>
+    </Application>
+    <Application>
+        <OID>930061b0-eb9e-1034-bad6-ed57540ae279</OID>
+        <TagName>Trigger Control</TagName>
+        <Address>202</Address>
+        <Group>
+            <OID>93003aa0-eb9e-1034-baf3-ed57540ae279</OID>
+            <TagName>Oen Door</TagName>
+            <Address>6</Address>
+        </Group>
+    </Application>
+    <Application>
+        <OID>930061b0-eb9e-1034-baf4-ed57540ae279</OID>
+        <TagName>Enable Control</TagName>
+        <Address>203</Address>
+        <Group>
+            <OID>930088c0-eb9e-1034-baf5-ed57540ae279</OID>
+            <TagName>&lt;Unused&gt;</TagName>
+            <Address>255</Address>
+        </Group>
+    </Application>
+    <Application>
+        <OID>930320d0-eb9e-1034-bb06-ed57540ae279</OID>
+        <TagName>Heating</TagName>
+        <Address>136</Address>
+        <Group>
+            <OID>930347e0-eb9e-1034-bb07-ed57540ae279</OID>
+            <TagName>&lt;Unused&gt;</TagName>
+            <Address>255</Address>
+        </Group>
+    </Application>
+    <Application>
+        <OID>93036ef0-eb9e-1034-bb08-ed57540ae279</OID>
+        <TagName>Unused</TagName>
+        <Address>255</Address>
+        <Group>
+            <OID>93039600-eb9e-1034-bb09-ed57540ae279</OID>
+            <TagName>&lt;Unused&gt;</TagName>
+            <Address>255</Address>
+        </Group>
+    </Application>
+    <Application>
+        <OID>9303bd10-eb9e-1034-bb0a-ed57540ae279</OID>
+        <TagName>Air Conditioning</TagName>
+        <Address>172</Address>
+        <Description></Description>
+    </Application>
+    <Application>
+        <OID>9303e420-eb9e-1034-bb0b-ed57540ae279</OID>
+        <TagName>Irrigation</TagName>
+        <Address>113</Address>
+        <Description></Description>
+        <Group>
+            <OID>92ffc570-eb9e-1034-bb0c-ed57540ae279</OID>
+            <TagName>&lt;Unused&gt;</TagName>
+            <Address>255</Address>
+        </Group>
+    </Application>
+    <Unit>
+        <OID>9301e850-eb9e-1034-bb1a-ed57540ae279</OID>
+        <TagName>My 12CH Relay</TagName>
+        <Address>1</Address>
+        <Description></Description>
+        <UnitType>RELDN12</UnitType>
+        <UnitName>DS_12CH</UnitName>
+        <SerialNumber>100162.317</SerialNumber>
+        <FirmwareVersion>1.3.0</FirmwareVersion>
+        <PP Name="LightLevel" Value="0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0x0 0x0 0x0 0x0"/>
+        <PP Name="UnitAddress" Value="0x1"/>
+        <PP Name="Application" Value="0x38 0xff"/>
+        <PP Name="Project" Value="HOMEKITM"/>
+        <PP Name="NetworkAddress" Value="0xff"/>
+        <PP Name="UnitName" Value="DS_12CH "/>
+        <PP Name="InterLockingChannel" Value="0x0"/>
+        <PP Name="LogicGA13Associations" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+        <PP Name="LogicGA14Associations" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+        <PP Name="LogicGA15Associations" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+        <PP Name="LogicGA16Associations" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+        <PP Name="RestrikeChannel" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+        <PP Name="LogicFunction" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+        <PP Name="ClockGenEnable" Value="1"/>
+        <PP Name="LocalToggleEnable" Value="1"/>
+        <PP Name="NetworkPriority" Value="1"/>
+        <PP Name="LearnMode" Value="1"/>
+        <PP Name="LearnAnyApplication" Value="1"/>
+        <PP Name="LearnedFlag" Value="1"/>
+        <PP Name="Burden" Value="1"/>
+        <PP Name="CheckSum" Value="0"/>
+        <PP Name="LevelStoreEnable" Value="1 1 1 1 1 1 1 1 1 1 1 1"/>
+        <PP Name="LogicLevelStoreEnable" Value="1 1 1 1"/>
+        <PP Name="RestrikeDelay" Value="0x3c"/>
+        <PP Name="AreaGroupAddress" Value="0x43"/>
+        <PP Name="PowerUpDelay" Value="0x5 0x5 0x5 0x5 0x5 0x5 0x5 0x5 0x5 0x5 0x5 0x5"/>
+        <PP Name="GroupAddress" Value="0x19 0x1a 0x1b 0x1d 0x33 0x34 0x1f 0x1e 0x21 0x22 0x23 0x24 0xff 0xff 0xff 0xff"/>
+        <PP Name="MinDimmingLevel" Value="0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0"/>
+        <PP Name="MaxDimmingLevel" Value="0xff 0xff 0xff 0xff"/>
+        <PP Name="SerialNo" Value="0x0 0x0 0x0 0x0"/>
+        <PP Name="CustType" Value="0x52 0x45 0x4c 0x44 0x4e 0x31 0x32 0x20"/>
+        <CatalogNumber>5512RVF</CatalogNumber>
+        <BurdenEnabled>true</BurdenEnabled>
+    </Unit>
+</Network>

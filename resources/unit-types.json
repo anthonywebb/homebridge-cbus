@@ -1,0 +1,492 @@
+{
+  "DIMAR12": {
+    "type": "dimmer",
+    "description": "12 Channel Architectural Dimmer - Universal",
+    "inputCount": 0,
+    "outputCount": 12
+  },
+  "DIMAR3": {
+    "type": "dimmer",
+    "description": "3 Channel Architectural Dimmer - Universal",
+    "inputCount": 0,
+    "outputCount": 3
+  },
+  "DIMAR6": {
+    "type": "dimmer",
+    "description": "6 Channel Architectural Dimmer - Universal",
+    "inputCount": 0,
+    "outputCount": 6
+  },
+  "DIMDN4": {
+    "type": "dimmer",
+    "description": "DIN Rail 4 Channel Dimmer, 2A per Channel",
+    "inputCount": 0,
+    "outputCount": 4
+  },
+  "DIMDN4F": {
+    "type": "dimmer",
+    "description": "DIN Rail 4 Channel Dimmer, 4A per Channel",
+    "inputCount": 0,
+    "outputCount": 4
+  },
+  "DIMDN8": {
+    "type": "dimmer",
+    "description": "DIN Rail 8 Channel Dimmer, 1A per Channel",
+    "inputCount": 0,
+    "outputCount": 8
+  },
+  "DIMDN8F": {
+    "type": "dimmer",
+    "description": "DIN Rail 8 Channel Dimmer, 2A per Channel",
+    "inputCount": 0,
+    "outputCount": 8
+  },
+  "DIMDS8": {
+    "type": "dimmer",
+    "description": "DIN Rail 8 Channel DSI Gateway",
+    "inputCount": 0,
+    "outputCount": 8
+  },
+  "DIMDU4": {
+    "type": "dimmer",
+    "description": "DIN Rail 4 Channel Universal Dimmer, 2A per Channel",
+    "inputCount": 0,
+    "outputCount": 4
+  },
+  "DIMMER4": {
+    "type": "dimmer",
+    "description": [
+      "4 Channel Standard Dimmer Range 3A per Channel",
+      "4 Channel Standard Dimmer Range 5A per Channel"
+    ],
+    "inputCount": 0,
+    "outputCount": 4
+  },
+  "DIMPR1": {
+    "type": "dimmer",
+    "description": "1 Channel Pro Dimmer, 20A per Channel",
+    "inputCount": 0,
+    "outputCount": 1
+  },
+  "DIMPR12": {
+    "type": "dimmer",
+    "description": "Professional 12 Channel Dimmer",
+    "inputCount": 0,
+    "outputCount": 12
+  },
+  "DIMPR12A": {
+    "type": "dimmer",
+    "description": "12 Channel Professional Series Dimmer",
+    "inputCount": 0,
+    "outputCount": 12
+  },
+  "DIMPR2": {
+    "type": "dimmer",
+    "description": "2 Channel Pro Dimmer, 10A per Channel",
+    "inputCount": 0,
+    "outputCount": 2
+  },
+  "DIMPR3A": {
+    "type": "dimmer",
+    "description": "3 Channel Professional Series Dimmer",
+    "inputCount": 0,
+    "outputCount": 3
+  },
+  "DIMPR4": {
+    "type": "dimmer",
+    "description": "4 Channel Pro Dimmer, 5A per Channel",
+    "inputCount": 0,
+    "outputCount": 4
+  },
+  "DIMPR6A": {
+    "type": "dimmer",
+    "description": "6 Channel Professional Series Dimmer",
+    "inputCount": 0,
+    "outputCount": 6
+  },
+  "DMXDO12": {
+    "type": "dimmer",
+    "description": "C-Bus to DMX512A Gateway",
+    "inputCount": 0,
+    "outputCount": 12
+  },
+  "KEY1": {
+    "type": "key",
+    "description": "1 Gang Key Input Unit",
+    "inputCount": 1,
+    "outputCount": 0
+  },
+  "KEY2": {
+    "type": "key",
+    "description": "2 Gang Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEY4": {
+    "type": "key",
+    "description": "4 Gang Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYA1": {
+    "type": "key",
+    "description": "1 Gang Reflection Key Input Unit",
+    "inputCount": 1,
+    "outputCount": 0
+  },
+  "KEYA3": {
+    "type": "key",
+    "description": "3 Gang Reflection Key Input Unit",
+    "inputCount": 3,
+    "outputCount": 0
+  },
+  "KEYA6": {
+    "type": "key",
+    "description": "6 Gang Reflection Key Input Unit",
+    "inputCount": 6,
+    "outputCount": 0
+  },
+  "KEYA8": {
+    "type": "key",
+    "description": "8 Gang Reflection Key Input Unit",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYAV2": {
+    "type": "key",
+    "description": "2 Gang Reflection Vertical Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYAV4": {
+    "type": "key",
+    "description": "4 Gang Reflection Vertical Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYB2": {
+    "type": "key",
+    "description": "2 Gang Saturn Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYB4": {
+    "type": "key",
+    "description": "4 Gang Saturn Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYB6": {
+    "type": "key",
+    "description": "6 Gang Saturn Key Input Unit",
+    "inputCount": 6,
+    "outputCount": 0
+  },
+  "KEYBIR2": {
+    "type": "key",
+    "description": "2 Gang Saturn IR Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYBIR4": {
+    "type": "key",
+    "description": "4 Gang Saturn IR Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYBIR6": {
+    "type": "key",
+    "description": "6 Gang Saturn IR Key Input Unit",
+    "inputCount": 6,
+    "outputCount": 0
+  },
+  "KEYBL4": {
+    "type": "key",
+    "description": "4 Gang DLT Input Unit (Saturn)",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYBL5": {
+    "type": "key",
+    "description": "5 Gang DLT Input Unit (Saturn)",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYC1": {
+    "type": "key",
+    "description": "1 Gang Key Input Unit",
+    "inputCount": 1,
+    "outputCount": 0
+  },
+  "KEYC2": {
+    "type": "key",
+    "description": "2 Gang Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYC4": {
+    "type": "key",
+    "description": "4 Gang Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYDL4": {
+    "type": "key",
+    "description": "4 Gang DLT Input Unit",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYDV1": {
+    "type": "key",
+    "description": [
+      "1 Gang Neo Decorator Key Input Unit",
+      "1 Gang Saturn Decorator Key Input Unit"
+    ],
+    "inputCount": 1,
+    "outputCount": 0
+  },
+  "KEYDV2": {
+    "type": "key",
+    "description": [
+      "2 Gang Neo Decorator Key Input Unit",
+      "2 Gang Saturn Decorator Key Input Unit"
+    ],
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYDV3": {
+    "type": "key",
+    "description": [
+      "3 Gang Neo Decorator Key Input Unit",
+      "3 Gang Saturn Decorator Key Input Unit"
+    ],
+    "inputCount": 3,
+    "outputCount": 0
+  },
+  "KEYDV4": {
+    "type": "key",
+    "description": [
+      "4 Gang Neo Decorator Key Input Unit",
+      "4 Gang Saturn Decorator Key Input Unit"
+    ],
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYGL5": {
+    "type": "key",
+    "description": [
+      "5 Gang eDLT Input Unit",
+      "5 Gang Saturn ZEN eDLT Input Unit"
+    ],
+    "inputCount": 16,
+    "outputCount": 0
+  },
+  "KEYH1": {
+    "type": "key",
+    "description": "1 Gang Saturn ZEN Key Input Unit",
+    "inputCount": 1,
+    "outputCount": 0
+  },
+  "KEYH2": {
+    "type": "key",
+    "description": "2 Gang Saturn ZEN Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYH3": {
+    "type": "key",
+    "description": "3 Gang Saturn ZEN Key Input Unit",
+    "inputCount": 3,
+    "outputCount": 0
+  },
+  "KEYH4": {
+    "type": "key",
+    "description": "4 Gang Saturn ZEN Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYL4": {
+    "type": "key",
+    "description": "4 Gang DLT Input Unit",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYL5": {
+    "type": "key",
+    "description": "5 Gang DLT Input Unit",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYM2": {
+    "type": "key",
+    "description": "2 Gang NEO Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYM4": {
+    "type": "key",
+    "description": "4 Gang NEO Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYM8": {
+    "type": "key",
+    "description": "8 Gang NEO Key Input Unit",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYML4": {
+    "type": "key",
+    "description": "4 Gang DLT Input Unit (Neo)",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYML5": {
+    "type": "key",
+    "description": "5 Gang DLT Input Unit (Neo)",
+    "inputCount": 8,
+    "outputCount": 0
+  },
+  "KEYP2": {
+    "type": "key",
+    "description": "2 Gang Modena Key Input Unit",
+    "inputCount": 2,
+    "outputCount": 0
+  },
+  "KEYP4": {
+    "type": "key",
+    "description": "4 Gang Modena Key Input Unit",
+    "inputCount": 4,
+    "outputCount": 0
+  },
+  "KEYP6": {
+    "type": "key",
+    "description": "6 Gang Modena Key Input Unit",
+    "inputCount": 6,
+    "outputCount": 0
+  },
+  "RELAY1": {
+    "type": "light",
+    "description": "1 Channel Relay 10A per Channel",
+    "inputCount": 0,
+    "outputCount": 1
+  },
+  "RELAY2": {
+    "type": "light",
+    "description": "2 Channel Voltage Free Relay 10A per Channel",
+    "inputCount": 0,
+    "outputCount": 2
+  },
+  "RELAY4": {
+    "type": "light",
+    "description": [
+      "4 Channel Relay Driver (for 4 external 20A relays)",
+      "4 Channel 20A Relay",
+      "4 Channel Relay (Cream Enclosure)",
+      "4 Channel Relay (Black Enclosure)"
+    ],
+    "inputCount": 0,
+    "outputCount": 4
+  },
+  "RELDB1": {
+    "type": "shutter",
+    "description": "DIN Rail 1 Channel Shutter Relay",
+    "inputCount": 0,
+    "outputCount": 1
+  },
+  "RELDC4": {
+    "type": "light",
+    "description": "DIN Rail 4 Channel Changeover Voltage Free Relay",
+    "inputCount": 0,
+    "outputCount": 4
+  },
+  "RELDF1": {
+    "type": "fan",
+    "description": "C-Bus Ceiling Sweep Fan Controller",
+    "inputCount": 0,
+    "outputCount": 1
+  },
+  "RELDN12": {
+    "type": "light",
+    "description": "DIN Rail 12 Channel Voltage Free Relay 10A per Channel",
+    "inputCount": 0,
+    "outputCount": 12
+  },
+  "RELDN4": {
+    "type": "light",
+    "description": [
+      "DIN Rail 4 Channel Voltage Free Relay",
+      "DIN Rail 4 Channel 16A Relay",
+      "DIN Rail 4 Channel 20A Relay",
+      "DIN Rail 4 Channel Relay Driver"
+    ],
+    "inputCount": 0,
+    "outputCount": 4
+  },
+  "RELDN8": {
+    "type": "light",
+    "description": "DIN Rail 8 Channel Voltage Free Relay 10A per Channel",
+    "inputCount": 0,
+    "outputCount": 8
+  },
+  "RELDN8B": {
+    "type": "light",
+    "description": "DIN Rail 8 Channel Voltage Free Relay 10A per Channel",
+    "inputCount": 0,
+    "outputCount": 8
+  },
+  "RELDN8SP": {
+    "type": "light",
+    "description": "DIN Rail 9 Channel Voltage Free Relay 10A per Channel",
+    "inputCount": 0,
+    "outputCount": 8
+  },
+  "RELPR4": {
+    "type": "light",
+    "description": "RELPR4",
+    "inputCount": 0,
+    "outputCount": 1
+  },
+  "RELSM8": {
+    "type": "light",
+    "description": "C-Bus 8 Channel Relay Unit for control of ELV loads",
+    "inputCount": 0,
+    "outputCount": 8
+  },
+  "SENPIR": {
+    "type": "motion",
+    "description": "Passive Infrared Motion Detector, Indoor, Flush Mount",
+    "inputCount": 0,
+    "outputCount": 0
+  },
+  "SENPIRIA": {
+    "type": "motion",
+    "description": "Passive Infrared Motion Detector, Indoor, Corner Mount",
+    "inputCount": 0,
+    "outputCount": 0
+  },
+  "SENPIRIB": {
+    "type": "motion",
+    "description": "Passive Infrared Motion Detector, Indoor, Flush Mount",
+    "inputCount": 0,
+    "outputCount": 0
+  },
+  "SENPIROA": {
+    "type": "motion",
+    "description": "Passive Infrared Motion Detector, Outdoor",
+    "inputCount": 0,
+    "outputCount": 0
+  },
+  "SENPIRSS": {
+    "type": "motion",
+    "description": "Passive Infrared Motion Detector",
+    "inputCount": 0,
+    "outputCount": 0
+  },
+  "SENSOR": {
+    "type": "motion",
+    "description": "Passive Infrared Motion Detector, Indoor, Corner Mount",
+    "inputCount": 0,
+    "outputCount": 0
+  }
+}

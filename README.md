@@ -204,6 +204,12 @@ npm run test-coverage
 ````
 
 ## Changes Since 0.5.0
+* 0.6.1: 
+  - when building the Unified Accessory List, use the unitType of the C-Bus units controlled by the group to make a semi-intelligent guess of the accessory's type.
+  - improved support for C-Bus installations with multiple networks
+   
+* 0.6.0: relax tests for project name validity
+
 * 0.5.9: adds support for `rampDuration` (for dimmers) and remove extraneous C-Bus comms when dimming or changing fan speed 
 
 * 0.5.8: adds support for `fan` accessories 
