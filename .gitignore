@@ -42,3 +42,6 @@ jspm_packages
 
 # output directory
 output/
+
+# configs directory
+configs

@@ -85,5 +85,3 @@ test(`project with empty application`, function (assert) {
 		assert.end();
 	});
 });
-
-
