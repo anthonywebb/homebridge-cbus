@@ -204,6 +204,8 @@ npm run test-coverage
 ````
 
 ## Changes Since 0.5.0
+* 0.6.2: Bugfix
+
 * 0.6.1: 
   - when building the Unified Accessory List, use the unitType of the C-Bus units controlled by the group to make a semi-intelligent guess of the accessory's type.
   - improved support for C-Bus installations with multiple networks
