@@ -78,7 +78,7 @@ function CBusPlatform(ignoredLog, config) {
 		process.exit(1);
 	}
 	this.cgateIpAddress = config.client_ip_address;
-	this.cgateControlPort = (typeof config.client_contolport === `undefined`) ? undefined : config.client_contolport;
+	this.cgateControlPort = (typeof config.client_controlport === `undefined`) ? undefined : config.client_controlport;
 
 	// project name, network and default application
 	try {
