@@ -30,7 +30,8 @@ This project provides a bridge which 'exposes' your devices in a way that you ca
 * shutter relays
 * fans
 * motion sensors
-* security presence detectors.
+* security presence detectors
+* trigger events
 
 If you need support for a new device type, feel free to open an issue, or have a go cutting code yourself. If you have some familiarity with [Node.js](https://nodejs.org/) you'll find it pretty straightforward.
 
@@ -89,7 +90,7 @@ You must register devices by hand in a config file, however to make this easier 
 
 The platform definition in the `config.json` file contains an `accessories` array, which defines the available accessories using the following keys:
 
-* `type`: (required) type of the accessory. The valid values are "light", "switch", "dimmer", "shutter", "motion", and "security".
+* `type`: (required) type of the accessory. The valid values are "light", "switch", "dimmer", "shutter", "motion", "security" and "trigger".
 * `name`: (required) name of the accessory (e.g. "Living Room Light", "Bedroom Light", "Living Room Curtain" etc.)
 * `network`: (optional, defaults to `client_network`) C-Bus network address of the device
 * `application`: (optional, defaults to `client_application`) The C-Bus Application address of the device
@@ -98,6 +99,7 @@ The platform definition in the `config.json` file contains an `accessories` arra
 * `activeDuration`: (optional) only used by the switch accessory, indicating a timeout period, after which the switch will automatically switch off. This allows a HomeKit switch accessory to be used to generate a *Bell Press* event.
 * `rampDuration`: (optional, maximum 17 minutes) only used by the dimmer accessory, indicating the ramp up/down time when dimming.
 * `enabled`: (optional, default: true) set to false to inhibit the accessory from loading.
+* `action`: (required by the trigger accessory) sets the action selector to be triggered. 
 
 (NB. Durations can be specified in days, hours, minutes, seconds or milliseconds. (eg.: "2 days", "2.5h", "5s", "100 ms", etc. ) For more information on allowable formats, please see the [ms library](https://github.com/zeit/ms))
 
@@ -146,7 +148,9 @@ The platform definition in the `config.json` file contains an `accessories` arra
 			    
         { "type": "security", "application": 208, "id": 1, "name": "Entry Zone" },
 			    
-        { "type": "switch", "id": "9", "name": "Garden Lights", "activeDuration": "2.5 hrs" }
+        { "type": "switch", "id": "9", "name": "Garden Lights", "activeDuration": "2.5 hrs" },
+        
+        { "type": "trigger", "application": 202, "id": 0, "action": 1, "name": "recall preset 2" }
       ]
     }
   ],
@@ -204,6 +208,8 @@ npm run test-coverage
 ````
 
 ## Changes Since 0.5.0
+* 0.6.3: adds support for `trigger` accessory
+
 * 0.6.2: Bugfix
 
 * 0.6.1: 
