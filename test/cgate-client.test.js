@@ -491,6 +491,21 @@ const TEST_DESCRIPTORS = [
 			matched: false,
 			processed: false
 		}
+	},
+	{
+		name: `[110] triggerEvent`,
+		clientAction: function () {
+			gClient.triggerAction(CBusNetId.parse(`//EXAMPLE/254/202/1`), 0);
+		},
+		fromClient: `[110] trigger event //EXAMPLE/254/202/1 0`,
+		fromServer: `[110] 200 OK: //EXAMPLE/254/56/3`,
+		expected: {
+			type: `response`,
+			commandId: 110,
+			code: 200,
+			matched: true,
+			processed: true
+		}
 	}
 ];
 

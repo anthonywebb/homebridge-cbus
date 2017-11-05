@@ -48,6 +48,15 @@ function CBusAccessory(platform, accessoryData) {
 		throw new Error(`id '${accessoryData.id}' for accessory '${this.name} is not an integer`);
 	}
 
+	if (typeof accessoryData.action !== `undefined`) {
+		let actionValue;
+		try {
+			actionValue = cbusUtils.integerise(accessoryData.action);
+		} catch (err) {
+			throw new Error(`action value '${accessoryData.action}' for accessory '${this.name} is not an integer`);
+		}
+	}
+
 	// build netId
 	this.netId = new CBusNetId(
 		platform.project,
