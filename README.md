@@ -208,7 +208,9 @@ npm run test-coverage
 ````
 
 ## Changes Since 0.5.0
-* 0.6.3: adds support for `trigger` accessory
+* 0.6.4: adds support for `trigger` accessory
+
+* 0.6.3: Bugfix
 
 * 0.6.2: Bugfix
 
