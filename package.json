@@ -1,6 +1,6 @@
 {
   "name": "homebridge-cbus",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "description": "CBus Platform plugin for homebridge",
   "license": "MIT",
   "homepage": "http://github.com/anthonywebb/homebridge-cbus/",
