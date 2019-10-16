@@ -32,6 +32,7 @@ This project provides a bridge which 'exposes' your devices in a way that you ca
 * motion sensors
 * security presence detectors
 * trigger events
+* contact sensors
 
 If you need support for a new device type, feel free to open an issue, or have a go cutting code yourself. If you have some familiarity with [Node.js](https://nodejs.org/) you'll find it pretty straightforward.
 
@@ -90,7 +91,7 @@ You must register devices by hand in a config file, however to make this easier 
 
 The platform definition in the `config.json` file contains an `accessories` array, which defines the available accessories using the following keys:
 
-* `type`: (required) type of the accessory. The valid values are "light", "switch", "dimmer", "shutter", "motion", "security" and "trigger".
+* `type`: (required) type of the accessory. The valid values are "light", "switch", "dimmer", "shutter", "motion", "security", "trigger" and "contact".
 * `name`: (required) name of the accessory (e.g. "Living Room Light", "Bedroom Light", "Living Room Curtain" etc.)
 * `network`: (optional, defaults to `client_network`) C-Bus network address of the device
 * `application`: (optional, defaults to `client_application`) The C-Bus Application address of the device
@@ -150,7 +151,9 @@ The platform definition in the `config.json` file contains an `accessories` arra
 			    
         { "type": "switch", "id": "9", "name": "Garden Lights", "activeDuration": "2.5 hrs" },
         
-        { "type": "trigger", "application": 202, "id": 0, "action": 1, "name": "recall preset 2" }
+        { "type": "trigger", "application": 202, "id": 0, "action": 1, "name": "recall preset 2" },
+	
+	{ "type": "contact","id": 5, "name": "Bedroom Window" }
       ]
     }
   ],
