@@ -35,7 +35,8 @@ module.exports = function (homebridge) {
 	const CBusFanAccessory = require('./accessories/fan-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusSwitchAccessory = require('./accessories/switch-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusTriggerAccessory = require('./accessories/trigger-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
-        const CBusContactAccessory = require('./accessories/contact-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
+	const CBusContactAccessory = require('./accessories/contact-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
+	const CBusMeasurementAccessory = require('./accessories/measurement-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	
 	// fix inheritance, since we've loaded our classes before the Accessory class has been loaded
 	cbusUtils.fixInheritance(CBusAccessory, Accessory);
@@ -47,7 +48,8 @@ module.exports = function (homebridge) {
 	cbusUtils.fixInheritance(CBusFanAccessory, CBusAccessory);
 	cbusUtils.fixInheritance(CBusSwitchAccessory, CBusAccessory);
 	cbusUtils.fixInheritance(CBusTriggerAccessory, CBusAccessory);
-        cbusUtils.fixInheritance(CBusContactAccessory, CBusAccessory);
+	cbusUtils.fixInheritance(CBusContactAccessory, CBusAccessory);
+	cbusUtils.fixInheritance(CBusMeasurementAccessory, CBusAccessory);
 	
 	// register ourself with homebridge
 	homebridge.registerPlatform('homebridge-cbus', 'CBus', CBusPlatform);
@@ -62,7 +64,8 @@ module.exports = function (homebridge) {
 		fan: CBusFanAccessory,
 		switch: CBusSwitchAccessory,
 		trigger: CBusTriggerAccessory,
-                contact: CBusContactAccessory,		
+		contact: CBusContactAccessory,
+		measurement: CBusMeasurementAccessory,
 	};
 };
 
