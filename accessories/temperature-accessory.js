@@ -15,10 +15,10 @@ module.exports = function (_service, _characteristic, _accessory, _uuid) {
 	CBusAccessory = _accessory;
 	uuid = _uuid;
 
-	return CBusMeasurementAccessory;
+	return CBusTemperatureAccessory;
 };
 
-function CBusMeasurementAccessory(platform, accessoryData) {
+function CBusTemperatureAccessory(platform, accessoryData) {
 	//--------------------------------------------------
 	// initialize parent
 	CBusAccessory.call(this, platform, accessoryData);
@@ -28,17 +28,17 @@ function CBusMeasurementAccessory(platform, accessoryData) {
     this.service = this.addService(new Service.TemperatureSensor(this.name));
 	
 	this.service.getCharacteristic(Characteristic.CurrentTemperature)
-		.on('get', this.getMeasurementState.bind(this));
+		.on('get', this.getTemperatureState.bind(this));
     }
 
-CBusMeasurementAccessory.prototype.getMeasurementState = function (callback) {
+CBusTemperatureAccessory.prototype.getTemperatureState = function (callback) {
 	this.client.receiveData(this.netId, message => {
 		this._log(FILE_ID, `getState`, message.data);
 		callback(false, /* state: */ message.data);
 	});
 };
 
-CBusMeasurementAccessory.prototype.processClientData = function (err, message) {
+CBusTemperatureAccessory.prototype.processClientData = function (err, message) {
 	if (!err) {
         this.service.getCharacteristic(Characteristic.CurrentTemperature)
             .setValue(message.data);

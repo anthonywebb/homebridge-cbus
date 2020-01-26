@@ -490,7 +490,7 @@
     "outputCount": 0
   },
   "SENTEMP4": {
-    "type": "measurement",
+    "type": "temperature",
     "description": "Digital Temperature Sensor Input Unit, 4 Channel",
     "inputCount": 4,
     "outputCount": 0
