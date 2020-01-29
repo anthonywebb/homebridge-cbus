@@ -111,29 +111,30 @@ function CBusPlatform(ignoredLog, config) {
 // Invokes callback(accessories[])
 CBusPlatform.prototype._processEvent = function (message) {
 	if (message.netId) {
-		const tag = this.database ? this.database.getTag(message.netId) : `NYI`;
-
-		// lookup accessory
 		let output;
+		// lookup accessory
 		const accessory = this.registeredAccessories[message.netId.toString()];
-		if (accessory) {
-			output = `${chalk.red.bold(accessory.name)} (${accessory.type}) set to level ${message.level}%`;
-		} else {
-			output = `${chalk.red.bold.italic(tag)} (not-registered) set to level ${message.level}%`;
+		if (!message.application === 'measurement') {
+			const tag = this.database ? this.database.getTag(message.netId) : `NYI`;
+			if (accessory) {
+				output = `${chalk.red.bold(accessory.name)} (${accessory.type}) set to level ${message.level}%`;
+			} else {
+				output = `${chalk.red.bold.italic(tag)} (not-registered) set to level ${message.level}%`;
+			}
 		}
 
 		// append source info, if applicable
-		if (typeof message.sourceunit !== `undefined`) {
-			const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceunit);
+		if (message.sourceUnit) {
+			const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceUnit);
 			const source = this.database.getNetworkEntity(sourceId);
 			output = `${output}, by ${chalk.red.bold(source.tag)} (${source.unitType})`;
 		}
-
 		logLevel(output);
 
 		if (accessory) {
 			// process if found
-			const err = (message.code !== 730);
+			// 702 code for temperature measurement event
+			const err = (message.code !== 730 && !message.code === 702);
 			accessory.processClientData(err, message);
 		}
 	} else if (message.code === 700) {

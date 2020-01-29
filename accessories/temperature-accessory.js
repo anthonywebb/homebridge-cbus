@@ -26,21 +26,13 @@ function CBusTemperatureAccessory(platform, accessoryData) {
 	//--------------------------------------------------
 	// register temperature service
     this.service = this.addService(new Service.TemperatureSensor(this.name));
-	
-	this.service.getCharacteristic(Characteristic.CurrentTemperature)
-		.on('get', this.getTemperatureState.bind(this));
-    }
-
-CBusTemperatureAccessory.prototype.getTemperatureState = function (callback) {
-	this.client.receiveData(this.netId, message => {
-		this._log(FILE_ID, `getState`, message.data);
-		callback(false, /* state: */ message.data);
-	});
 };
 
 CBusTemperatureAccessory.prototype.processClientData = function (err, message) {
+	const currentTemp = message.remainder && message.remainder[1] && message.remainder[1] / 100;
 	if (!err) {
+		this._log(FILE_ID, `${message.application} event`, currentTemp);
         this.service.getCharacteristic(Characteristic.CurrentTemperature)
-            .setValue(message.data);
+            .setValue(currentTemp);
 	}
 };
