@@ -29,10 +29,17 @@ function CBusTemperatureAccessory(platform, accessoryData) {
 };
 
 CBusTemperatureAccessory.prototype.processClientData = function (err, message) {
-	const currentTemp = message.remainder && message.remainder[1] && message.remainder[1] / 100;
+	const currentTemp = message.remainder &&
+		message.remainder.length >= 4 &&
+		Number(message.remainder[1]) * Math.pow(10, Number(message.remainder[2]));
+	const temperatureDisplayUnits = message.remainder &&
+		message.remainder.length >= 4 &&
+		Number(message.remainder[3]);
 	if (!err) {
 		this._log(FILE_ID, `${message.application} event`, currentTemp);
         this.service.getCharacteristic(Characteristic.CurrentTemperature)
-            .setValue(currentTemp);
+			.setValue(currentTemp);
+		this.service.getCharacteristic(Characteristic.TemperatureDisplayUnits)
+			.setValue(temperatureDisplayUnits);
 	}
 };
