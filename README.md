@@ -33,6 +33,7 @@ This project provides a bridge which 'exposes' your devices in a way that you ca
 * security presence detectors
 * trigger events
 * contact sensors
+* smoke Sensor
 * temperature sensors
 
 If you need support for a new device type, feel free to open an issue, or have a go cutting code yourself. If you have some familiarity with [Node.js](https://nodejs.org/) you'll find it pretty straightforward.
@@ -156,7 +157,9 @@ The platform definition in the `config.json` file contains an `accessories` arra
 
         { "type": "temperature", "id": 245, "application": 228, "channel": 1, "name": "Living Room Temperature" },
 	
-	{ "type": "contact","id": 5, "name": "Bedroom Window" }
+	{ "type": "contact","id": 5, "name": "Bedroom Window" },
+	
+	{ "type": "smoke","id": 3, "name": "Kitchen Smoke Detector" }
       ]
     }
   ],
