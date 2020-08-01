@@ -62,7 +62,8 @@ function CBusAccessory(platform, accessoryData) {
 		platform.project,
 		accessoryData.network || platform.client.network,
 		accessoryData.application || platform.client.application,
-		groupAddress
+		groupAddress,
+		accessoryData.channel
 	);
 
 	// fire our parent

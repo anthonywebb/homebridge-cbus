@@ -26,13 +26,11 @@ function CBusTriggerAccessory(platform, accessoryData) {
 	// initialize the parent
 	CBusAccessory.call(this, platform, accessoryData);
 
-	/*
 	try {
 		this.action = cbusUtils.integerise(accessoryData.action);
 	} catch (err) {
 		throw new Error(`action value '${accessoryData.action}' for accessory '${this.name} is not an integer`);
 	}
-	*/
 
 	// register the on-off service
 	this.service = this.addService(new Service.Switch(this.name));

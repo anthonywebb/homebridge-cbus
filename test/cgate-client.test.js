@@ -600,7 +600,7 @@ function _serverTests(descriptors) {
 
 		let descriptorIndex = 0;
 
-		const EVENTS_REQUEST = `[99] events e7s0c0`;
+		const EVENTS_REQUEST = `[99] events e8s0c0`;
 		const EVENTS_RESPONSE = `[99] 200 OK.`;
 
 		// this harness will directly run a test for every instance of the following test properties:
