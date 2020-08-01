@@ -488,5 +488,11 @@
     "description": "Passive Infrared Motion Detector, Indoor, Corner Mount",
     "inputCount": 0,
     "outputCount": 0
+  },
+  "SENTEMP4": {
+    "type": "temperature",
+    "description": "Digital Temperature Sensor Input Unit, 4 Channel",
+    "inputCount": 4,
+    "outputCount": 0
   }
 }

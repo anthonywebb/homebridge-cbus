@@ -35,7 +35,8 @@ module.exports = function (homebridge) {
 	const CBusFanAccessory = require('./accessories/fan-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusSwitchAccessory = require('./accessories/switch-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusTriggerAccessory = require('./accessories/trigger-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
-        const CBusContactAccessory = require('./accessories/contact-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
+	const CBusContactAccessory = require('./accessories/contact-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
+	const CBusTemperatureAccessory = require('./accessories/temperature-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	
 	// fix inheritance, since we've loaded our classes before the Accessory class has been loaded
 	cbusUtils.fixInheritance(CBusAccessory, Accessory);
@@ -47,7 +48,8 @@ module.exports = function (homebridge) {
 	cbusUtils.fixInheritance(CBusFanAccessory, CBusAccessory);
 	cbusUtils.fixInheritance(CBusSwitchAccessory, CBusAccessory);
 	cbusUtils.fixInheritance(CBusTriggerAccessory, CBusAccessory);
-        cbusUtils.fixInheritance(CBusContactAccessory, CBusAccessory);
+	cbusUtils.fixInheritance(CBusContactAccessory, CBusAccessory);
+	cbusUtils.fixInheritance(CBusTemperatureAccessory, CBusAccessory);
 	
 	// register ourself with homebridge
 	homebridge.registerPlatform('homebridge-cbus', 'CBus', CBusPlatform);
@@ -62,7 +64,8 @@ module.exports = function (homebridge) {
 		fan: CBusFanAccessory,
 		switch: CBusSwitchAccessory,
 		trigger: CBusTriggerAccessory,
-                contact: CBusContactAccessory,		
+		contact: CBusContactAccessory,
+		temperature: CBusTemperatureAccessory,
 	};
 };
 
@@ -108,20 +111,21 @@ function CBusPlatform(ignoredLog, config) {
 // Invokes callback(accessories[])
 CBusPlatform.prototype._processEvent = function (message) {
 	if (message.netId) {
-		const tag = this.database ? this.database.getTag(message.netId) : `NYI`;
-
-		// lookup accessory
 		let output;
+		// lookup accessory
 		const accessory = this.registeredAccessories[message.netId.toString()];
-		if (accessory) {
-			output = `${chalk.red.bold(accessory.name)} (${accessory.type}) set to level ${message.level}%`;
-		} else {
-			output = `${chalk.red.bold.italic(tag)} (not-registered) set to level ${message.level}%`;
+		if (!message.application === 'measurement') {
+			const tag = this.database ? this.database.getTag(message.netId) : `NYI`;
+			if (accessory) {
+				output = `${chalk.red.bold(accessory.name)} (${accessory.type}) set to level ${message.level}%`;
+			} else {
+				output = `${chalk.red.bold.italic(tag)} (not-registered) set to level ${message.level}%`;
+			}
 		}
 
 		// append source info, if applicable
-		if (typeof message.sourceunit !== `undefined`) {
-			const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceunit);
+		if (message.sourceUnit) {
+			const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceUnit);
 			const source = this.database.getNetworkEntity(sourceId);
             if (typeof source == 'undefined') {
                 log(`event source unit ${sourceId} not found.`);
@@ -129,12 +133,12 @@ CBusPlatform.prototype._processEvent = function (message) {
 			    output = `${output}, by ${chalk.red.bold(source.tag)} (${source.unitType})`;
             }
 		}
-
 		logLevel(output);
 
 		if (accessory) {
 			// process if found
-			const err = (message.code !== 730);
+			// 702 code for temperature measurement event
+			const err = (message.code !== 730 && !message.code === 702);
 			accessory.processClientData(err, message);
 		}
 	} else if (message.code === 700) {
