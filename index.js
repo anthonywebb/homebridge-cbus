@@ -123,7 +123,11 @@ CBusPlatform.prototype._processEvent = function (message) {
 		if (typeof message.sourceunit !== `undefined`) {
 			const sourceId = new CBusNetId(this.project, this.network, `p`, message.sourceunit);
 			const source = this.database.getNetworkEntity(sourceId);
-			output = `${output}, by ${chalk.red.bold(source.tag)} (${source.unitType})`;
+            if (typeof source == 'undefined') {
+                log(`event source unit ${sourceId} not found.`);
+            } else {
+			    output = `${output}, by ${chalk.red.bold(source.tag)} (${source.unitType})`;
+            }
 		}
 
 		logLevel(output);
