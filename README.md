@@ -32,6 +32,7 @@ This project provides a bridge which 'exposes' your devices in a way that you ca
 * motion sensors
 * security presence detectors
 * trigger events
+* enable events
 * contact sensors
 * smoke Sensor
 * temperature sensors
@@ -93,7 +94,7 @@ You must register devices by hand in a config file, however to make this easier 
 
 The platform definition in the `config.json` file contains an `accessories` array, which defines the available accessories using the following keys:
 
-* `type`: (required) type of the accessory. The valid values are "light", "switch", "dimmer", "shutter", "motion", "security", "trigger" and "contact".
+* `type`: (required) type of the accessory. The valid values are "light", "switch", "dimmer", "shutter", "motion", "security", "trigger", enablecontrol" and "contact".
 * `name`: (required) name of the accessory (e.g. "Living Room Light", "Bedroom Light", "Living Room Curtain" etc.)
 * `network`: (optional, defaults to `client_network`) C-Bus network address of the device
 * `application`: (optional, defaults to `client_application`) The C-Bus Application address of the device
@@ -102,7 +103,7 @@ The platform definition in the `config.json` file contains an `accessories` arra
 * `activeDuration`: (optional) only used by the switch accessory, indicating a timeout period, after which the switch will automatically switch off. This allows a HomeKit switch accessory to be used to generate a *Bell Press* event.
 * `rampDuration`: (optional, maximum 17 minutes) only used by the dimmer accessory, indicating the ramp up/down time when dimming.
 * `enabled`: (optional, default: true) set to false to inhibit the accessory from loading.
-* `action`: (required by the trigger accessory) sets the action selector to be triggered. 
+* `action`: (required by the trigger and enablecontrol accessories) sets the action selector to be triggered/enabled. 
 
 (NB. Durations can be specified in days, hours, minutes, seconds or milliseconds. (eg.: "2 days", "2.5h", "5s", "100 ms", etc. ) For more information on allowable formats, please see the [ms library](https://github.com/zeit/ms))
 
@@ -154,6 +155,8 @@ The platform definition in the `config.json` file contains an `accessories` arra
         { "type": "switch", "id": "9", "name": "Garden Lights", "activeDuration": "2.5 hrs" },
         
         { "type": "trigger", "application": 202, "id": 0, "action": 1, "name": "recall preset 2" },
+
+        { "type": "enablecontrol", "application": 203, "id": 0, "action": 1, "name": "enable sensor" },
 
         { "type": "temperature", "id": 245, "application": 228, "channel": 1, "name": "Living Room Temperature" },
 	
@@ -217,6 +220,9 @@ npm run test-coverage
 ````
 
 ## Changes Since 0.5.0
+
+* 0.6.6 adds support for `enablecontrol` accessory
+
 * 0.6.5: adds support for `contact` accessory
 
 * 0.6.4: adds support for `trigger` accessory

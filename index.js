@@ -35,7 +35,8 @@ module.exports = function (homebridge) {
 	const CBusFanAccessory = require('./accessories/fan-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusSwitchAccessory = require('./accessories/switch-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusTriggerAccessory = require('./accessories/trigger-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
-  const CBusSmokeAccessory = require('./accessories/smoke-sensor-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
+	const CBusEnableAccessory = require('./accessories/enable-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
+	const CBusSmokeAccessory = require('./accessories/smoke-sensor-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusContactAccessory = require('./accessories/contact-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	const CBusTemperatureAccessory = require('./accessories/temperature-accessory.js')(Service, Characteristic, CBusAccessory, uuid);
 	
@@ -49,7 +50,8 @@ module.exports = function (homebridge) {
 	cbusUtils.fixInheritance(CBusFanAccessory, CBusAccessory);
 	cbusUtils.fixInheritance(CBusSwitchAccessory, CBusAccessory);
 	cbusUtils.fixInheritance(CBusTriggerAccessory, CBusAccessory);
-  cbusUtils.fixInheritance(CBusSmokeAccessory, CBusAccessory);
+	cbusUtils.fixInheritance(CBusEnableAccessory, CBusAccessory);
+    cbusUtils.fixInheritance(CBusSmokeAccessory, CBusAccessory);
 	cbusUtils.fixInheritance(CBusContactAccessory, CBusAccessory);
 	cbusUtils.fixInheritance(CBusTemperatureAccessory, CBusAccessory);
 	
@@ -66,7 +68,8 @@ module.exports = function (homebridge) {
 		fan: CBusFanAccessory,
 		switch: CBusSwitchAccessory,
 		trigger: CBusTriggerAccessory,
-    smoke: CBusSmokeAccessory,
+		enablecontrol: CBusEnableAccessory,
+        smoke: CBusSmokeAccessory,
 		contact: CBusContactAccessory,
 		temperature: CBusTemperatureAccessory,
 	};
